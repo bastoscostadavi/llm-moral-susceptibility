@@ -1,0 +1,136 @@
+[
+  {
+    "persona_id": 0,
+    "persona": "A young mother who trusts their caregiver to look after and check in on their children while they are at work",
+    "model_type": "ollama",
+    "model_name": "mistral:7b-instruct",
+    "timestamp": "2025-10-02T11:09:39.695027",
+    "relevance_scores": {
+      "care_harm": [
+        4,
+        4,
+        0,
+        4,
+        5,
+        4
+      ],
+      "fairness_cheating": [
+        5,
+        3,
+        3,
+        4,
+        0,
+        4
+      ],
+      "loyalty_betrayal": [
+        0,
+        2,
+        1,
+        0,
+        1,
+        1
+      ],
+      "authority_subversion": [
+        2,
+        3,
+        4,
+        0,
+        4,
+        3
+      ],
+      "sanctity_degradation": [
+        3,
+        0,
+        3,
+        4,
+        5,
+        1
+      ]
+    },
+    "agreement_scores": [
+      5,
+      5,
+      3,
+      4,
+      5,
+      5,
+      5,
+      4,
+      5,
+      2,
+      2,
+      5,
+      5,
+      3,
+      1,
+      4
+    ]
+  },
+  {
+    "persona_id": 1,
+    "persona": "A parent who works in the field of computational linguistics and shares insights on the intersection of language and programming",
+    "model_type": "ollama",
+    "model_name": "mistral:7b-instruct",
+    "timestamp": "2025-10-02T11:10:15.280998",
+    "relevance_scores": {
+      "care_harm": [
+        -1,
+        -1,
+        0,
+        4,
+        -1,
+        -1
+      ],
+      "fairness_cheating": [
+        5,
+        -1,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "loyalty_betrayal": [
+        0,
+        -1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "authority_subversion": [
+        -1,
+        0,
+        2,
+        0,
+        2,
+        1
+      ],
+      "sanctity_degradation": [
+        -1,
+        0,
+        0,
+        1,
+        0,
+        -1
+      ]
+    },
+    "agreement_scores": [
+      -1,
+      -1,
+      -1,
+      4,
+      5,
+      5,
+      5,
+      -1,
+      4,
+      -1,
+      1,
+      5,
+      5,
+      -1,
+      0,
+      -1
+    ]
+  }
+]
