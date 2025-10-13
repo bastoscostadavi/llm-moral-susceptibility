@@ -1,132 +1,115 @@
 # LLM Moral Susceptibility Experiments
 
-This project explores the moral susceptibility of Large Language Models (LLMs) using the Moral Foundations Questionnaire (MFQ-30) with different personas from the Persona Hub dataset.
+This repository explores how persona conditioning alters large language model responses on the 30-item Moral Foundations Questionnaire (MFQ-30). The runner will impersonate each persona and ask every MFQ question multiple times, logging the numeric rating returned by the model.
 
-## Project Structure
+## Repository Layout
 
 ```
-llm-moral-susceptibility/
-├── personas/
-│   ├── generate_persona_samples.py    # Generate multiple persona samples
-│   ├── personas_sample_01.json        # First sample (100 personas)
-│   ├── personas_sample_02.json        # Second sample (100 personas)
-│   └── ... (up to 10 samples)         # For testing stability
-├── data/                              # Experimental results
-│   ├── mfq_results_*.json            # Complete experimental data
-│   └── mfq_results_*.csv             # Tabular data for analysis
-├── run_mfq_experiment.py             # Main experimental runner
-├── llm_interface.py                  # LLM interface (OpenAI, Anthropic, Ollama)
-├── mfq_questions.py                  # MFQ-30 questions by moral foundations
-└── requirements.txt                  # Python dependencies
+.
+├── data/                         # Streaming CSV outputs (one per model)
+├── results/                      # Optional sandbox for downstream analyses
+├── generate_persona_samples.py   # Utility to slice persona datasets
+├── llm_interface.py              # Shared LLM access layer (local + API providers)
+├── mfq_questions.py              # Canonical MFQ-30 catalog and prompt helpers
+├── personas.json                 # Default persona list (array of descriptions)
+└── run_mfq_experiment.py         # Experiment entry point / CLI
 ```
 
-## Setup
+## Prerequisites
 
-### 1. Install dependencies
-```bash
-pip install -r requirements.txt
-```
+1. **Python packages**
 
-### 2. Generate persona samples (optional)
-```bash
-cd personas
-python generate_persona_samples.py  # Creates 10 different samples
-```
+   ```bash
+   pip install -r requirements.txt
+   pip install llama-cpp-python  # required for the local GGUF workflow
+   ```
 
-### 3. Set up local models (Ollama)
-```bash
-# Install Ollama (https://ollama.ai)
-ollama pull mistral:7b-instruct
-ollama pull llama3.2:1b
-```
+2. **MFQ personas** (already provided as `personas.json`). Use `generate_persona_samples.py` if you need alternative subsets.
 
-### 4. Or set up API keys for cloud models
-```bash
-export OPENAI_API_KEY="your-openai-key"
-export ANTHROPIC_API_KEY="your-anthropic-key"
-```
+3. **Local GGUF model**
 
-## Usage
+   Download `Mistral-7B-Instruct-v0.3-Q8_0.gguf` (or another chat-tuned model) and place it in `../models/` relative to this project, or choose any directory and pass it via `--models-dir`.
 
-### Quick test with local models
-```bash
-# Test with Mistral 7B (recommended)
-python run_mfq_experiment.py --model-type ollama --model-name mistral:7b-instruct --limit 5
+   ```bash
+   mkdir -p ../models
+   mv /path/to/Mistral-7B-Instruct-v0.3-Q8_0.gguf ../models/
+   ```
 
-# Test with Llama 3.2 1B
-python run_mfq_experiment.py --model-type ollama --model-name llama3.2:1b --limit 5
-```
+   Other providers (OpenAI, Anthropic, etc.) remain supported through `llm_interface.py`, provided their Python SDKs and API keys are configured.
 
-### Full experiments
-```bash
-# Full experiment with 100 personas
-python run_mfq_experiment.py --model-type ollama --model-name mistral:7b-instruct
+## Running Experiments
 
-# Different persona sample
-python run_mfq_experiment.py --model-type ollama --model-name mistral:7b-instruct --personas-file personas/personas_sample_02.json
-```
-
-### API-based models
-```bash
-# OpenAI models
-python run_mfq_experiment.py --model-type openai --model-name gpt-3.5-turbo --limit 10
-python run_mfq_experiment.py --model-type openai --model-name gpt-4 --limit 10
-
-# Anthropic models
-python run_mfq_experiment.py --model-type anthropic --model-name claude-3-haiku-20240307 --limit 10
-```
-
-## Testing Stability
-
-Run experiments across multiple persona samples to test moral susceptibility stability:
+The CLI now prompts for a model when no `--model-type/--model-name` are supplied. With the GGUF above in `../models`, you can simply run:
 
 ```bash
-# Test different persona samples
-for i in {01..10}; do
-  python run_mfq_experiment.py \
-    --model-type ollama \
-    --model-name mistral:7b-instruct \
-    --personas-file personas/personas_sample_${i}.json \
-    --limit 20
-done
+python run_mfq_experiment.py --limit 5
 ```
 
-## Output
+or provide everything explicitly:
 
-Results are automatically saved to `data/` in two formats:
-- **JSON**: Complete experimental data with metadata
-- **CSV**: Tabular numeric scores for statistical analysis
+```bash
+python run_mfq_experiment.py \
+  --model-type local \
+  --model-name Mistral-7B-Instruct-v0.3-Q8_0.gguf \
+  --models-dir ../models \
+  --personas-file personas.json \
+  --n 10 \
+  --limit 100
+```
 
-Example files:
-- `data/mfq_results_ollama_mistral_7b-instruct_20241002_103045.json`
-- `data/mfq_results_ollama_mistral_7b-instruct_20241002_103045.csv`
+Key flags:
 
-## Moral Foundations
+- `--n`: number of times each persona answers a given MFQ item (default 10).
+- `--limit`: cap the number of personas processed (useful for smoke tests).
+- `--models-dir`: directory that contains the target GGUF model when using `--model-type local`.
+- `--output`: filename prefix for the CSV stored in `data/` (defaults to `mfq_results`).
 
-The MFQ-30 measures five moral foundations:
+## Result Format
 
-1. **Care/Harm** - Concerns about suffering and welfare
-2. **Fairness/Cheating** - Concerns about justice and rights
-3. **Loyalty/Betrayal** - Concerns about group cohesion
-4. **Authority/Subversion** - Concerns about hierarchy and tradition
-5. **Sanctity/Degradation** - Concerns about purity and degradation
+Every response is appended to a per-model CSV in `data/`. The filename is derived from the output prefix and sanitized model name, e.g. `data/mfq_results_Mistral-7B-Instruct-v0.3-Q8_0.gguf.csv`.
 
-## Experimental Design
+Each row captures a single rating:
 
-For each persona:
-1. The LLM adopts the persona description
-2. Answers MFQ relevance questions (0-5 scale: how relevant each moral consideration is)
-3. Answers MFQ agreement questions (0-5 scale: agreement with moral statements)
-4. Results capture how different personas influence LLM moral reasoning
+| Column        | Description                                                         |
+|---------------|---------------------------------------------------------------------|
+| `persona_id`  | Zero-based index of the persona in the loaded list                  |
+| `question_id` | Canonical MFQ item id (1-15 relevance, 16-31 agreement)             |
+| `run_index`   | 1-based counter of repeated queries for that persona/question pair  |
+| `rating`      | Parsed integer 0–5 returned by the model (−1 if no rating detected) |
+| `collected_at`| ISO8601 timestamp written immediately after receiving the response  |
 
-This enables analysis of:
-- **Moral susceptibility**: How much personas change LLM moral responses
-- **Stability**: Whether effects are consistent across different persona samples
-- **Foundation differences**: Which moral foundations are most susceptible to persona influence
+Rows are flushed to disk as they are gathered, so partial runs still yield usable data.
 
-## Research Questions
+## MFQ Catalog Helpers
 
-- Do different personas significantly alter LLM moral reasoning?
-- Which moral foundations show the highest susceptibility to persona influence?
-- Are these effects stable across different sets of personas?
-- How do different LLM models compare in their moral susceptibility?
+`mfq_questions.py` now exposes a single ordered list of `MFQQuestion` dataclasses. Use these helpers when analysing results:
+
+```python
+from mfq_questions import iter_questions, get_question
+
+# Iterate in MFQ canonical order
+for question in iter_questions():
+    print(question.id, question.question_type, question.foundation)
+
+# Lookup metadata for a specific question id
+q5 = get_question(5)
+print(q5.text)
+```
+
+This structure eliminates the need to reconstruct foundation-specific groupings when aligning CSV question ids with the original prompts.
+
+## Personas and Samples
+
+- `personas.json` contains the default persona descriptions (plain strings). The runner implicitly uses each list position as the persona identifier.
+- Generate alternative slices with `python generate_persona_samples.py` if you wish to test stability across different persona cohorts.
+
+## Troubleshooting
+
+- If you see `Local model error: ...`, double-check the GGUF path or install status of `llama-cpp-python`.
+- Ratings of `-1` indicate the model produced no parsable score; inspect those responses manually to adjust prompts or retry with different parameters.
+- Existing CSVs are opened in append mode. Remove or rename old files if you want a clean slate for a new run.
+
+## License
+
+Released under the MIT License. See `LICENSE` for details.
+
