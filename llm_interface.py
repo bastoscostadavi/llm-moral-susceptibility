@@ -5,7 +5,10 @@ LLM utilities for different model interfaces
 
 import os
 import time
-from typing import Optional
+from typing import Optional, Dict, Any
+
+DEFAULT_MODELS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
+_MODEL_CACHE: Dict[str, Any] = {}
 
 def get_llm_response(model_type: str, model_name: str, prompt: str, **kwargs) -> str:
     """
@@ -27,6 +30,8 @@ def get_llm_response(model_type: str, model_name: str, prompt: str, **kwargs) ->
         return _anthropic_response(model_name, prompt, **kwargs)
     elif model_type == "ollama":
         return _ollama_response(model_name, prompt, **kwargs)
+    elif model_type == "local":
+        return _local_response(model_name, prompt, **kwargs)
     else:
         raise ValueError(f"Unsupported model type: {model_type}")
 
@@ -106,6 +111,73 @@ def _ollama_response(model_name: str, prompt: str, **kwargs) -> str:
         print(f"Ollama API error: {e}")
         return "ERROR"
 
+
+def _resolve_model_path(model_name: str, model_dir: Optional[str] = None) -> str:
+    """Resolve the absolute path to a local GGUF model."""
+
+    if os.path.isabs(model_name):
+        return model_name
+
+    search_dir = model_dir or DEFAULT_MODELS_DIR
+    return os.path.join(search_dir, model_name)
+
+
+def _load_local_model(model_path: str, **kwargs):
+    """Load and cache a local llama.cpp model."""
+
+    if model_path in _MODEL_CACHE:
+        return _MODEL_CACHE[model_path]
+
+    try:
+        from llama_cpp import Llama
+    except ImportError as exc:
+        raise ImportError("Please install llama-cpp-python: pip install llama-cpp-python") from exc
+
+    if not os.path.isfile(model_path):
+        raise FileNotFoundError(f"Local model file not found: {model_path}")
+
+    model = Llama(
+        model_path=model_path,
+        n_ctx=kwargs.get("n_ctx", 2048),
+        n_gpu_layers=kwargs.get("n_gpu_layers", -1),
+        verbose=kwargs.get("verbose", False),
+    )
+
+    _MODEL_CACHE[model_path] = model
+    return model
+
+
+def _local_response(model_name: str, prompt: str, **kwargs) -> str:
+    """Generate a response from a local GGUF model via llama.cpp."""
+
+    model_dir = kwargs.get("model_dir")
+    model_path = _resolve_model_path(model_name, model_dir)
+
+    try:
+        model = _load_local_model(model_path, **kwargs)
+    except Exception as exc:
+        print(f"Local model error: {exc}")
+        return "ERROR"
+
+    try:
+        result = model.create_completion(
+            prompt=prompt,
+            max_tokens=kwargs.get("max_tokens", 50),
+            temperature=kwargs.get("temperature", 0.1),
+            top_p=kwargs.get("top_p", 0.95),
+            repeat_penalty=kwargs.get("repeat_penalty", 1.1),
+            stream=False,
+        )
+    except Exception as exc:
+        print(f"Local model generation error: {exc}")
+        return "ERROR"
+
+    choices = result.get("choices", []) if isinstance(result, dict) else []
+    if choices:
+        return choices[0].get("text", "").strip()
+
+    return ""
+
 def check_model_availability(model_type: str, model_name: str, **kwargs) -> bool:
     """Check if a model is available and accessible"""
 
@@ -135,6 +207,11 @@ def check_model_availability(model_type: str, model_name: str, **kwargs) -> bool
         api_key = kwargs.get("api_key") or os.getenv("ANTHROPIC_API_KEY")
         return api_key is not None
 
+    elif model_type == "local":
+        model_dir = kwargs.get("model_dir")
+        model_path = _resolve_model_path(model_name, model_dir)
+        return os.path.isfile(model_path)
+
     return False
 
 def list_available_models(model_type: str, **kwargs) -> list:
@@ -152,5 +229,16 @@ def list_available_models(model_type: str, **kwargs) -> list:
 
         except Exception:
             pass
+
+    elif model_type == "local":
+        model_dir = kwargs.get("model_dir") or DEFAULT_MODELS_DIR
+        try:
+            return [
+                filename
+                for filename in os.listdir(model_dir)
+                if filename.lower().endswith(".gguf")
+            ]
+        except OSError:
+            return []
 
     return []
