@@ -44,7 +44,7 @@ def _openai_response(model_name: str, prompt: str, **kwargs) -> str:
         response = client.chat.completions.create(
             model=model_name,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=kwargs.get("max_tokens", 50),
+            max_tokens=kwargs.get("max_tokens", 5),
             temperature=kwargs.get("temperature", 0.1)
         )
         return response.choices[0].message.content.strip()
@@ -63,7 +63,7 @@ def _anthropic_response(model_name: str, prompt: str, **kwargs) -> str:
 
         response = client.messages.create(
             model=model_name,
-            max_tokens=kwargs.get("max_tokens", 50),
+            max_tokens=kwargs.get("max_tokens", 5),
             temperature=kwargs.get("temperature", 0.1),
             messages=[{"role": "user", "content": prompt}]
         )
@@ -88,7 +88,7 @@ def _ollama_response(model_name: str, prompt: str, **kwargs) -> str:
             "stream": False,
             "options": {
                 "temperature": kwargs.get("temperature", 0.1),
-                "num_predict": kwargs.get("max_tokens", 10)
+                "num_predict": kwargs.get("max_tokens", 5)
             }
         }
 
@@ -162,7 +162,7 @@ def _local_response(model_name: str, prompt: str, **kwargs) -> str:
     try:
         result = model.create_completion(
             prompt=prompt,
-            max_tokens=kwargs.get("max_tokens", 50),
+            max_tokens=kwargs.get("max_tokens", 5),
             temperature=kwargs.get("temperature", 0.1),
             top_p=kwargs.get("top_p", 0.95),
             repeat_penalty=kwargs.get("repeat_penalty", 1.1),

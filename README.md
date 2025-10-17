@@ -24,7 +24,17 @@ This repository explores how persona conditioning alters large language model re
    pip install llama-cpp-python  # required for the local GGUF workflow
    ```
 
-2. **MFQ personas** (already provided as `personas.json`). Use `generate_persona_samples.py` if you need alternative subsets.
+2. **Configure environment variables**
+
+   Create or edit the provided `.env` file and add any API keys you plan to use. For Claude Sonnet 4.5 you must supply `ANTHROPIC_API_KEY`:
+
+   ```bash
+   echo "ANTHROPIC_API_KEY=your-key-here" >> .env
+   ```
+
+   You can also set keys via your shell environment; `python-dotenv` loads `.env` automatically when present.
+
+3. **MFQ personas** (already provided as `personas.json`). Use `generate_persona_samples.py` if you need alternative subsets.
 
 3. **Local GGUF model**
 
@@ -57,6 +67,16 @@ python run_mfq_experiment.py \
   --limit 100
 ```
 
+To query Claude Sonnet 4.5 through the Anthropic API, ensure `ANTHROPIC_API_KEY` is set in your environment (or `.env`) and run:
+
+```bash
+python run_mfq_experiment.py \
+  --model-type anthropic \
+  --model-name claude-4.5-sonnet \
+  --n 5 \
+  --limit 20
+```
+
 Key flags:
 
 - `--n`: number of times each persona answers a given MFQ item (default 10).
@@ -73,9 +93,10 @@ Each row captures a single rating:
 | Column        | Description                                                         |
 |---------------|---------------------------------------------------------------------|
 | `persona_id`  | Zero-based index of the persona in the loaded list                  |
-| `question_id` | Canonical MFQ item id (1-15 relevance, 16-31 agreement)             |
+| `question_id` | Canonical MFQ item id (1-32; 6 and 22 are official MFQ filler items) |
 | `run_index`   | 1-based counter of repeated queries for that persona/question pair  |
 | `rating`      | Parsed integer 0–5 returned by the model (−1 if no rating detected) |
+| `response`    | First few tokens of the model’s raw reply after whitespace trimming |
 | `collected_at`| ISO8601 timestamp written immediately after receiving the response  |
 
 Rows are flushed to disk as they are gathered, so partial runs still yield usable data.
@@ -94,6 +115,7 @@ for question in iter_questions():
 # Lookup metadata for a specific question id
 q5 = get_question(5)
 print(q5.text)
+# Filler items (6 and 22) report foundation='useless'
 ```
 
 This structure eliminates the need to reconstruct foundation-specific groupings when aligning CSV question ids with the original prompts.
@@ -112,4 +134,3 @@ This structure eliminates the need to reconstruct foundation-specific groupings 
 ## License
 
 Released under the MIT License. See `LICENSE` for details.
-

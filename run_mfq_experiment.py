@@ -11,6 +11,13 @@ from datetime import datetime
 from typing import List, Dict, Any, Tuple, Optional
 import re
 
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
 AVAILABLE_MODELS = [
     {
         "key": "1",
@@ -20,7 +27,60 @@ AVAILABLE_MODELS = [
         "model_kwargs": {
             "model_dir": "../models",
         },
-    }
+    },
+    {
+        "key": "2",
+        "label": "Meta Llama 3.1 8B Instruct (local gguf)",
+        "model_type": "local",
+        "model_name": "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+        "model_kwargs": {
+            "model_dir": "../models",
+        },
+    },
+    {
+        "key": "3",
+        "label": "Qwen2.5 7B Instruct (local gguf)",
+        "model_type": "local",
+        "model_name": "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+        "model_kwargs": {
+            "model_dir": "../models",
+        },
+    },
+    {
+        "key": "4",
+        "label": "Claude Sonnet 4.5 (Anthropic API)",
+        "model_type": "anthropic",
+        "model_name": "claude-4.5-sonnet",
+        "model_kwargs": {},
+    },
+    {
+        "key": "5",
+        "label": "OpenAI GPT-5 Mini",
+        "model_type": "openai",
+        "model_name": "gpt-5-mini",
+        "model_kwargs": {},
+    },
+    {
+        "key": "6",
+        "label": "OpenAI GPT-4.1 Mini",
+        "model_type": "openai",
+        "model_name": "gpt-4.1-mini",
+        "model_kwargs": {},
+    },
+    {
+        "key": "7",
+        "label": "OpenAI GPT-4o Mini",
+        "model_type": "openai",
+        "model_name": "gpt-4o-mini",
+        "model_kwargs": {},
+    },
+    {
+        "key": "8",
+        "label": "Claude Haiku 3.5 (Anthropic API)",
+        "model_type": "anthropic",
+        "model_name": "claude-3-5-haiku-latest",
+        "model_kwargs": {},
+    },
 ]
 
 from mfq_questions import iter_questions
@@ -79,12 +139,14 @@ def run_mfq_experiment(
             for run_index in range(1, n + 1):
                 response = get_llm_response(model_type, model_name, prompt, **model_kwargs)
                 rating = extract_rating(response)
+                response_text = response.strip() if isinstance(response, str) else str(response)
 
                 row = {
                     "persona_id": persona_id,
                     "question_id": question.id,
                     "run_index": run_index,
                     "rating": rating,
+                    "response": response_text,
                     "collected_at": datetime.now().isoformat(),
                 }
 
@@ -122,7 +184,7 @@ def main():
                         help="Specific model name (skip to choose interactively)")
     parser.add_argument("--output", type=str, default="mfq_results",
                         help="Output file prefix")
-    parser.add_argument("--limit", type=int, default=None,
+    parser.add_argument("--limit", type=int, default=100,
                         help="Limit number of personas to test")
     parser.add_argument("--list-models", action="store_true",
                         help="List available models and exit")
@@ -136,7 +198,7 @@ def main():
     # Model-specific parameters
     parser.add_argument("--temperature", type=float, default=0.1,
                         help="Model temperature")
-    parser.add_argument("--max-tokens", type=int, default=10,
+    parser.add_argument("--max-tokens", type=int, default=5,
                         help="Maximum tokens in response")
 
     args = parser.parse_args()
@@ -193,6 +255,7 @@ def main():
         "question_id",
         "run_index",
         "rating",
+        "response",
         "collected_at",
     ]
 
