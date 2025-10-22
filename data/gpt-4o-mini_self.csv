@@ -1,341 +1,419 @@
-question_id,run_index,rating,response,collected_at
-1,1,5,5 - extremely relevant.,2025-10-21T13:07:40.770713
-1,2,5,5 - extremely relevant.,2025-10-21T13:07:42.722575
-1,3,5,5 - extremely relevant.,2025-10-21T13:07:43.400780
-1,4,5,5 - extremely relevant.,2025-10-21T13:07:45.009108
-1,5,5,5 - extremely relevant.,2025-10-21T13:07:49.771627
-1,6,5,5 - extremely relevant.,2025-10-21T13:07:53.018197
-1,7,5,5 - extremely relevant.,2025-10-21T13:07:54.527529
-1,8,5,5 - extremely relevant.,2025-10-21T13:07:56.912464
-1,9,5,5 - extremely relevant.,2025-10-21T13:07:58.021654
-1,10,5,5 - extremely relevant.,2025-10-21T13:07:58.886051
-2,1,4,4 - very relevant.,2025-10-21T13:08:00.765535
-2,2,4,4 - very relevant.,2025-10-21T13:08:02.012664
-2,3,5,5 - extremely relevant.,2025-10-21T13:08:03.023957
-2,4,4,4 - very relevant.,2025-10-21T13:08:06.193336
-2,5,5,5 - extremely relevant.,2025-10-21T13:08:13.668326
-2,6,4,4 - very relevant.,2025-10-21T13:08:14.459508
-2,7,5,5 - extremely relevant.,2025-10-21T13:08:15.329045
-2,8,4,4 - very relevant.,2025-10-21T13:08:16.020848
-2,9,5,5 - extremely relevant.,2025-10-21T13:08:16.594029
-2,10,4,4 - very relevant.,2025-10-21T13:08:17.221130
-3,1,3,3 - somewhat relevant.,2025-10-21T13:08:17.979302
-3,2,3,"3
+question_id,run_index,rating,failures,response,collected_at
+1,1,5,0,5 - extremely relevant.,2025-10-21T13:07:40.770713
+1,2,5,0,5 - extremely relevant.,2025-10-21T13:07:42.722575
+1,3,5,0,5 - extremely relevant.,2025-10-21T13:07:43.400780
+1,4,5,0,5 - extremely relevant.,2025-10-21T13:07:45.009108
+1,5,5,0,5 - extremely relevant.,2025-10-21T13:07:49.771627
+1,6,5,0,5 - extremely relevant.,2025-10-21T13:07:53.018197
+1,7,5,0,5 - extremely relevant.,2025-10-21T13:07:54.527529
+1,8,5,0,5 - extremely relevant.,2025-10-21T13:07:56.912464
+1,9,5,0,5 - extremely relevant.,2025-10-21T13:07:58.021654
+1,10,5,0,5 - extremely relevant.,2025-10-21T13:07:58.886051
+2,1,4,0,4 - very relevant.,2025-10-21T13:08:00.765535
+2,2,4,0,4 - very relevant.,2025-10-21T13:08:02.012664
+2,3,5,0,5 - extremely relevant.,2025-10-21T13:08:03.023957
+2,4,4,0,4 - very relevant.,2025-10-21T13:08:06.193336
+2,5,5,0,5 - extremely relevant.,2025-10-21T13:08:13.668326
+2,6,4,0,4 - very relevant.,2025-10-21T13:08:14.459508
+2,7,5,0,5 - extremely relevant.,2025-10-21T13:08:15.329045
+2,8,4,0,4 - very relevant.,2025-10-21T13:08:16.020848
+2,9,5,0,5 - extremely relevant.,2025-10-21T13:08:16.594029
+2,10,4,0,4 - very relevant.,2025-10-21T13:08:17.221130
+3,1,3,0,3 - somewhat relevant.,2025-10-21T13:08:17.979302
+3,2,3,0,"3
 
 The consideration of",2025-10-21T13:08:18.743625
-3,3,3,3 - somewhat relevant.,2025-10-21T13:08:19.274440
-3,4,3,"3
+3,3,3,0,3 - somewhat relevant.,2025-10-21T13:08:19.274440
+3,4,3,0,"3
 
 The consideration of",2025-10-21T13:08:19.975470
-3,5,3,3 - somewhat relevant.,2025-10-21T13:08:21.374073
-3,6,3,"3
+3,5,3,0,3 - somewhat relevant.,2025-10-21T13:08:21.374073
+3,6,3,0,"3
 
 The consideration of",2025-10-21T13:08:22.140186
-3,7,3,"3
+3,7,3,0,"3
 
 The consideration of",2025-10-21T13:08:23.030919
-3,8,3,3 - somewhat relevant.,2025-10-21T13:08:23.647413
-3,9,3,3 - somewhat relevant.,2025-10-21T13:08:24.178798
-3,10,3,"3
+3,8,3,0,3 - somewhat relevant.,2025-10-21T13:08:23.647413
+3,9,3,0,3 - somewhat relevant.,2025-10-21T13:08:24.178798
+3,10,3,0,"3
 
 The consideration of",2025-10-21T13:08:24.742881
-4,1,2,2 - slightly relevant.,2025-10-21T13:08:25.391993
-4,2,2,2 - slightly relevant.,2025-10-21T13:08:26.123620
-4,3,2,2 - slightly relevant.,2025-10-21T13:08:26.852639
-4,4,2,2 - slightly relevant.,2025-10-21T13:08:28.329700
-4,5,2,2 - slightly relevant.,2025-10-21T13:08:29.101977
-4,6,2,2 - slightly relevant.,2025-10-21T13:08:29.779064
-4,7,3,3 - somewhat relevant.,2025-10-21T13:08:30.454303
-4,8,2,2 - slightly relevant.,2025-10-21T13:08:31.245897
-4,9,2,2 - slightly relevant.,2025-10-21T13:08:31.826065
-4,10,2,2 - slightly relevant.,2025-10-21T13:08:34.833937
-5,1,3,3 - somewhat relevant.,2025-10-21T13:08:35.468253
-5,2,3,3 - somewhat relevant.,2025-10-21T13:08:36.967256
-5,3,3,3 - somewhat relevant.,2025-10-21T13:08:37.560381
-5,4,3,3 - somewhat relevant.,2025-10-21T13:08:38.675899
-5,5,3,3 - somewhat relevant.,2025-10-21T13:08:39.275756
-5,6,3,3 - somewhat relevant.,2025-10-21T13:08:42.063528
-5,7,3,3 - somewhat relevant.,2025-10-21T13:08:42.684174
-5,8,3,3 - somewhat relevant.,2025-10-21T13:08:43.646997
-5,9,3,3 - somewhat relevant.,2025-10-21T13:08:44.934793
-5,10,3,3 - somewhat relevant.,2025-10-21T13:08:45.630849
-6,1,5,5 - extremely relevant.,2025-10-21T13:08:46.276474
-6,2,5,5 - extremely relevant.,2025-10-21T13:08:47.029058
-6,3,5,5 - extremely relevant.,2025-10-21T13:08:54.749555
-6,4,5,5 - extremely relevant.,2025-10-21T13:08:55.532049
-6,5,5,5 - extremely relevant.,2025-10-21T13:08:56.326724
-6,6,5,5 - extremely relevant.,2025-10-21T13:08:56.907614
-6,7,5,5 - extremely relevant.,2025-10-21T13:08:57.542402
-6,8,5,5 - extremely relevant.,2025-10-21T13:08:59.148754
-6,9,5,5 - extremely relevant.,2025-10-21T13:08:59.771749
-6,10,5,5 - extremely relevant.,2025-10-21T13:09:00.504591
-7,1,4,4 - very relevant.,2025-10-21T13:09:01.166526
-7,2,4,4 - very relevant.,2025-10-21T13:09:01.872292
-7,3,4,4 - very relevant.,2025-10-21T13:09:02.592006
-7,4,4,"4
+4,1,2,0,2 - slightly relevant.,2025-10-21T13:08:25.391993
+4,2,2,0,2 - slightly relevant.,2025-10-21T13:08:26.123620
+4,3,2,0,2 - slightly relevant.,2025-10-21T13:08:26.852639
+4,4,2,0,2 - slightly relevant.,2025-10-21T13:08:28.329700
+4,5,2,0,2 - slightly relevant.,2025-10-21T13:08:29.101977
+4,6,2,0,2 - slightly relevant.,2025-10-21T13:08:29.779064
+4,7,3,0,3 - somewhat relevant.,2025-10-21T13:08:30.454303
+4,8,2,0,2 - slightly relevant.,2025-10-21T13:08:31.245897
+4,9,2,0,2 - slightly relevant.,2025-10-21T13:08:31.826065
+4,10,2,0,2 - slightly relevant.,2025-10-21T13:08:34.833937
+5,1,3,0,3 - somewhat relevant.,2025-10-21T13:08:35.468253
+5,2,3,0,3 - somewhat relevant.,2025-10-21T13:08:36.967256
+5,3,3,0,3 - somewhat relevant.,2025-10-21T13:08:37.560381
+5,4,3,0,3 - somewhat relevant.,2025-10-21T13:08:38.675899
+5,5,3,0,3 - somewhat relevant.,2025-10-21T13:08:39.275756
+5,6,3,0,3 - somewhat relevant.,2025-10-21T13:08:42.063528
+5,7,3,0,3 - somewhat relevant.,2025-10-21T13:08:42.684174
+5,8,3,0,3 - somewhat relevant.,2025-10-21T13:08:43.646997
+5,9,3,0,3 - somewhat relevant.,2025-10-21T13:08:44.934793
+5,10,3,0,3 - somewhat relevant.,2025-10-21T13:08:45.630849
+6,1,5,0,5 - extremely relevant.,2025-10-21T13:08:46.276474
+6,2,5,0,5 - extremely relevant.,2025-10-21T13:08:47.029058
+6,3,5,0,5 - extremely relevant.,2025-10-21T13:08:54.749555
+6,4,5,0,5 - extremely relevant.,2025-10-21T13:08:55.532049
+6,5,5,0,5 - extremely relevant.,2025-10-21T13:08:56.326724
+6,6,5,0,5 - extremely relevant.,2025-10-21T13:08:56.907614
+6,7,5,0,5 - extremely relevant.,2025-10-21T13:08:57.542402
+6,8,5,0,5 - extremely relevant.,2025-10-21T13:08:59.148754
+6,9,5,0,5 - extremely relevant.,2025-10-21T13:08:59.771749
+6,10,5,0,5 - extremely relevant.,2025-10-21T13:09:00.504591
+7,1,4,0,4 - very relevant.,2025-10-21T13:09:01.166526
+7,2,4,0,4 - very relevant.,2025-10-21T13:09:01.872292
+7,3,4,0,4 - very relevant.,2025-10-21T13:09:02.592006
+7,4,4,0,"4
 
 The consideration of",2025-10-21T13:09:03.451908
-7,5,4,4 - very relevant.,2025-10-21T13:09:07.524760
-7,6,4,4 - very relevant.,2025-10-21T13:09:08.355873
-7,7,4,4 - very relevant.,2025-10-21T13:09:09.106399
-7,8,4,4 - very relevant.,2025-10-21T13:09:10.132575
-7,9,4,4 - very relevant.,2025-10-21T13:09:10.873949
-7,10,4,4 - very relevant.,2025-10-21T13:09:11.663559
-8,1,3,3 - somewhat relevant.,2025-10-21T13:09:12.381869
-8,2,3,3 - somewhat relevant.,2025-10-21T13:09:13.040013
-8,3,3,3 - somewhat relevant.,2025-10-21T13:09:14.028771
-8,4,3,3 - somewhat relevant.,2025-10-21T13:09:14.910806
-8,5,3,3 - somewhat relevant.,2025-10-21T13:09:15.655738
-8,6,3,3 - somewhat relevant.,2025-10-21T13:09:17.391792
-8,7,3,3 - somewhat relevant.,2025-10-21T13:09:19.033063
-8,8,3,3 - somewhat relevant.,2025-10-21T13:09:21.139923
-8,9,3,3 - somewhat relevant.,2025-10-21T13:09:24.689340
-8,10,3,3 - somewhat relevant.,2025-10-21T13:09:26.093092
-9,1,3,3 - somewhat relevant.,2025-10-21T13:09:26.592153
-9,2,3,3 - somewhat relevant.,2025-10-21T13:09:27.224305
-9,3,3,3 - somewhat relevant.,2025-10-21T13:09:27.791609
-9,4,3,3 - somewhat relevant.,2025-10-21T13:09:28.638718
-9,5,3,3 - somewhat relevant.,2025-10-21T13:09:29.150838
-9,6,3,"3
+7,5,4,0,4 - very relevant.,2025-10-21T13:09:07.524760
+7,6,4,0,4 - very relevant.,2025-10-21T13:09:08.355873
+7,7,4,0,4 - very relevant.,2025-10-21T13:09:09.106399
+7,8,4,0,4 - very relevant.,2025-10-21T13:09:10.132575
+7,9,4,0,4 - very relevant.,2025-10-21T13:09:10.873949
+7,10,4,0,4 - very relevant.,2025-10-21T13:09:11.663559
+8,1,3,0,3 - somewhat relevant.,2025-10-21T13:09:12.381869
+8,2,3,0,3 - somewhat relevant.,2025-10-21T13:09:13.040013
+8,3,3,0,3 - somewhat relevant.,2025-10-21T13:09:14.028771
+8,4,3,0,3 - somewhat relevant.,2025-10-21T13:09:14.910806
+8,5,3,0,3 - somewhat relevant.,2025-10-21T13:09:15.655738
+8,6,3,0,3 - somewhat relevant.,2025-10-21T13:09:17.391792
+8,7,3,0,3 - somewhat relevant.,2025-10-21T13:09:19.033063
+8,8,3,0,3 - somewhat relevant.,2025-10-21T13:09:21.139923
+8,9,3,0,3 - somewhat relevant.,2025-10-21T13:09:24.689340
+8,10,3,0,3 - somewhat relevant.,2025-10-21T13:09:26.093092
+9,1,3,0,3 - somewhat relevant.,2025-10-21T13:09:26.592153
+9,2,3,0,3 - somewhat relevant.,2025-10-21T13:09:27.224305
+9,3,3,0,3 - somewhat relevant.,2025-10-21T13:09:27.791609
+9,4,3,0,3 - somewhat relevant.,2025-10-21T13:09:28.638718
+9,5,3,0,3 - somewhat relevant.,2025-10-21T13:09:29.150838
+9,6,3,0,"3
 
 The consideration of",2025-10-21T13:09:29.771817
-9,7,3,3 - somewhat relevant.,2025-10-21T13:09:31.901005
-9,8,3,3 - somewhat relevant.,2025-10-21T13:09:32.563886
-9,9,3,"3
+9,7,3,0,3 - somewhat relevant.,2025-10-21T13:09:31.901005
+9,8,3,0,3 - somewhat relevant.,2025-10-21T13:09:32.563886
+9,9,3,0,"3
 
 The consideration of",2025-10-21T13:09:33.112128
-9,10,3,3 - somewhat relevant.,2025-10-21T13:09:34.015849
-10,1,3,3 - somewhat relevant.,2025-10-21T13:09:34.766589
-10,2,3,3 - somewhat relevant.,2025-10-21T13:09:37.376632
-10,3,3,3 - somewhat relevant.,2025-10-21T13:09:38.172875
-10,4,3,3 - somewhat relevant.,2025-10-21T13:09:39.286125
-10,5,3,3 - somewhat relevant.,2025-10-21T13:09:42.879424
-10,6,3,3 - somewhat relevant.,2025-10-21T13:09:43.491779
-10,7,3,3 - somewhat relevant.,2025-10-21T13:09:44.638928
-10,8,3,3 - somewhat relevant.,2025-10-21T13:09:45.371110
-10,9,3,3 - somewhat relevant.,2025-10-21T13:09:46.900821
-10,10,3,3 - somewhat relevant.,2025-10-21T13:09:47.706612
-11,1,5,5 - extremely relevant.,2025-10-21T13:09:48.751907
-11,2,5,5 - extremely relevant.,2025-10-21T13:09:49.938167
-11,3,5,5 - extremely relevant.,2025-10-21T13:09:51.250203
-11,4,5,5 - extremely relevant.,2025-10-21T13:09:52.444203
-11,5,5,5 - extremely relevant.,2025-10-21T13:09:53.094095
-11,6,5,5 - extremely relevant.,2025-10-21T13:09:53.661753
-11,7,5,5 - extremely relevant.,2025-10-21T13:09:54.454247
-11,8,5,5 - extremely relevant.,2025-10-21T13:09:55.145391
-11,9,5,5 - extremely relevant.,2025-10-21T13:09:55.768802
-11,10,5,5 - extremely relevant.,2025-10-21T13:09:56.523226
-12,1,5,5 - extremely relevant.,2025-10-21T13:09:59.268623
-12,2,5,5 - extremely relevant.,2025-10-21T13:09:59.789649
-12,3,5,5 - extremely relevant.,2025-10-21T13:10:00.816162
-12,4,5,5 - extremely relevant.,2025-10-21T13:10:01.429616
-12,5,5,5 - extremely relevant.,2025-10-21T13:10:10.360203
-12,6,5,5 - extremely relevant.,2025-10-21T13:10:11.202926
-12,7,5,5 - extremely relevant.,2025-10-21T13:10:11.718199
-12,8,5,5 - extremely relevant.,2025-10-21T13:10:12.290403
-12,9,5,5 - extremely relevant.,2025-10-21T13:10:14.051337
-12,10,5,"5. 
+9,10,3,0,3 - somewhat relevant.,2025-10-21T13:09:34.015849
+10,1,3,0,3 - somewhat relevant.,2025-10-21T13:09:34.766589
+10,2,3,0,3 - somewhat relevant.,2025-10-21T13:09:37.376632
+10,3,3,0,3 - somewhat relevant.,2025-10-21T13:09:38.172875
+10,4,3,0,3 - somewhat relevant.,2025-10-21T13:09:39.286125
+10,5,3,0,3 - somewhat relevant.,2025-10-21T13:09:42.879424
+10,6,3,0,3 - somewhat relevant.,2025-10-21T13:09:43.491779
+10,7,3,0,3 - somewhat relevant.,2025-10-21T13:09:44.638928
+10,8,3,0,3 - somewhat relevant.,2025-10-21T13:09:45.371110
+10,9,3,0,3 - somewhat relevant.,2025-10-21T13:09:46.900821
+10,10,3,0,3 - somewhat relevant.,2025-10-21T13:09:47.706612
+11,1,5,0,5 - extremely relevant.,2025-10-21T13:09:48.751907
+11,2,5,0,5 - extremely relevant.,2025-10-21T13:09:49.938167
+11,3,5,0,5 - extremely relevant.,2025-10-21T13:09:51.250203
+11,4,5,0,5 - extremely relevant.,2025-10-21T13:09:52.444203
+11,5,5,0,5 - extremely relevant.,2025-10-21T13:09:53.094095
+11,6,5,0,5 - extremely relevant.,2025-10-21T13:09:53.661753
+11,7,5,0,5 - extremely relevant.,2025-10-21T13:09:54.454247
+11,8,5,0,5 - extremely relevant.,2025-10-21T13:09:55.145391
+11,9,5,0,5 - extremely relevant.,2025-10-21T13:09:55.768802
+11,10,5,0,5 - extremely relevant.,2025-10-21T13:09:56.523226
+12,1,5,0,5 - extremely relevant.,2025-10-21T13:09:59.268623
+12,2,5,0,5 - extremely relevant.,2025-10-21T13:09:59.789649
+12,3,5,0,5 - extremely relevant.,2025-10-21T13:10:00.816162
+12,4,5,0,5 - extremely relevant.,2025-10-21T13:10:01.429616
+12,5,5,0,5 - extremely relevant.,2025-10-21T13:10:10.360203
+12,6,5,0,5 - extremely relevant.,2025-10-21T13:10:11.202926
+12,7,5,0,5 - extremely relevant.,2025-10-21T13:10:11.718199
+12,8,5,0,5 - extremely relevant.,2025-10-21T13:10:12.290403
+12,9,5,0,5 - extremely relevant.,2025-10-21T13:10:14.051337
+12,10,5,0,"5. 
 
 The consideration",2025-10-21T13:10:14.682403
-13,1,3,3 - somewhat relevant.,2025-10-21T13:10:17.736954
-13,2,3,3 - somewhat relevant.,2025-10-21T13:10:18.402754
-13,3,3,3 - somewhat relevant.,2025-10-21T13:10:19.629875
-13,4,3,3 - somewhat relevant.,2025-10-21T13:10:20.460398
-13,5,3,3 - somewhat relevant.,2025-10-21T13:10:21.347128
-13,6,3,3 - somewhat relevant.,2025-10-21T13:10:22.226973
-13,7,3,3 - somewhat relevant.,2025-10-21T13:10:23.870261
-13,8,3,3 - somewhat relevant.,2025-10-21T13:10:24.550349
-13,9,3,3 - somewhat relevant.,2025-10-21T13:10:25.462472
-13,10,3,3 - somewhat relevant.,2025-10-21T13:10:26.389346
-14,1,4,"4
+13,1,3,0,3 - somewhat relevant.,2025-10-21T13:10:17.736954
+13,2,3,0,3 - somewhat relevant.,2025-10-21T13:10:18.402754
+13,3,3,0,3 - somewhat relevant.,2025-10-21T13:10:19.629875
+13,4,3,0,3 - somewhat relevant.,2025-10-21T13:10:20.460398
+13,5,3,0,3 - somewhat relevant.,2025-10-21T13:10:21.347128
+13,6,3,0,3 - somewhat relevant.,2025-10-21T13:10:22.226973
+13,7,3,0,3 - somewhat relevant.,2025-10-21T13:10:23.870261
+13,8,3,0,3 - somewhat relevant.,2025-10-21T13:10:24.550349
+13,9,3,0,3 - somewhat relevant.,2025-10-21T13:10:25.462472
+13,10,3,0,3 - somewhat relevant.,2025-10-21T13:10:26.389346
+14,1,4,0,"4
 
 The consideration of",2025-10-21T13:10:27.217441
-14,2,4,4 - very relevant.,2025-10-21T13:10:28.364821
-14,3,4,4 - very relevant.,2025-10-21T13:10:28.971339
-14,4,4,"4
+14,2,4,0,4 - very relevant.,2025-10-21T13:10:28.364821
+14,3,4,0,4 - very relevant.,2025-10-21T13:10:28.971339
+14,4,4,0,"4
 
 The consideration of",2025-10-21T13:10:29.700403
-14,5,4,4 - very relevant.,2025-10-21T13:10:30.554612
-14,6,4,"4
+14,5,4,0,4 - very relevant.,2025-10-21T13:10:30.554612
+14,6,4,0,"4
 
 The consideration of",2025-10-21T13:10:31.403499
-14,7,4,4 - very relevant.,2025-10-21T13:10:36.341149
-14,8,4,"4
+14,7,4,0,4 - very relevant.,2025-10-21T13:10:36.341149
+14,8,4,0,"4
 
 The consideration of",2025-10-21T13:10:37.460263
-14,9,4,4 - very relevant.,2025-10-21T13:10:38.116996
-14,10,4,4 - very relevant.,2025-10-21T13:10:39.002307
-15,1,3,"3
+14,9,4,0,4 - very relevant.,2025-10-21T13:10:38.116996
+14,10,4,0,4 - very relevant.,2025-10-21T13:10:39.002307
+15,1,3,0,"3
 
 The consideration of",2025-10-21T13:10:39.705521
-15,2,3,"3
+15,2,3,0,"3
 
 The consideration of",2025-10-21T13:10:40.336465
-15,3,3,"3
+15,3,3,0,"3
 
 The consideration of",2025-10-21T13:10:41.156865
-15,4,3,"3
+15,4,3,0,"3
 
 The consideration of",2025-10-21T13:10:41.847315
-15,5,3,3 - somewhat relevant.,2025-10-21T13:10:42.595950
-15,6,3,3 - somewhat relevant.,2025-10-21T13:10:43.729517
-15,7,4,"4
+15,5,3,0,3 - somewhat relevant.,2025-10-21T13:10:42.595950
+15,6,3,0,3 - somewhat relevant.,2025-10-21T13:10:43.729517
+15,7,4,0,"4
 
 The consideration of",2025-10-21T13:10:44.374440
-15,8,3,3 - somewhat relevant.,2025-10-21T13:10:44.863150
-15,9,3,3 - somewhat relevant.,2025-10-21T13:10:45.385618
-15,10,4,"4
+15,8,3,0,3 - somewhat relevant.,2025-10-21T13:10:44.863150
+15,9,3,0,3 - somewhat relevant.,2025-10-21T13:10:45.385618
+15,10,4,0,"4
 
 The consideration of",2025-10-21T13:10:47.760523
-16,1,5,5 - strongly agree.,2025-10-21T13:10:48.529091
-16,2,5,5 - strongly agree.,2025-10-21T13:10:53.730144
-16,3,5,5 - strongly agree.,2025-10-21T13:10:54.281823
-16,4,5,5 - strongly agree.,2025-10-21T13:10:55.284587
-16,5,5,5 - strongly agree.,2025-10-21T13:10:55.980675
-16,6,5,5 - strongly agree.,2025-10-21T13:10:56.708832
-16,7,5,5 - strongly agree.,2025-10-21T13:10:57.471863
-16,8,5,5 - strongly agree.,2025-10-21T13:10:58.748932
-16,9,5,5 - strongly agree.,2025-10-21T13:10:59.875898
-16,10,5,5 - strongly agree.,2025-10-21T13:11:00.524682
-17,1,5,5 - strongly agree.,2025-10-21T13:11:01.104998
-17,2,5,5 - strongly agree.,2025-10-21T13:11:11.530238
-17,3,5,5 - strongly agree.,2025-10-21T13:11:12.242770
-17,4,5,5 - strongly agree.,2025-10-21T13:11:12.817338
-17,5,5,5 - strongly agree.,2025-10-21T13:11:13.498741
-17,6,5,5 - strongly agree.,2025-10-21T13:11:14.191330
-17,7,5,5 - strongly agree.,2025-10-21T13:11:14.834067
-17,8,5,5 - strongly agree.,2025-10-21T13:11:15.456769
-17,9,5,5 - strongly agree.,2025-10-21T13:11:16.235417
-17,10,5,5 - strongly agree.,2025-10-21T13:11:17.481957
-18,1,-1,"As an AI, I",2025-10-21T13:11:18.160836
-18,2,-1,"As an AI, I",2025-10-21T13:11:18.861730
-18,3,-1,"As an AI, I",2025-10-21T13:11:19.603391
-18,4,-1,"As an AI, I",2025-10-21T13:11:23.303047
-18,5,-1,"As an AI, I",2025-10-21T13:11:24.039815
-18,6,-1,"As an AI, I",2025-10-21T13:11:25.301568
-18,7,-1,"As an AI, I",2025-10-21T13:11:26.028651
-18,8,-1,"As an AI, I",2025-10-21T13:11:28.401645
-18,9,-1,"As an AI, I",2025-10-21T13:11:29.454306
-18,10,-1,"As an AI, I",2025-10-21T13:11:30.098040
-19,1,4,4 - moderately agree.,2025-10-21T13:11:30.758340
-19,2,4,4 - moderately agree.,2025-10-21T13:11:31.624309
-19,3,4,4 - moderately agree.,2025-10-21T13:11:32.239390
-19,4,4,4 - moderately agree.,2025-10-21T13:11:33.101395
-19,5,4,4 - moderately agree.,2025-10-21T13:11:34.101974
-19,6,4,4 - moderately agree.,2025-10-21T13:11:35.005785
-19,7,4,4 - moderately agree.,2025-10-21T13:11:35.606969
-19,8,4,4 - moderately agree.,2025-10-21T13:11:36.222725
-19,9,4,4 - moderately agree.,2025-10-21T13:11:37.058675
-19,10,4,4 - moderately agree.,2025-10-21T13:11:39.153118
-20,1,4,4 - moderately agree.,2025-10-21T13:11:39.785483
-20,2,4,4 - moderately agree.,2025-10-21T13:11:40.369172
-20,3,4,4 - moderately agree.,2025-10-21T13:11:41.075792
-20,4,3,3 - slightly agree.,2025-10-21T13:11:41.794329
-20,5,4,4 - moderately agree.,2025-10-21T13:11:45.847335
-20,6,4,4 - moderately agree.,2025-10-21T13:11:48.891928
-20,7,4,4 - moderately agree.,2025-10-21T13:11:51.786441
-20,8,4,4 - moderately agree.,2025-10-21T13:11:52.450869
-20,9,3,3 - slightly agree.,2025-10-21T13:11:53.686623
-20,10,4,4 - moderately agree.,2025-10-21T13:11:54.986732
-21,1,5,5 - strongly agree.,2025-10-21T13:11:58.411741
-21,2,5,5 - strongly agree.,2025-10-21T13:11:59.323024
-21,3,5,5 - strongly agree.,2025-10-21T13:11:59.976701
-21,4,5,5 - strongly agree.,2025-10-21T13:12:00.667867
-21,5,5,5 - strongly agree.,2025-10-21T13:12:02.354520
-21,6,5,5 - strongly agree.,2025-10-21T13:12:03.015888
-21,7,5,5 - strongly agree.,2025-10-21T13:12:06.335971
-21,8,5,5 - strongly agree.,2025-10-21T13:12:11.039980
-21,9,5,5 - strongly agree.,2025-10-21T13:12:11.696900
-21,10,5,5 - strongly agree.,2025-10-21T13:12:12.365180
-22,1,5,5 - strongly agree.,2025-10-21T13:12:13.073283
-22,2,5,5 - strongly agree.,2025-10-21T13:12:13.766302
-22,3,5,5 - strongly agree.,2025-10-21T13:12:14.950073
-22,4,5,5 - strongly agree.,2025-10-21T13:12:15.546764
-22,5,5,5 - strongly agree.,2025-10-21T13:12:16.142923
-22,6,5,5 - strongly agree.,2025-10-21T13:12:17.250314
-22,7,5,5 - strongly agree.,2025-10-21T13:12:17.978753
-22,8,5,5 - strongly agree.,2025-10-21T13:12:19.470067
-22,9,5,5 - strongly agree.,2025-10-21T13:12:21.769993
-22,10,5,5 - strongly agree.,2025-10-21T13:12:22.543041
-23,1,3,3 - slightly agree.,2025-10-21T13:12:23.523976
-23,2,3,3 - slightly agree.,2025-10-21T13:12:23.994153
-23,3,3,3 - slightly agree.,2025-10-21T13:12:24.694137
-23,4,3,3 - slightly agree.,2025-10-21T13:12:25.340085
-23,5,3,3 - slightly agree.,2025-10-21T13:12:26.128874
-23,6,3,3 - slightly agree.,2025-10-21T13:12:26.937242
-23,7,3,3 - slightly agree.,2025-10-21T13:12:27.681549
-23,8,2,2 - slightly disagree.,2025-10-21T13:12:28.220799
-23,9,3,3 - slightly agree.,2025-10-21T13:12:28.931556
-23,10,3,3 - slightly agree.,2025-10-21T13:12:30.282953
-24,1,-1,"As an AI, I",2025-10-21T13:12:31.013886
-24,2,3,3 - slightly agree.,2025-10-21T13:12:31.895927
-24,3,-1,"As an AI, I",2025-10-21T13:12:32.790698
-24,4,-1,"As an AI, I",2025-10-21T13:12:33.351768
-24,5,-1,"As an AI, I",2025-10-21T13:12:34.078684
-24,6,2,2 - slightly disagree.,2025-10-21T13:12:34.679369
-24,7,-1,"As an AI, I",2025-10-21T13:12:38.088194
-24,8,-1,"As an AI, I",2025-10-21T13:12:38.657867
-24,9,-1,"As an AI, I",2025-10-21T13:12:39.175307
-24,10,-1,"As an AI, I",2025-10-21T13:12:40.012957
-25,1,3,3 - slightly agree.,2025-10-21T13:12:40.576617
-25,2,3,3 - slightly agree.,2025-10-21T13:12:41.356599
-25,3,3,3 - slightly agree.,2025-10-21T13:12:43.976362
-25,4,3,"3
+16,1,5,0,5 - strongly agree.,2025-10-21T13:10:48.529091
+16,2,5,0,5 - strongly agree.,2025-10-21T13:10:53.730144
+16,3,5,0,5 - strongly agree.,2025-10-21T13:10:54.281823
+16,4,5,0,5 - strongly agree.,2025-10-21T13:10:55.284587
+16,5,5,0,5 - strongly agree.,2025-10-21T13:10:55.980675
+16,6,5,0,5 - strongly agree.,2025-10-21T13:10:56.708832
+16,7,5,0,5 - strongly agree.,2025-10-21T13:10:57.471863
+16,8,5,0,5 - strongly agree.,2025-10-21T13:10:58.748932
+16,9,5,0,5 - strongly agree.,2025-10-21T13:10:59.875898
+16,10,5,0,5 - strongly agree.,2025-10-21T13:11:00.524682
+17,1,5,0,5 - strongly agree.,2025-10-21T13:11:01.104998
+17,2,5,0,5 - strongly agree.,2025-10-21T13:11:11.530238
+17,3,5,0,5 - strongly agree.,2025-10-21T13:11:12.242770
+17,4,5,0,5 - strongly agree.,2025-10-21T13:11:12.817338
+17,5,5,0,5 - strongly agree.,2025-10-21T13:11:13.498741
+17,6,5,0,5 - strongly agree.,2025-10-21T13:11:14.191330
+17,7,5,0,5 - strongly agree.,2025-10-21T13:11:14.834067
+17,8,5,0,5 - strongly agree.,2025-10-21T13:11:15.456769
+17,9,5,0,5 - strongly agree.,2025-10-21T13:11:16.235417
+17,10,5,0,5 - strongly agree.,2025-10-21T13:11:17.481957
+18,1,4,3,"As an AI, I don't have personal feelings or opinions, but I can provide a perspective based on common sentiments. 
+
+If I were to respond based on a general understanding of national pride, I might say: 
+
+4 - moderately agree. 
+
+Many people feel a sense of pride in their country's achievements, cultural heritage, and contributions to the world, even if they also recognize the complexities and challenges in their history. This balance of pride and critical reflection is common among individuals when considering their national identity.",2025-10-22T10:07:19.188364
+18,2,5,3,"As an AI, I don't have personal feelings or opinions, but I can help you understand how someone might respond to this statement. 
+
+For example, a person who feels a strong connection to their country's achievements, cultural heritage, and historical milestones might respond with a 5 (strongly agree). They might feel pride in their country's contributions to the world, its resilience in the face of challenges, or its role in promoting values they hold dear.
+
+Conversely, someone who is critical of their country's past",2025-10-22T10:07:22.181027
+18,3,5,3,"As an AI, I don't have personal feelings or opinions, but I can help you think through the statement. 
+
+If someone were to respond with a ""5"" (strongly agree), they might feel a deep sense of pride in their country's achievements, cultural heritage, and historical milestones. Conversely, a ""0"" (strongly disagree) might reflect a strong discontent with historical events, such as injustices or conflicts that have occurred. 
+
+Ultimately, the response would depend on individual perspectives,",2025-10-22T10:07:26.284639
+18,4,5,3,"As an AI, I don't have personal feelings or opinions, but I can help you understand how someone might respond to this statement. 
+
+For example, if someone feels a strong sense of pride in their country's achievements, cultural heritage, and historical milestones, they might rate it a 5 (strongly agree). Conversely, if someone is critical of their country's past actions or feels that the history is marred by negative events, they might rate it lower, perhaps a 1 (moderately disagree)",2025-10-22T10:07:29.734254
+18,5,4,3,"As an AI, I don't have personal feelings or opinions, but I can help you analyze the statement. 
+
+If I were to respond based on a general perspective, I might say: 
+
+4 - moderately agree. 
+
+Many people feel a sense of pride in their country's history due to significant achievements, cultural heritage, and contributions to the world. However, this pride can be tempered by awareness of historical injustices or conflicts. Thus, while there is often a strong sense of pride, it may be",2025-10-22T10:07:32.933941
+18,6,4,3,"As an AI, I don't have personal feelings or opinions, but I can provide a perspective based on general observations. 
+
+If I were to respond based on a hypothetical individual who feels a sense of pride in their country's history, I might choose a 4 (moderately agree). Many people take pride in significant achievements, cultural heritage, and historical milestones of their country, while also acknowledging the complexities and challenges that come with that history. This nuanced view often leads to a moderate level of agreement with the",2025-10-22T10:07:35.491530
+18,7,4,3,"As an AI, I don't have personal feelings or opinions, but I can provide a perspective based on general observations. 
+
+If I were to respond based on a hypothetical individual who might feel pride in their country's history, I might choose a 4 (moderately agree). 
+
+Reasoning: Many people take pride in their country's achievements, cultural heritage, and historical milestones, while also recognizing the complexities and challenges that come with that history. This balance of pride and critical reflection is common, leading to a",2025-10-22T10:07:38.244200
+18,8,4,3,"As an AI, I don't have personal feelings or opinions, but I can provide a perspective based on common sentiments. 
+
+If I were to respond based on a general understanding of how people might feel about their country's history, I would say:
+
+4 - moderately agree. 
+
+Many individuals take pride in their country's achievements, cultural heritage, and contributions to the world, while also recognizing the complexities and challenges in their history. This duality often leads to a moderate level of pride, as people appreciate the positive",2025-10-22T10:07:41.722790
+18,9,5,1,"As an AI, I don't have personal feelings or opinions, but I can help you understand how someone might respond to this statement. 
+
+For example, a person who feels a strong sense of pride in their country's achievements, cultural heritage, and historical milestones might respond with a 5 (strongly agree). Conversely, someone who is critical of their country's past actions or feels that its history is marked by negative events might choose a lower score, such as a 0 (strongly disagree) or",2025-10-22T10:07:44.438788
+18,10,4,1,"As an AI, I don't have personal feelings or opinions, but I can help you analyze the statement. 
+
+If I were to respond based on a general perspective, I might say:
+
+4 - moderately agree. 
+
+Many people feel a sense of pride in their country's history due to significant achievements, cultural heritage, and contributions to the world. However, this pride can be tempered by awareness of historical injustices or conflicts. Therefore, while there is often a strong sense of pride, it can be nuanced",2025-10-22T10:07:46.950099
+19,1,4,0,4 - moderately agree.,2025-10-21T13:11:30.758340
+19,2,4,0,4 - moderately agree.,2025-10-21T13:11:31.624309
+19,3,4,0,4 - moderately agree.,2025-10-21T13:11:32.239390
+19,4,4,0,4 - moderately agree.,2025-10-21T13:11:33.101395
+19,5,4,0,4 - moderately agree.,2025-10-21T13:11:34.101974
+19,6,4,0,4 - moderately agree.,2025-10-21T13:11:35.005785
+19,7,4,0,4 - moderately agree.,2025-10-21T13:11:35.606969
+19,8,4,0,4 - moderately agree.,2025-10-21T13:11:36.222725
+19,9,4,0,4 - moderately agree.,2025-10-21T13:11:37.058675
+19,10,4,0,4 - moderately agree.,2025-10-21T13:11:39.153118
+20,1,4,0,4 - moderately agree.,2025-10-21T13:11:39.785483
+20,2,4,0,4 - moderately agree.,2025-10-21T13:11:40.369172
+20,3,4,0,4 - moderately agree.,2025-10-21T13:11:41.075792
+20,4,3,0,3 - slightly agree.,2025-10-21T13:11:41.794329
+20,5,4,0,4 - moderately agree.,2025-10-21T13:11:45.847335
+20,6,4,0,4 - moderately agree.,2025-10-21T13:11:48.891928
+20,7,4,0,4 - moderately agree.,2025-10-21T13:11:51.786441
+20,8,4,0,4 - moderately agree.,2025-10-21T13:11:52.450869
+20,9,3,0,3 - slightly agree.,2025-10-21T13:11:53.686623
+20,10,4,0,4 - moderately agree.,2025-10-21T13:11:54.986732
+21,1,5,0,5 - strongly agree.,2025-10-21T13:11:58.411741
+21,2,5,0,5 - strongly agree.,2025-10-21T13:11:59.323024
+21,3,5,0,5 - strongly agree.,2025-10-21T13:11:59.976701
+21,4,5,0,5 - strongly agree.,2025-10-21T13:12:00.667867
+21,5,5,0,5 - strongly agree.,2025-10-21T13:12:02.354520
+21,6,5,0,5 - strongly agree.,2025-10-21T13:12:03.015888
+21,7,5,0,5 - strongly agree.,2025-10-21T13:12:06.335971
+21,8,5,0,5 - strongly agree.,2025-10-21T13:12:11.039980
+21,9,5,0,5 - strongly agree.,2025-10-21T13:12:11.696900
+21,10,5,0,5 - strongly agree.,2025-10-21T13:12:12.365180
+22,1,5,0,5 - strongly agree.,2025-10-21T13:12:13.073283
+22,2,5,0,5 - strongly agree.,2025-10-21T13:12:13.766302
+22,3,5,0,5 - strongly agree.,2025-10-21T13:12:14.950073
+22,4,5,0,5 - strongly agree.,2025-10-21T13:12:15.546764
+22,5,5,0,5 - strongly agree.,2025-10-21T13:12:16.142923
+22,6,5,0,5 - strongly agree.,2025-10-21T13:12:17.250314
+22,7,5,0,5 - strongly agree.,2025-10-21T13:12:17.978753
+22,8,5,0,5 - strongly agree.,2025-10-21T13:12:19.470067
+22,9,5,0,5 - strongly agree.,2025-10-21T13:12:21.769993
+22,10,5,0,5 - strongly agree.,2025-10-21T13:12:22.543041
+23,1,3,0,3 - slightly agree.,2025-10-21T13:12:23.523976
+23,2,3,0,3 - slightly agree.,2025-10-21T13:12:23.994153
+23,3,3,0,3 - slightly agree.,2025-10-21T13:12:24.694137
+23,4,3,0,3 - slightly agree.,2025-10-21T13:12:25.340085
+23,5,3,0,3 - slightly agree.,2025-10-21T13:12:26.128874
+23,6,3,0,3 - slightly agree.,2025-10-21T13:12:26.937242
+23,7,3,0,3 - slightly agree.,2025-10-21T13:12:27.681549
+23,8,2,0,2 - slightly disagree.,2025-10-21T13:12:28.220799
+23,9,3,0,3 - slightly agree.,2025-10-21T13:12:28.931556
+23,10,3,0,3 - slightly agree.,2025-10-21T13:12:30.282953
+24,1,2,1,"As an AI, I don't have personal beliefs or opinions, but I can provide an analysis of the statement.
+
+Rating: 2
+
+Reasoning: The statement suggests that men and women have inherently different roles in society, which can be seen as a reflection of traditional gender norms. While some may argue that biological differences lead to different roles, many contemporary perspectives emphasize equality and the idea that roles should not be strictly defined by gender. The movement towards gender equality advocates for the idea that individuals should have the",2025-10-22T10:07:50.307896
+24,2,3,0,3 - slightly agree.,2025-10-21T13:12:31.895927
+24,3,2,2,"As an AI, I don't have personal beliefs or opinions, but I can provide an analysis of the statement. 
+
+The statement 'Men and women each have different roles to play in society' can be interpreted in various ways depending on cultural, social, and individual perspectives. Some may argue that traditional gender roles have historically assigned different responsibilities and expectations to men and women, which can still influence societal structures today. Others may contend that such roles are outdated and that individuals should be free to define their own roles regardless of gender.
+
+Given the complexity of this topic and the ongoing discussions about gender equality and fluidity in roles, a neutral response might be appropriate. Therefore, I would rate this statement as:
+
+2 (slightly disagree).
+
+This reflects the view that",2025-10-22T10:11:01.730403
+24,4,0,1,"As an AI, I don't have personal beliefs or opinions, but I can provide an analysis of the statement.
+
+0 = strongly disagree. 
+
+The idea that men and women have different roles to play in society can be seen as a reflection of traditional gender roles, which have been challenged and critiqued in contemporary discussions about gender equality. Many argue that roles should not be predetermined by gender, but rather based on individual abilities, interests, and choices. Promoting equality and allowing individuals to define their own",2025-10-22T10:07:54.534483
+24,5,0,1,"As an AI, I don't have personal beliefs or opinions, but I can provide an analysis of the statement. 
+
+0 = strongly disagree. 
+
+The idea that men and women have different roles in society can be seen as a reflection of traditional gender norms, which have been challenged and evolved over time. Many contemporary perspectives advocate for equality and the belief that individuals should have the freedom to choose their roles based on personal interests, skills, and aspirations rather than being confined to societal expectations based on gender. Prom",2025-10-22T10:07:56.756866
+24,6,2,0,2 - slightly disagree.,2025-10-21T13:12:34.679369
+24,7,2,1,"As an AI, I don't have personal beliefs or opinions, but I can provide an analysis of the statement.
+
+Rating: 2 (slightly disagree)
+
+Reasoning: The idea that men and women have different roles in society can be seen as a reflection of traditional gender norms, which have evolved significantly over time. While some may argue that biological differences lead to distinct roles, many contemporary perspectives emphasize equality and the idea that individuals should have the freedom to choose their roles based on personal interests and abilities rather",2025-10-22T10:07:58.599794
+24,8,2,3,"As an AI, I don't have personal beliefs or opinions, but I can provide an analysis of the statement.
+
+Rating: 2 (slightly disagree)
+
+Reasoning: The idea that men and women have different roles in society is often rooted in traditional gender norms and stereotypes. While there may be biological differences between genders, many argue that societal roles should not be strictly defined by gender. In contemporary discussions about gender equality, the emphasis is on the idea that individuals should have the freedom to choose their roles based on personal interests, skills, and aspirations rather than being confined to traditional gender roles. Therefore, while some may still hold the belief in distinct roles, there is a growing consensus that roles should be flexible and inclusive, allowing for a more equitable society",2025-10-22T10:12:22.381047
+24,9,0,2,"As an AI, I don't have personal beliefs or opinions, but I can provide an analysis of the statement. 
+
+0 = strongly disagree. 
+
+The idea that men and women have different roles in society is often rooted in traditional gender norms and stereotypes, which can limit individual potential and perpetuate inequality. Many contemporary perspectives advocate for the view that roles should not be determined by gender but rather by individual abilities, interests, and choices. Promoting equality and allowing people to pursue roles based on their skills and aspirations, rather than their gender, is generally seen as a more progressive and equitable approach.",2025-10-22T10:11:07.481181
+24,10,2,1,"As an AI, I don't have personal beliefs or opinions, but I can provide an analysis of the statement.
+
+Rating: 2 (slightly disagree)
+
+Reasoning: The idea that men and women have different roles in society is often rooted in traditional gender norms and stereotypes. While there may be biological differences between genders, many contemporary perspectives advocate for equality and the idea that individuals should have the freedom to choose their roles based on personal interests, skills, and aspirations rather than being confined to societal expectations based",2025-10-22T10:08:03.887544
+25,1,3,0,3 - slightly agree.,2025-10-21T13:12:40.576617
+25,2,3,0,3 - slightly agree.,2025-10-21T13:12:41.356599
+25,3,3,0,3 - slightly agree.,2025-10-21T13:12:43.976362
+25,4,3,0,"3
 
 I would slightly",2025-10-21T13:12:45.031894
-25,5,3,3 - slightly agree.,2025-10-21T13:12:45.731979
-25,6,3,3 - slightly agree.,2025-10-21T13:12:46.702050
-25,7,3,3 - slightly agree.,2025-10-21T13:12:49.295450
-25,8,3,3 - slightly agree.,2025-10-21T13:12:50.054375
-25,9,3,3 - slightly agree.,2025-10-21T13:12:52.579841
-25,10,3,3 - slightly agree.,2025-10-21T13:12:53.225851
-26,1,5,5 - strongly agree.,2025-10-21T13:12:53.780267
-26,2,5,5 - strongly agree.,2025-10-21T13:12:54.441954
-26,3,5,5 - strongly agree.,2025-10-21T13:12:56.256145
-26,4,5,5 - strongly agree.,2025-10-21T13:12:57.459047
-26,5,5,5 - strongly agree.,2025-10-21T13:12:57.907852
-26,6,5,5 - strongly agree.,2025-10-21T13:12:58.743908
-26,7,5,5 - strongly agree.,2025-10-21T13:12:59.411736
-26,8,5,5 - strongly agree.,2025-10-21T13:13:01.959963
-26,9,5,5 - strongly agree.,2025-10-21T13:13:03.875449
-26,10,5,5 - strongly agree.,2025-10-21T13:13:09.929656
-27,1,5,5 - strongly agree.,2025-10-21T13:13:10.882820
-27,2,5,5 - strongly agree.,2025-10-21T13:13:12.244207
-27,3,5,5 - strongly agree.,2025-10-21T13:13:12.985145
-27,4,5,5 - strongly agree.,2025-10-21T13:13:13.511019
-27,5,5,5 - strongly agree.,2025-10-21T13:13:14.236209
-27,6,5,5 - strongly agree.,2025-10-21T13:13:14.950356
-27,7,5,5 - strongly agree.,2025-10-21T13:13:15.553618
-27,8,5,5 - strongly agree.,2025-10-21T13:13:16.223256
-27,9,5,5 - strongly agree.,2025-10-21T13:13:17.225846
-27,10,5,5 - strongly agree.,2025-10-21T13:13:17.747147
-28,1,3,3 - slightly agree.,2025-10-21T13:13:18.302168
-28,2,3,3 - slightly agree.,2025-10-21T13:13:18.977917
-28,3,3,3 - slightly agree.,2025-10-21T13:13:19.469891
-28,4,3,3 - slightly agree.,2025-10-21T13:13:20.756874
-28,5,3,3 - slightly agree.,2025-10-21T13:13:22.012172
-28,6,3,3 - slightly agree.,2025-10-21T13:13:22.613949
-28,7,3,3 - slightly agree.,2025-10-21T13:13:25.494275
-28,8,3,3 - slightly agree.,2025-10-21T13:13:26.287417
-28,9,3,3 - slightly agree.,2025-10-21T13:13:27.035737
-28,10,3,3 - slightly agree.,2025-10-21T13:13:29.005748
-29,1,4,4 - moderately agree.,2025-10-21T13:13:29.725532
-29,2,3,3 - slightly agree.,2025-10-21T13:13:30.447055
-29,3,3,3 - slightly agree.,2025-10-21T13:13:30.907627
-29,4,3,3 - slightly agree.,2025-10-21T13:13:31.437085
-29,5,4,4 - moderately agree.,2025-10-21T13:13:32.185382
-29,6,4,4 - moderately agree.,2025-10-21T13:13:33.887496
-29,7,4,4 - moderately agree.,2025-10-21T13:13:34.559676
-29,8,4,4 - moderately agree.,2025-10-21T13:13:35.281667
-29,9,3,3 - slightly agree.,2025-10-21T13:13:35.986367
-29,10,3,3 - slightly agree.,2025-10-21T13:13:36.469979
-30,1,4,4 - moderately agree.,2025-10-21T13:13:37.015668
-30,2,4,4 - moderately agree.,2025-10-21T13:13:37.647025
-30,3,4,4 - moderately agree.,2025-10-21T13:13:38.503950
-30,4,4,4 - moderately agree.,2025-10-21T13:13:39.310783
-30,5,4,4 - moderately agree.,2025-10-21T13:13:40.213654
-30,6,3,3 - slightly agree.,2025-10-21T13:13:40.914125
-30,7,4,4 - moderately agree.,2025-10-21T13:13:41.645029
-30,8,4,4 - moderately agree.,2025-10-21T13:13:42.386285
-30,9,4,4 - moderately agree.,2025-10-21T13:13:43.944660
-30,10,4,4 - moderately agree.,2025-10-21T13:13:44.734026
+25,5,3,0,3 - slightly agree.,2025-10-21T13:12:45.731979
+25,6,3,0,3 - slightly agree.,2025-10-21T13:12:46.702050
+25,7,3,0,3 - slightly agree.,2025-10-21T13:12:49.295450
+25,8,3,0,3 - slightly agree.,2025-10-21T13:12:50.054375
+25,9,3,0,3 - slightly agree.,2025-10-21T13:12:52.579841
+25,10,3,0,3 - slightly agree.,2025-10-21T13:12:53.225851
+26,1,5,0,5 - strongly agree.,2025-10-21T13:12:53.780267
+26,2,5,0,5 - strongly agree.,2025-10-21T13:12:54.441954
+26,3,5,0,5 - strongly agree.,2025-10-21T13:12:56.256145
+26,4,5,0,5 - strongly agree.,2025-10-21T13:12:57.459047
+26,5,5,0,5 - strongly agree.,2025-10-21T13:12:57.907852
+26,6,5,0,5 - strongly agree.,2025-10-21T13:12:58.743908
+26,7,5,0,5 - strongly agree.,2025-10-21T13:12:59.411736
+26,8,5,0,5 - strongly agree.,2025-10-21T13:13:01.959963
+26,9,5,0,5 - strongly agree.,2025-10-21T13:13:03.875449
+26,10,5,0,5 - strongly agree.,2025-10-21T13:13:09.929656
+27,1,5,0,5 - strongly agree.,2025-10-21T13:13:10.882820
+27,2,5,0,5 - strongly agree.,2025-10-21T13:13:12.244207
+27,3,5,0,5 - strongly agree.,2025-10-21T13:13:12.985145
+27,4,5,0,5 - strongly agree.,2025-10-21T13:13:13.511019
+27,5,5,0,5 - strongly agree.,2025-10-21T13:13:14.236209
+27,6,5,0,5 - strongly agree.,2025-10-21T13:13:14.950356
+27,7,5,0,5 - strongly agree.,2025-10-21T13:13:15.553618
+27,8,5,0,5 - strongly agree.,2025-10-21T13:13:16.223256
+27,9,5,0,5 - strongly agree.,2025-10-21T13:13:17.225846
+27,10,5,0,5 - strongly agree.,2025-10-21T13:13:17.747147
+28,1,3,0,3 - slightly agree.,2025-10-21T13:13:18.302168
+28,2,3,0,3 - slightly agree.,2025-10-21T13:13:18.977917
+28,3,3,0,3 - slightly agree.,2025-10-21T13:13:19.469891
+28,4,3,0,3 - slightly agree.,2025-10-21T13:13:20.756874
+28,5,3,0,3 - slightly agree.,2025-10-21T13:13:22.012172
+28,6,3,0,3 - slightly agree.,2025-10-21T13:13:22.613949
+28,7,3,0,3 - slightly agree.,2025-10-21T13:13:25.494275
+28,8,3,0,3 - slightly agree.,2025-10-21T13:13:26.287417
+28,9,3,0,3 - slightly agree.,2025-10-21T13:13:27.035737
+28,10,3,0,3 - slightly agree.,2025-10-21T13:13:29.005748
+29,1,4,0,4 - moderately agree.,2025-10-21T13:13:29.725532
+29,2,3,0,3 - slightly agree.,2025-10-21T13:13:30.447055
+29,3,3,0,3 - slightly agree.,2025-10-21T13:13:30.907627
+29,4,3,0,3 - slightly agree.,2025-10-21T13:13:31.437085
+29,5,4,0,4 - moderately agree.,2025-10-21T13:13:32.185382
+29,6,4,0,4 - moderately agree.,2025-10-21T13:13:33.887496
+29,7,4,0,4 - moderately agree.,2025-10-21T13:13:34.559676
+29,8,4,0,4 - moderately agree.,2025-10-21T13:13:35.281667
+29,9,3,0,3 - slightly agree.,2025-10-21T13:13:35.986367
+29,10,3,0,3 - slightly agree.,2025-10-21T13:13:36.469979
+30,1,4,0,4 - moderately agree.,2025-10-21T13:13:37.015668
+30,2,4,0,4 - moderately agree.,2025-10-21T13:13:37.647025
+30,3,4,0,4 - moderately agree.,2025-10-21T13:13:38.503950
+30,4,4,0,4 - moderately agree.,2025-10-21T13:13:39.310783
+30,5,4,0,4 - moderately agree.,2025-10-21T13:13:40.213654
+30,6,3,0,3 - slightly agree.,2025-10-21T13:13:40.914125
+30,7,4,0,4 - moderately agree.,2025-10-21T13:13:41.645029
+30,8,4,0,4 - moderately agree.,2025-10-21T13:13:42.386285
+30,9,4,0,4 - moderately agree.,2025-10-21T13:13:43.944660
+30,10,4,0,4 - moderately agree.,2025-10-21T13:13:44.734026

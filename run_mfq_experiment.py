@@ -6,9 +6,10 @@ Simple MFQ experiment runner with different personas
 import json
 import csv
 import argparse
+import os
 from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Any, Tuple, Optional
+from typing import List, Dict, Any, Tuple, Optional, Set, Callable
 import re
 
 try:
@@ -107,10 +108,27 @@ AVAILABLE_MODELS = [
         "model_kwargs": {
             "reasoning_effort": "minimal",
             "use_responses_api": True,
-            "max_tokens": 16,
+            "max_tokens": 2,
         },
     },
 ]
+
+# Map model names to custom CSV filenames (without path). Update this dictionary
+# whenever you rename or relocate a model's results file. Filenames are assumed
+# to reside under the ``data/`` directory; the standard ``_self`` suffix is
+# appended automatically for no-persona runs.
+CUSTOM_MODEL_FILENAMES: Dict[str, str] = {
+    "Mistral-7B-Instruct-v0.3-Q8_0.gguf": "mistral-7b-instruct.csv",
+    "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf": "llama-3.1-8b-instruct.csv",
+    "Qwen2.5-7B-Instruct-Q4_K_M.gguf": "qwen2.5-7b-instruct.csv",
+    "claude-4.5-sonnet": "claude-sonnet-4-5.csv",
+    "claude-haiku-4-5-20251001": "claude-haiku-4-5.csv",
+    "gpt-4o-mini": "gpt-4o-mini.csv",
+    "gpt-4.1-mini": "gpt-4.1-mini.csv",
+    "gpt-5-mini": "gpt-5-mini.csv",
+    "gpt-5": "gpt-5.csv",
+    "grok-4-fast": "grok-4-fast.csv",
+}
 
 from mfq_questions import iter_questions
 from llm_interface import get_llm_response
@@ -136,6 +154,20 @@ def extract_rating(response: str) -> int:
         return -1
 
 
+def resolve_model_filename(model_name: str, suffix: str = "", directory: Optional[Path] = None) -> Path:
+    """Return the CSV path for the given model, applying any custom mapping."""
+
+    base_dir = directory or Path("data")
+    custom = CUSTOM_MODEL_FILENAMES.get(model_name)
+    if custom:
+        stem = custom[:-4] if custom.lower().endswith(".csv") else custom
+    else:
+        stem = model_name.replace(":", "_").replace("/", "_")
+
+    filename = f"{stem}{suffix}.csv"
+    return base_dir / filename
+
+
 def run_mfq_experiment(
     personas: List[str],
     model_type: str,
@@ -143,17 +175,35 @@ def run_mfq_experiment(
     n: int = 10,
     csv_writer: Optional[csv.DictWriter] = None,
     csv_file=None,
+    existing_valid_slots: Optional[Set[Tuple[int, int, int]]] = None,
+    collect_new_rows: bool = False,
+    slot_failures: Optional[Dict[Tuple[int, int, int], int]] = None,
+    row_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
     **model_kwargs,
-) -> Tuple[int, int]:
-    """Run the MFQ experiment, streaming rows to the provided CSV writer."""
+) -> Tuple[int, int, List[Dict[str, Any]]]:
+    """Run the MFQ experiment.
 
-    if csv_writer is None:
-        raise ValueError("run_mfq_experiment requires a csv_writer")
+    - If ``csv_writer`` is supplied, rows are streamed directly to the CSV.
+    - ``existing_valid_slots`` marks (persona_id, question_id, run_index) entries
+      that already have valid (>=0) ratings and should be skipped.
+    - When ``collect_new_rows`` is True, the function returns any newly
+      generated rows so the caller can handle persistence (e.g., rewrite files).
+    - ``slot_failures`` tracks how many invalid attempts (rating -1) have been
+      recorded for each (persona, question, run_index) slot.
+    """
+
+    if csv_writer is None and not collect_new_rows and row_callback is None:
+        raise ValueError(
+            "run_mfq_experiment requires a csv_writer unless collect_new_rows or row_callback is provided"
+        )
 
     questions = list(iter_questions())
 
     personas_processed = 0
     responses_written = 0
+    existing_valid_slots = existing_valid_slots or set()
+    slot_failures = slot_failures or {}
+    new_rows: List[Dict[str, Any]] = []
 
     print(f"Running MFQ experiment with {len(personas)} personas using {model_type}:{model_name}")
 
@@ -166,25 +216,48 @@ def run_mfq_experiment(
             prompt = create_persona_prompt(persona_text, question.prompt)
 
             for run_index in range(1, n + 1):
+                slot_key = (persona_id, question.id, run_index)
+                if slot_key in existing_valid_slots:
+                    continue
+
                 response = get_llm_response(model_type, model_name, prompt, **model_kwargs)
                 rating = extract_rating(response)
                 response_text = response.strip() if isinstance(response, str) else str(response)
+
+                prior_failures = slot_failures.get(slot_key, 0)
+                failures = prior_failures + (1 if rating < 0 else 0)
 
                 row = {
                     "persona_id": persona_id,
                     "question_id": question.id,
                     "run_index": run_index,
                     "rating": rating,
+                    "failures": failures,
                     "response": response_text,
                     "collected_at": datetime.now().isoformat(),
                 }
 
-                csv_writer.writerow(row)
-                responses_written += 1
-                if csv_file is not None:
-                    csv_file.flush()
+                if csv_writer is not None:
+                    csv_writer.writerow(row)
+                    responses_written += 1
+                    if csv_file is not None:
+                        csv_file.flush()
+                else:
+                    responses_written += 1
 
-    return personas_processed, responses_written
+                slot_failures[slot_key] = failures
+
+                if row_callback is not None:
+                    row_callback(dict(row))
+
+                if collect_new_rows:
+                    # Store a copy to avoid accidental mutation
+                    new_rows.append(dict(row))
+
+                if rating >= 0:
+                    existing_valid_slots.add(slot_key)
+
+    return personas_processed, responses_written, new_rows
 
 
 def prompt_for_model_selection() -> Tuple[str, str, Dict[str, Any]]:
@@ -234,14 +307,13 @@ def main():
 
     model_kwargs = {
         "temperature": 0.1,
-        "max_tokens": 2,
+        "max_tokens": 1,
     }
     model_kwargs.update(selection_kwargs)
 
     print(f"Selected model: {model_type}:{model_name}")
 
-    model_suffix = model_name.replace(":", "_").replace("/", "_")
-    output_path = Path("data") / f"{model_suffix}.csv"
+    output_path = resolve_model_filename(model_name)
     file_exists = output_path.exists()
 
     fieldnames = [
@@ -249,24 +321,129 @@ def main():
         "question_id",
         "run_index",
         "rating",
+        "failures",
         "response",
         "collected_at",
     ]
 
-    with open(output_path, "a", newline="", encoding="utf-8") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        if not file_exists:
-            writer.writeheader()
+    existing_rows: List[Dict[str, Any]] = []
+    existing_valid_slots: Set[Tuple[int, int, int]] = set()
+    slot_failures: Dict[Tuple[int, int, int], int] = {}
+    rows_by_key: Dict[Tuple[int, int, int], Dict[str, Any]] = {}
+    had_missing_failures = False
 
-        personas_processed, responses_written = run_mfq_experiment(
+    if file_exists:
+        try:
+            with open(output_path, "r", newline="", encoding="utf-8") as existing_file:
+                reader = csv.DictReader(existing_file)
+                for row in reader:
+                    try:
+                        persona_id = int(row["persona_id"])
+                        question_id = int(row["question_id"])
+                        run_index = int(row["run_index"])
+                    except (KeyError, TypeError, ValueError):
+                        continue
+
+                    rating_value = row.get("rating", -1)
+                    try:
+                        rating = int(rating_value)
+                    except (TypeError, ValueError):
+                        rating = -1
+
+                    raw_failures = row.get("failures")
+                    if raw_failures in (None, ""):
+                        failures = 0
+                        had_missing_failures = True
+                    else:
+                        try:
+                            failures = int(raw_failures)
+                        except (TypeError, ValueError):
+                            failures = 0
+                            had_missing_failures = True
+
+                    if rating < 0 and failures <= 0:
+                        failures = 1
+
+                    row_dict = {
+                        "persona_id": persona_id,
+                        "question_id": question_id,
+                        "run_index": run_index,
+                        "rating": rating,
+                        "failures": failures,
+                        "response": row.get("response", ""),
+                        "collected_at": row.get("collected_at", ""),
+                    }
+
+                    existing_rows.append(row_dict)
+                    rows_by_key[(persona_id, question_id, run_index)] = row_dict
+
+                    if rating >= 0:
+                        existing_valid_slots.add((persona_id, question_id, run_index))
+
+                    slot_failures[(persona_id, question_id, run_index)] = failures
+
+            if existing_valid_slots:
+                print(
+                    f"Found {len(existing_valid_slots)} previously completed slots. Only missing or invalid entries will be re-run."
+                )
+        except FileNotFoundError:
+            file_exists = False
+
+    if file_exists:
+        def write_rows_to_disk() -> None:
+            if not rows_by_key:
+                return
+            tmp_path = output_path.parent / f"{output_path.name}.tmp"
+            with open(tmp_path, "w", newline="", encoding="utf-8") as tmp_file:
+                writer = csv.DictWriter(tmp_file, fieldnames=fieldnames)
+                writer.writeheader()
+                for key in sorted(rows_by_key.keys()):
+                    writer.writerow(rows_by_key[key])
+            os.replace(tmp_path, output_path)
+
+        def handle_new_row(row: Dict[str, Any]) -> None:
+            key = (row["persona_id"], row["question_id"], row["run_index"])
+            rows_by_key[key] = row
+            slot_failures[key] = row.get("failures", 0)
+            write_rows_to_disk()
+
+        personas_processed, responses_written, _ = run_mfq_experiment(
             personas,
             model_type,
             model_name,
             n=args.n,
-            csv_writer=writer,
-            csv_file=csv_file,
+            csv_writer=None,
+            csv_file=None,
+            existing_valid_slots=set(existing_valid_slots),
+            collect_new_rows=False,
+            slot_failures=slot_failures,
+            row_callback=handle_new_row,
             **model_kwargs,
         )
+
+        if responses_written == 0 and had_missing_failures and rows_by_key:
+            write_rows_to_disk()
+
+    else:
+        with open(output_path, "w", newline="", encoding="utf-8") as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
+
+            personas_processed, responses_written, _ = run_mfq_experiment(
+                personas,
+                model_type,
+                model_name,
+                n=args.n,
+                csv_writer=writer,
+                csv_file=csv_file,
+                existing_valid_slots=None,
+                collect_new_rows=False,
+                slot_failures=slot_failures,
+                **model_kwargs,
+            )
+
+    if file_exists and responses_written == 0:
+        print("\nNo new runs were required; all slots were already filled with valid ratings.")
 
     print(
         f"\nExperiment completed! Processed {personas_processed} personas and logged {responses_written} responses to {output_path}."

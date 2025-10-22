@@ -80,7 +80,7 @@ def main() -> None:
     args = parse_args()
 
     summary = pd.read_csv(args.summary_csv)
-    expected_cols = {"persona", "question", "average_score", "uncertainty"}
+    expected_cols = {"persona", "question", "average_score", "uncertainty", "relative_score"}
     missing = expected_cols.difference(summary.columns)
     if missing:
         missing_str = ", ".join(sorted(missing))
@@ -106,6 +106,11 @@ def main() -> None:
         missing = pivot.isnull().sum().sum()
         raise ValueError(f"Summary contains {int(missing)} missing average_score values.")
 
+    relative_pivot = filtered.pivot(index="persona", columns="question", values="relative_score").sort_index()
+    if relative_pivot.isnull().any().any():
+        missing = relative_pivot.isnull().sum().sum()
+        raise ValueError(f"Summary contains {int(missing)} missing relative_score values.")
+
     persona_ids = list(pivot.index)
     if not persona_ids:
         raise ValueError("No personas available for susceptibility computation.")
@@ -124,20 +129,32 @@ def main() -> None:
         )
 
     susceptibility_samples: List[float] = []
+    relative_samples: List[float] = []
     for group in groups:
         block = pivot.loc[group]
         per_question_std = block.std(axis=0, ddof=1)
         susceptibility_samples.append(float(per_question_std.mean()))
+
+        rel_block = relative_pivot.loc[group]
+        rel_per_question_std = rel_block.std(axis=0, ddof=1)
+        relative_samples.append(float(rel_per_question_std.mean()))
 
     susceptibility = float(np.mean(susceptibility_samples))
     susceptibility_uncertainty = (
         float(np.std(susceptibility_samples, ddof=1)) if len(susceptibility_samples) > 1 else 0.0
     )
 
+    relative_susceptibility = float(np.mean(relative_samples))
+    relative_uncertainty = (
+        float(np.std(relative_samples, ddof=1)) if len(relative_samples) > 1 else 0.0
+    )
+
     metrics_columns = [
         "model",
         "susceptibility",
         "s_uncertainty",
+        "relative_susceptibility",
+        "rs_uncertainty",
         "robustness",
         "r_uncertainty",
     ]
@@ -148,6 +165,8 @@ def main() -> None:
             "model": [model_name],
             "susceptibility": [susceptibility],
             "s_uncertainty": [susceptibility_uncertainty],
+            "relative_susceptibility": [relative_susceptibility],
+            "rs_uncertainty": [relative_uncertainty],
             "robustness": [robustness],
             "r_uncertainty": [robustness_uncertainty],
         }
@@ -174,4 +193,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

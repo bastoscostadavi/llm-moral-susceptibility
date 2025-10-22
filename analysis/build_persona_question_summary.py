@@ -14,7 +14,9 @@ contains one row per (persona, question) with:
   self-run rating for the same question.
 
 Notes:
-- All averages and uncertainties ignore ratings equal to -1.
+Notes:
+- All ratings, including -1, are aggregated; ensure you re-run missing
+  slots to remove invalid entries before summarizing.
 """
 
 from __future__ import annotations
@@ -54,12 +56,9 @@ def main() -> None:
         missing_str = ", ".join(sorted(missing))
         raise ValueError(f"Input CSV missing columns: {missing_str}")
 
-    # Ignore invalid ratings (-1)
-    valid_raw = raw[raw["rating"] >= 0].copy()
-    if valid_raw.empty:
-        raise ValueError("No valid ratings (>=0) found in input CSV after filtering -1 values.")
+    raw["rating"] = pd.to_numeric(raw["rating"], errors="coerce")
 
-    grouped = valid_raw.groupby(["persona_id", "question_id"])["rating"]
+    grouped = raw.groupby(["persona_id", "question_id"])["rating"]
 
     def _std(series: pd.Series) -> float:
         if len(series) <= 1:
@@ -92,15 +91,10 @@ def main() -> None:
         missing_str = ", ".join(sorted(self_missing))
         raise ValueError(f"Self-run CSV missing columns: {missing_str}")
 
-    # Ignore invalid ratings (-1) for self-run as well
-    self_valid = self_raw[self_raw["rating"] >= 0].copy()
-    if self_valid.empty:
-        raise ValueError(
-            "No valid ratings (>=0) found in self-run CSV after filtering -1 values."
-        )
+    self_raw["rating"] = pd.to_numeric(self_raw["rating"], errors="coerce")
 
     r0_per_question = (
-        self_valid.groupby("question_id")["rating"].mean().reset_index().rename(
+        self_raw.groupby("question_id")["rating"].mean().reset_index().rename(
             columns={"question_id": "question", "rating": "R0"}
         )
     )

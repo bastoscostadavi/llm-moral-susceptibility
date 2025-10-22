@@ -61,34 +61,79 @@ def _openai_response(model_name: str, prompt: str, **kwargs) -> str:
 
         if use_responses_api:
             # Use the newer Responses API to support reasoning parameters
-            req: dict = {
-                "model": model_name,
-                "input": [
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "input_text", "text": prompt},
-                        ],
-                    }
-                ],
-                "max_output_tokens": kwargs.get("max_tokens", 5),
-            }
-            # GPT-5 does not use temperature; omit it in that case
-            if not is_gpt5 and "temperature" in kwargs:
-                req["temperature"] = kwargs.get("temperature", 0.1)
-            if reasoning_effort:
-                req["reasoning"] = {"effort": reasoning_effort}
+            max_out = kwargs.get("max_tokens", 8)
+            if is_gpt5:
+                # For GPT-5, prefer the simplest input form: a plain string
+                req: dict = {
+                    "model": model_name,
+                    "input": prompt,
+                    "max_output_tokens": max_out,
+                }
+                if reasoning_effort:
+                    req["reasoning"] = {"effort": reasoning_effort}
 
-            try:
-                response = client.responses.create(**req)
-            except Exception as exc:
-                # For GPT-5, do not fall back to Chat Completions
-                if is_gpt5:
-                    print(f"OpenAI Responses API error for GPT-5: {exc}")
-                    return "ERROR"
-                # Otherwise, try Chat Completions as a fallback
                 response = None
-                print(f"OpenAI Responses API error: {exc}. Falling back to chat.completions.")
+                last_exc: Optional[Exception] = None
+                for attempt in range(3):
+                    try:
+                        response = client.responses.create(**req)
+                        break
+                    except Exception as exc:
+                        last_exc = exc
+                        # No Chat Completions fallback for GPT-5; retry with backoff
+                        print(
+                            f"OpenAI Responses API error for GPT-5 (attempt {attempt+1}/3): {exc}"
+                        )
+                        time.sleep(1 * (2 ** attempt))
+
+                if response is None:
+                    # Retry once without reasoning effort and with explicit modalities if available
+                    fallback_req = {
+                        "model": model_name,
+                        "input": prompt,
+                        "max_output_tokens": max_out,
+                        "modalities": ["text"],
+                    }
+                    try:
+                        response = client.responses.create(**fallback_req)
+                    except Exception as exc:
+                        print(
+                            "OpenAI Responses API fallback for GPT-5 failed:"
+                            f" {exc}. Giving up."
+                        )
+                        if last_exc is not None:
+                            print(f"Last GPT-5 error before fallback: {last_exc}")
+                        return "ERROR"
+
+                if response is None:
+                    # Give up after retries
+                    return "ERROR"
+
+            else:
+                # Non-GPT-5: use structured content with role and input_text
+                req: dict = {
+                    "model": model_name,
+                    "input": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "input_text", "text": prompt},
+                            ],
+                        }
+                    ],
+                    "max_output_tokens": max_out,
+                }
+                if "temperature" in kwargs:
+                    req["temperature"] = kwargs.get("temperature", 0.1)
+                if reasoning_effort:
+                    req["reasoning"] = {"effort": reasoning_effort}
+
+                try:
+                    response = client.responses.create(**req)
+                except Exception as exc:
+                    # Otherwise, try Chat Completions as a fallback
+                    response = None
+                    print(f"OpenAI Responses API error: {exc}. Falling back to chat.completions.")
 
             if response is not None:
                 # Prefer unified accessor when available

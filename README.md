@@ -94,6 +94,14 @@ Key flags:
 - `--models-dir`: directory that contains the target GGUF model when using `--model-type local`.
 - `--output`: filename prefix for the CSV stored in `data/` (defaults to `mfq_results`).
 
+### Custom CSV filenames
+
+If you rename the per-model CSVs under `data/`, update the
+`CUSTOM_MODEL_FILENAMES` dictionary at the top of `run_mfq_experiment.py`.
+Entries map the model name (as passed to the runner) to the desired CSV
+filename. The self-run script reuses the same mapping, automatically
+appending `_self` when writing the no-persona results.
+
 ## Result Format
 
 Every response is appended to a per-model CSV in `data/`. The filename is derived from the output prefix and sanitized model name, e.g. `data/mfq_results_Mistral-7B-Instruct-v0.3-Q8_0.gguf.csv`.
@@ -102,14 +110,18 @@ Each row captures a single rating:
 
 | Column        | Description                                                         |
 |---------------|---------------------------------------------------------------------|
-| `persona_id`  | Zero-based index of the persona in the loaded list                  |
+| `persona_id`  | Zero-based index of the persona in the loaded list (self runs omit) |
 | `question_id` | Canonical MFQ item id (1-32; 6 and 22 are official MFQ filler items) |
 | `run_index`   | 1-based counter of repeated queries for that persona/question pair  |
 | `rating`      | Parsed integer 0–5 returned by the model (−1 if no rating detected) |
+| `failures`    | Count of failed attempts (rating −1) recorded before this row       |
 | `response`    | First few tokens of the model’s raw reply after whitespace trimming |
 | `collected_at`| ISO8601 timestamp written immediately after receiving the response  |
 
 Rows are flushed to disk as they are gathered, so partial runs still yield usable data.
+
+Self-run CSVs (`*_self.csv`) use the same schema without the `persona_id`
+column.
 
 ## MFQ Catalog Helpers
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate bar plots for susceptibility and robustness metrics."""
+"""Generate bar plots for susceptibility, relative susceptibility, and robustness."""
 
 from __future__ import annotations
 
@@ -87,6 +87,8 @@ def main() -> None:
             "model",
             "susceptibility",
             "s_uncertainty",
+            "relative_susceptibility",
+            "rs_uncertainty",
             "robustness",
             "r_uncertainty",
         },
@@ -102,6 +104,15 @@ def main() -> None:
         "Susceptibility",
         "Moral Susceptibility by Model",
         output_dir / "susceptibility.png",
+    )
+
+    plot_metric(
+        metrics,
+        "relative_susceptibility",
+        "rs_uncertainty",
+        "Relative Susceptibility",
+        "Relative Susceptibility by Model",
+        output_dir / "relative_susceptibility.png",
     )
 
     plot_metric(
