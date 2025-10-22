@@ -34,6 +34,12 @@ This repository explores how persona conditioning alters large language model re
 
    You can also set keys via your shell environment; `python-dotenv` loads `.env` automatically when present.
 
+   For xAI Grok models, set `XAI_API_KEY` (the client uses OpenAI-compatible endpoints at `https://api.x.ai/v1`):
+
+   ```bash
+   echo "XAI_API_KEY=your-xai-key" >> .env
+   ```
+
 3. **MFQ personas** (already provided as `personas.json`). Use `generate_persona_samples.py` if you need alternative subsets.
 
 3. **Local GGUF model**
@@ -76,6 +82,10 @@ python run_mfq_experiment.py \
   --n 5 \
   --limit 20
 ```
+
+To use xAI Grok-4-Fast, set `XAI_API_KEY` and select “xAI Grok-4-Fast” from the interactive menu (works in both persona and self runners). The preset uses `max_tokens=2` to keep outputs short.
+
+For GPT‑5 family with minimal reasoning, select either “OpenAI GPT‑5 (minimal reasoning)” or “OpenAI GPT‑5 Mini (minimal reasoning)”. These use the Responses API and `reasoning: {effort: "minimal"}`.
 
 Key flags:
 

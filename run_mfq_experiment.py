@@ -50,7 +50,7 @@ AVAILABLE_MODELS = [
         "key": "4",
         "label": "Claude Sonnet 4.5 (Anthropic API)",
         "model_type": "anthropic",
-        "model_name": "claude-4.5-sonnet",
+        "model_name": "claude-sonnet-4-5-20250929",
         "model_kwargs": {},
     },
     {
@@ -76,10 +76,39 @@ AVAILABLE_MODELS = [
     },
     {
         "key": "8",
-        "label": "Claude Haiku 3.5 (Anthropic API)",
+        "label": "Claude Haiku 4.5 (Anthropic API)",
         "model_type": "anthropic",
-        "model_name": "claude-3-5-haiku-latest",
+        "model_name": "claude-haiku-4-5-20251001",
         "model_kwargs": {},
+    },
+    {
+        "key": "9",
+        "label": "OpenAI GPT-5 (minimal reasoning)",
+        "model_type": "openai",
+        "model_name": "gpt-5",
+        "model_kwargs": {
+            "reasoning_effort": "minimal",
+            "use_responses_api": True,
+            "max_tokens": 16,
+        },
+    },
+    {
+        "key": "10",
+        "label": "xAI Grok-4-Fast",
+        "model_type": "xai",
+        "model_name": "grok-4-fast",
+        "model_kwargs": {},
+    },
+    {
+        "key": "11",
+        "label": "OpenAI GPT-5 Mini (minimal reasoning)",
+        "model_type": "openai",
+        "model_name": "gpt-5-mini",
+        "model_kwargs": {
+            "reasoning_effort": "minimal",
+            "use_responses_api": True,
+            "max_tokens": 16,
+        },
     },
 ]
 
@@ -177,50 +206,23 @@ def prompt_for_model_selection() -> Tuple[str, str, Dict[str, Any]]:
         print("Invalid selection. Please try again.")
 
 def main():
+    
     parser = argparse.ArgumentParser(description="Run MFQ experiments with different personas")
-    parser.add_argument("--model-type", choices=["openai", "anthropic", "ollama", "local"], default=None,
-                        help="Type of model to use (skip to choose interactively)")
-    parser.add_argument("--model-name", type=str, default=None,
-                        help="Specific model name (skip to choose interactively)")
-    parser.add_argument("--output", type=str, default="mfq_results",
-                        help="Output file prefix")
+    
     parser.add_argument("--limit", type=int, default=100,
                         help="Limit number of personas to test")
-    parser.add_argument("--list-models", action="store_true",
-                        help="List available models and exit")
-    parser.add_argument("--personas-file", type=str, default="personas.json",
-                        help="Path to personas JSON file")
     parser.add_argument("--n", type=int, default=10,
                         help="Number of times each persona answers each question")
-    parser.add_argument("--models-dir", type=str, default="models",
-                        help="Directory containing local GGUF models")
 
-    # Model-specific parameters
-    parser.add_argument("--temperature", type=float, default=0.1,
-                        help="Model temperature")
-    parser.add_argument("--max-tokens", type=int, default=5,
-                        help="Maximum tokens in response")
 
     args = parser.parse_args()
 
-    model_kwargs = {
-        "temperature": args.temperature,
-        "max_tokens": args.max_tokens,
-    }
-
-    if args.list_models:
-        print("Available models:")
-        for option in AVAILABLE_MODELS:
-            print(f"  {option['label']} -> type: {option['model_type']}, name: {option['model_name']}")
-        return
-
     # Load personas
     try:
-        with open(args.personas_file, 'r', encoding='utf-8') as f:
+        with open("personas.json", 'r', encoding='utf-8') as f:
             personas = json.load(f)
     except FileNotFoundError:
-        print(f"Error: Could not find personas file {args.personas_file}")
-        print("Please run download_personas.py first")
+        print(f"Error: Could not find personas file")
         return
 
     if args.limit:
@@ -228,27 +230,19 @@ def main():
 
     print(f"Loaded {len(personas)} personas")
 
-    model_type = args.model_type
-    model_name = args.model_name
-    selection_kwargs: Dict[str, Any] = {}
+    model_type, model_name, selection_kwargs = prompt_for_model_selection()
 
-    if not model_type or not model_name:
-        model_type, model_name, selection_kwargs = prompt_for_model_selection()
-    else:
-        selection_kwargs = {}
-
-    if model_type == "local":
-        selection_kwargs.setdefault("model_dir", args.models_dir)
-
+    model_kwargs = {
+        "temperature": 0.1,
+        "max_tokens": 2,
+    }
     model_kwargs.update(selection_kwargs)
 
     print(f"Selected model: {model_type}:{model_name}")
 
-    output_dir = Path("data")
-    output_dir.mkdir(parents=True, exist_ok=True)
     model_suffix = model_name.replace(":", "_").replace("/", "_")
-    csv_path = output_dir / f"{args.output}_{model_suffix}.csv"
-    file_exists = csv_path.exists()
+    output_path = Path("data") / f"{model_suffix}.csv"
+    file_exists = output_path.exists()
 
     fieldnames = [
         "persona_id",
@@ -259,7 +253,7 @@ def main():
         "collected_at",
     ]
 
-    with open(csv_path, "a", newline="", encoding="utf-8") as csv_file:
+    with open(output_path, "a", newline="", encoding="utf-8") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         if not file_exists:
             writer.writeheader()
@@ -275,7 +269,7 @@ def main():
         )
 
     print(
-        f"\nExperiment completed! Processed {personas_processed} personas and logged {responses_written} responses to {csv_path}."
+        f"\nExperiment completed! Processed {personas_processed} personas and logged {responses_written} responses to {output_path}."
     )
 
 if __name__ == "__main__":

@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
-"""Collapse rerun MFQ results into persona-question means and uncertainties."""
+"""Collapse rerun MFQ results into persona-question means, uncertainties, and relative scores.
+
+This summary expects as input a persona-conditioned MFQ CSV (e.g.,
+`data/gpt-4o-mini.csv`) and will automatically locate the matching
+no-persona self-run file (e.g., `data/gpt-4o-mini_self.csv`). The output
+contains one row per (persona, question) with:
+
+- persona
+- question
+- average_score
+- uncertainty
+- relative_score = sqrt((average_score - R0)^2) where R0 is the mean
+  self-run rating for the same question.
+
+Notes:
+- All averages and uncertainties ignore ratings equal to -1.
+"""
 
 from __future__ import annotations
 
@@ -38,7 +54,12 @@ def main() -> None:
         missing_str = ", ".join(sorted(missing))
         raise ValueError(f"Input CSV missing columns: {missing_str}")
 
-    grouped = raw.groupby(["persona_id", "question_id"])["rating"]
+    # Ignore invalid ratings (-1)
+    valid_raw = raw[raw["rating"] >= 0].copy()
+    if valid_raw.empty:
+        raise ValueError("No valid ratings (>=0) found in input CSV after filtering -1 values.")
+
+    grouped = valid_raw.groupby(["persona_id", "question_id"])["rating"]
 
     def _std(series: pd.Series) -> float:
         if len(series) <= 1:
@@ -54,13 +75,56 @@ def main() -> None:
 
     summary["uncertainty"] = summary["uncertainty"].fillna(0.0)
 
+    # Locate and load the corresponding self-run CSV to compute R0 per question
+    input_name = args.input_csv.name  # e.g., gpt-4o-mini.csv
+    stem = args.input_csv.stem        # e.g., gpt-4o-mini
+    self_csv = args.input_csv.with_name(f"{stem}_self.csv")
+
+    if not self_csv.exists():
+        raise FileNotFoundError(
+            f"Could not find matching self-run CSV: {self_csv}. Run run_mfq_self.py for this model first."
+        )
+
+    self_raw = pd.read_csv(self_csv)
+    self_expected = {"question_id", "run_index", "rating"}
+    self_missing = self_expected.difference(self_raw.columns)
+    if self_missing:
+        missing_str = ", ".join(sorted(self_missing))
+        raise ValueError(f"Self-run CSV missing columns: {missing_str}")
+
+    # Ignore invalid ratings (-1) for self-run as well
+    self_valid = self_raw[self_raw["rating"] >= 0].copy()
+    if self_valid.empty:
+        raise ValueError(
+            "No valid ratings (>=0) found in self-run CSV after filtering -1 values."
+        )
+
+    r0_per_question = (
+        self_valid.groupby("question_id")["rating"].mean().reset_index().rename(
+            columns={"question_id": "question", "rating": "R0"}
+        )
+    )
+
+    # Merge and compute relative_score = |average_score - R0|
+    summary = summary.merge(r0_per_question, on="question", how="left")
+    if summary["R0"].isna().any():
+        # Questions missing in self-run file would prevent relative score computation
+        missing_q = sorted(summary.loc[summary["R0"].isna(), "question"].unique().tolist())
+        raise ValueError(
+            f"Self-run file lacks ratings for questions: {missing_q}. Rerun self-run to cover all questions."
+        )
+
+    summary["relative_score"] = (summary["average_score"] - summary["R0"]).abs()
+    summary = summary.drop(columns=["R0"])  # keep only requested columns
+
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / args.input_csv.name
 
+    # Reorder columns as requested
+    summary = summary[["persona", "question", "average_score", "uncertainty", "relative_score"]]
     summary.to_csv(output_path, index=False)
 
 
 if __name__ == "__main__":
     main()
-

@@ -32,20 +32,96 @@ def get_llm_response(model_type: str, model_name: str, prompt: str, **kwargs) ->
         return _ollama_response(model_name, prompt, **kwargs)
     elif model_type == "local":
         return _local_response(model_name, prompt, **kwargs)
+    elif model_type == "xai":
+        return _xai_response(model_name, prompt, **kwargs)
     else:
         raise ValueError(f"Unsupported model type: {model_type}")
 
 def _openai_response(model_name: str, prompt: str, **kwargs) -> str:
-    """Get response from OpenAI API"""
+    """Get response from OpenAI API.
+
+    Supports both Chat Completions and the Responses API. If
+    `reasoning_effort` is provided (or `use_responses_api=True`), the
+    Responses API is used and the effort level is passed through.
+    """
     try:
         import openai
         client = openai.OpenAI(api_key=kwargs.get("api_key") or os.getenv("OPENAI_API_KEY"))
 
+        reasoning_effort = kwargs.get("reasoning_effort")
+        # Accept both cookbook-style "minimal" and older "low" synonyms
+        if reasoning_effort in {"minimal", "low", "medium", "high"}:
+            pass  # keep as provided
+        elif reasoning_effort is not None:
+            # Unknown effort hint; coerce to minimal to be safe
+            reasoning_effort = "minimal"
+
+        is_gpt5 = model_name.startswith("gpt-5") or "gpt-5" in model_name
+        use_responses_api = bool(kwargs.get("use_responses_api") or reasoning_effort or is_gpt5)
+
+        if use_responses_api:
+            # Use the newer Responses API to support reasoning parameters
+            req: dict = {
+                "model": model_name,
+                "input": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": prompt},
+                        ],
+                    }
+                ],
+                "max_output_tokens": kwargs.get("max_tokens", 5),
+            }
+            # GPT-5 does not use temperature; omit it in that case
+            if not is_gpt5 and "temperature" in kwargs:
+                req["temperature"] = kwargs.get("temperature", 0.1)
+            if reasoning_effort:
+                req["reasoning"] = {"effort": reasoning_effort}
+
+            try:
+                response = client.responses.create(**req)
+            except Exception as exc:
+                # For GPT-5, do not fall back to Chat Completions
+                if is_gpt5:
+                    print(f"OpenAI Responses API error for GPT-5: {exc}")
+                    return "ERROR"
+                # Otherwise, try Chat Completions as a fallback
+                response = None
+                print(f"OpenAI Responses API error: {exc}. Falling back to chat.completions.")
+
+            if response is not None:
+                # Prefer unified accessor when available
+                text = getattr(response, "output_text", None)
+                if isinstance(text, str) and text.strip():
+                    return text.strip()
+
+                # Fallback: concatenate any text items in the output
+                try:
+                    parts = []
+                    for item in getattr(response, "output", []) or []:
+                        content = item.get("content") if isinstance(item, dict) else None
+                        if isinstance(content, list):
+                            for c in content:
+                                if isinstance(c, dict) and c.get("type") == "output_text":
+                                    parts.append(str(c.get("text", "")))
+                    joined = "\n".join(p for p in parts if p)
+                    if joined.strip():
+                        return joined.strip()
+                except Exception:
+                    pass
+                # As a last resort, try .model_dump_json() if available
+                try:
+                    return response.model_dump_json()
+                except Exception:
+                    return ""
+
+        # Default: Chat Completions API
         response = client.chat.completions.create(
             model=model_name,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=kwargs.get("max_tokens", 5),
-            temperature=kwargs.get("temperature", 0.1)
+            max_tokens=kwargs.get("max_tokens", 2),
+            temperature=kwargs.get("temperature", 0.1),
         )
         return response.choices[0].message.content.strip()
 
@@ -178,6 +254,35 @@ def _local_response(model_name: str, prompt: str, **kwargs) -> str:
 
     return ""
 
+def _xai_response(model_name: str, prompt: str, **kwargs) -> str:
+    """Get response from xAI (Grok) via OpenAI-compatible API.
+
+    Uses the OpenAI SDK with base_url 'https://api.x.ai/v1'.
+    Expects XAI_API_KEY in the environment or passed as api_key.
+    """
+    try:
+        import openai
+        api_key = kwargs.get("api_key") or os.getenv("XAI_API_KEY")
+        if not api_key:
+            raise ValueError("Missing XAI_API_KEY for xAI Grok API")
+
+        base_url = kwargs.get("base_url") or os.getenv("XAI_BASE_URL") or "https://api.x.ai/v1"
+        client = openai.OpenAI(api_key=api_key, base_url=base_url)
+
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=kwargs.get("max_tokens", 5),
+            temperature=kwargs.get("temperature", 0.1),
+        )
+        return response.choices[0].message.content.strip()
+
+    except ImportError as exc:
+        raise ImportError("Please install openai: pip install openai") from exc
+    except Exception as e:
+        print(f"xAI API error: {e}")
+        return "ERROR"
+
 def check_model_availability(model_type: str, model_name: str, **kwargs) -> bool:
     """Check if a model is available and accessible"""
 
@@ -211,6 +316,10 @@ def check_model_availability(model_type: str, model_name: str, **kwargs) -> bool
         model_dir = kwargs.get("model_dir")
         model_path = _resolve_model_path(model_name, model_dir)
         return os.path.isfile(model_path)
+
+    elif model_type == "xai":
+        api_key = kwargs.get("api_key") or os.getenv("XAI_API_KEY")
+        return api_key is not None
 
     return False
 
