@@ -34,6 +34,8 @@ def get_llm_response(model_type: str, model_name: str, prompt: str, **kwargs) ->
         return _local_response(model_name, prompt, **kwargs)
     elif model_type == "xai":
         return _xai_response(model_name, prompt, **kwargs)
+    elif model_type == "google":
+        return _google_response(model_name, prompt, **kwargs)
     else:
         raise ValueError(f"Unsupported model type: {model_type}")
 
@@ -328,6 +330,51 @@ def _xai_response(model_name: str, prompt: str, **kwargs) -> str:
         print(f"xAI API error: {e}")
         return "ERROR"
 
+def _google_response(model_name: str, prompt: str, **kwargs) -> str:
+    """Get response from Google Gemini via google-generativeai SDK.
+
+    Expects GOOGLE_API_KEY in environment or passed as api_key.
+    """
+    try:
+        import google.generativeai as genai
+    except ImportError as exc:
+        raise ImportError("Please install google-generativeai: pip install google-generativeai") from exc
+
+    api_key = kwargs.get("api_key") or os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise ValueError("Missing GOOGLE_API_KEY for Google Gemini API")
+
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel(model_name)
+        gen_cfg = {}
+        if "temperature" in kwargs:
+            gen_cfg["temperature"] = kwargs.get("temperature")
+        if "max_tokens" in kwargs:
+            gen_cfg["max_output_tokens"] = kwargs.get("max_tokens")
+
+        response = model.generate_content(prompt, generation_config=gen_cfg or None)
+        text = getattr(response, "text", None)
+        if isinstance(text, str) and text.strip():
+            return text.strip()
+        # Fallback: try candidates
+        try:
+            for cand in getattr(response, "candidates", []) or []:
+                parts = []
+                content = getattr(cand, "content", None)
+                for part in getattr(content, "parts", []) or []:
+                    t = getattr(part, "text", None)
+                    if t:
+                        parts.append(str(t))
+                if parts:
+                    return "\n".join(parts).strip()
+        except Exception:
+            pass
+        return ""
+    except Exception as e:
+        print(f"Google Gemini API error: {e}")
+        return "ERROR"
+
 def check_model_availability(model_type: str, model_name: str, **kwargs) -> bool:
     """Check if a model is available and accessible"""
 
@@ -364,6 +411,10 @@ def check_model_availability(model_type: str, model_name: str, **kwargs) -> bool
 
     elif model_type == "xai":
         api_key = kwargs.get("api_key") or os.getenv("XAI_API_KEY")
+        return api_key is not None
+
+    elif model_type == "google":
+        api_key = kwargs.get("api_key") or os.getenv("GOOGLE_API_KEY")
         return api_key is not None
 
     return False

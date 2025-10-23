@@ -22,43 +22,41 @@ except ImportError:
 AVAILABLE_MODELS = [
     {
         "key": "1",
-        "label": "Mistral-7B Instruct v0.3 Q8_0 (local gguf)",
-        "model_type": "local",
-        "model_name": "Mistral-7B-Instruct-v0.3-Q8_0.gguf",
+        "label": "Claude Haiku 4.5 (Anthropic API)",
+        "model_type": "anthropic",
+        "model_name": "claude-haiku-4-5-20251001",
         "model_kwargs": {
-            "model_dir": "../models",
+             "max_tokens": 2,
         },
     },
     {
         "key": "2",
-        "label": "Meta Llama 3.1 8B Instruct (local gguf)",
-        "model_type": "local",
-        "model_name": "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+        "label": "Claude Sonnet 4.5 (Anthropic API)",
+        "model_type": "anthropic",
+        "model_name": "claude-sonnet-4-5-20250929",
         "model_kwargs": {
-            "model_dir": "../models",
+             "max_tokens": 2,
         },
     },
     {
         "key": "3",
-        "label": "Qwen2.5 7B Instruct (local gguf)",
-        "model_type": "local",
-        "model_name": "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
-        "model_kwargs": {
-            "model_dir": "../models",
-        },
+        "label": "Gemini 2.5 Flash Lite",
+        "model_type": "google",
+        "model_name": "gemini-2.5-flash-lite",
+        "model_kwargs": {},
     },
     {
         "key": "4",
-        "label": "Claude Sonnet 4.5 (Anthropic API)",
-        "model_type": "anthropic",
-        "model_name": "claude-sonnet-4-5-20250929",
+        "label": "Gemini 2.5 Flash (Google)",
+        "model_type": "google",
+        "model_name": "gemini-2.5-flash",
         "model_kwargs": {},
     },
     {
         "key": "5",
-        "label": "OpenAI GPT-5 Mini",
+        "label": "OpenAI GPT-4.1",
         "model_type": "openai",
-        "model_name": "gpt-5-mini",
+        "model_name": "gpt-4.1",
         "model_kwargs": {},
     },
     {
@@ -70,16 +68,16 @@ AVAILABLE_MODELS = [
     },
     {
         "key": "7",
-        "label": "OpenAI GPT-4o Mini",
+        "label": "OpenAI GPT-4.1 Nano",
         "model_type": "openai",
-        "model_name": "gpt-4o-mini",
+        "model_name": "gpt-4.1-nano",
         "model_kwargs": {},
     },
     {
         "key": "8",
-        "label": "Claude Haiku 4.5 (Anthropic API)",
-        "model_type": "anthropic",
-        "model_name": "claude-haiku-4-5-20251001",
+        "label": "OpenAI GPT-4o Mini",
+        "model_type": "openai",
+        "model_name": "gpt-4o-mini",
         "model_kwargs": {},
     },
     {
@@ -95,21 +93,35 @@ AVAILABLE_MODELS = [
     },
     {
         "key": "10",
-        "label": "xAI Grok-4-Fast",
-        "model_type": "xai",
-        "model_name": "grok-4-fast",
-        "model_kwargs": {},
-    },
-    {
-        "key": "11",
         "label": "OpenAI GPT-5 Mini (minimal reasoning)",
         "model_type": "openai",
         "model_name": "gpt-5-mini",
         "model_kwargs": {
             "reasoning_effort": "minimal",
             "use_responses_api": True,
-            "max_tokens": 2,
+            "max_tokens": 16,
         },
+    },
+    {
+        "key": "11",
+        "label": "xAI Grok-3 Mini",
+        "model_type": "xai",
+        "model_name": "grok-3-mini",
+        "model_kwargs": {},
+    },
+    {
+        "key": "12",
+        "label": "xAI Grok-4",
+        "model_type": "xai",
+        "model_name": "grok-4",
+        "model_kwargs": {},
+    },
+    {
+        "key": "13",
+        "label": "xAI Grok-4-Fast",
+        "model_type": "xai",
+        "model_name": "grok-4-fast",
+        "model_kwargs": {},
     },
 ]
 
@@ -118,15 +130,17 @@ AVAILABLE_MODELS = [
 # to reside under the ``data/`` directory; the standard ``_self`` suffix is
 # appended automatically for no-persona runs.
 CUSTOM_MODEL_FILENAMES: Dict[str, str] = {
-    "Mistral-7B-Instruct-v0.3-Q8_0.gguf": "mistral-7b-instruct.csv",
-    "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf": "llama-3.1-8b-instruct.csv",
-    "Qwen2.5-7B-Instruct-Q4_K_M.gguf": "qwen2.5-7b-instruct.csv",
-    "claude-4.5-sonnet": "claude-sonnet-4-5.csv",
+    "claude-sonnet-4-5-20250929": "claude-sonnet-4-5.csv",
     "claude-haiku-4-5-20251001": "claude-haiku-4-5.csv",
+    "gemini-2.5-flash-lite": "gemini-2.5-flash-lite.csv",
+    "gemini-2.5-flash": "gemini-2.5-flash.csv",
+    "gpt-4.1": "gpt-4.1.csv",
     "gpt-4o-mini": "gpt-4o-mini.csv",
     "gpt-4.1-mini": "gpt-4.1-mini.csv",
     "gpt-5-mini": "gpt-5-mini.csv",
     "gpt-5": "gpt-5.csv",
+    "grok-3-mini": "grok-3-mini.csv",
+    "grok-4": "grok-4.csv",
     "grok-4-fast": "grok-4-fast.csv",
 }
 
