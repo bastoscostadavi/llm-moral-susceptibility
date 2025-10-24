@@ -1,0 +1,224 @@
+\documentclass{article}
+
+\usepackage{mlsys2025}
+\usepackage{natbib}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{placeins}
+
+
+\title{Moral Susceptibility and Robustness\\ in Large Language Models}
+
+
+
+
+% For double‑blind submission, leave author info empty under the MLSys style.
+\author{Davi Bastos Costa, Felippe Alves \& Renato Vicente \\
+TELUS Digital Research Hub\\ 
+Center for Artificial Intelligence and Machine Learning\\
+Institute of Mathematics, Statistics and Computer Science\\
+University of São Paulo \\
+\texttt{\{davi.costa,falves,rvicente\}@usp.br} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We study how persona conditioning influences the moral judgments produced by large language models (LLMs). Using the 30-item Moral Foundations Questionnaire (MFQ-30), we elicit repeated ratings across diverse personas and models, and introduce a benchmark that quantifies two properties: (i) moral susceptibility (the extent to which MFQ subscale scores shift under different personas), and (ii) robustness (the stability of ratings under repeated sampling and persona variation). We describe a simple, reproducible experimental protocol and propose variance- and effect-size-based metrics alongside mixed-effects analyses to isolate persona-related variance components. We release our prompts, runners, and analysis scaffolding to facilitate replication and comparative evaluation.
+\end{abstract}
+
+\section{Introduction}
+Reliable benchmarks for the social capabilities of large language models (LLMs) are increasingly important as these systems are deployed in interactive, multi-agent settings where outcomes hinge on social intelligence and strategic reasoning. Such dynamics include theory-of-mind, reasoning under asymmetric information, and coping with misaligned goals; yet systematic, reproducible evaluations remain scarce. Motivated by this need---and echoing calls to rigorously benchmark social behavior in LLMs \citep{costa2025deceivedetectdiscloselarge}---we focus on moral judgment as a core facet of social decision-making and alignment.
+
+
+
+This paper introduces a benchmark based on the Moral Foundations Questionnaire (MFQ-30), a widely used instrument in moral psychology that measures five moral foundations: Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, and Purity/Sanctity \citep{graham2009liberals,haidt2007when}. We operationalize moral susceptibility as the variation in MFQ subscale scores across personas, and robustness as the stability of ratings across repeated trials and persona perturbations. Our contributions are:
+\begin{itemize}
+  \item A standardized, open protocol for eliciting MFQ-30 ratings from LLMs under persona conditioning, including prompts and a lightweight runner.
+  \item A set of susceptibility and robustness metrics grounded in variance components, effect sizes, and reliability analysis.
+  \item An empirical study across multiple models and personas, with guidance for statistical analysis and reporting.
+\end{itemize}
+
+Recent MFQ-based studies profile LLM value orientations and alignment. \citet{abdulhai-etal-2024-moral} adapt MFQ prompts to derive foundation scores, compare them to human surveys, and show that targeted prompts can shift profiles and affect downstream donations. \citet{nunes2024hypocrites} combine MFQ with MFV to reveal inconsistencies between abstract and concrete judgments. \citet{aksoy2024whose} use MFQ-2 across eight languages to expose cultural/linguistic variability, and \citet{bajpai2024insights} compare MFQ-20 and moral competence between humans and chatbots, finding LLMs emphasize individualist foundations and lag human competence. In parallel, MoralBench \citep{ji2025moralbenchmoralevaluationllms} offers a broad task suite; our MFQ persona framework complements it by isolating persona-driven shifts relative to a self baseline.
+
+\section{Moral Susceptibility and Robustness Benchmark}
+We define a benchmark to evaluate two complementary dimensions of persona sensitivity in LLMs.
+
+\paragraph{Moral susceptibility} The degree to which MFQ subscale scores shift as persona descriptions change. High susceptibility indicates strong persona-driven modulation of moral judgments; low susceptibility indicates persona-invariant responses.
+
+
+
+\paragraph{Robustness} The stability of MFQ ratings under repeated sampling and small persona perturbations (e.g., paraphrases). Operationally, we report a simple index defined as the inverse of the average per-item standard deviation across repetitions (higher is more stable).
+
+\subsection{MFQ}
+The MFQ-30 comprises 30 items split into two sections: 15 relevance judgments (how relevant specific considerations are when deciding right from wrong) and 15 agreement statements (level of agreement with moral propositions) \citep{graham2011mfq}. Items map to five moral foundations (Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, Purity/Sanctity). Following common practice, filler items (e.g., canonical item indices 6 and 22 in some MFQ-30 versions) are excluded from subscale scoring. Subscale scores are computed by averaging the items associated with each foundation within each section and then combining sections (e.g., mean of relevance and agreement for that foundation), or by an alternative pre-registered scheme.
+
+In our implementation, each prompt instructs the model to produce a leading integer in \([0,5]\) reflecting either relevance (0=not at all, 5=extremely) or agreement (0=strongly disagree, 5=strongly agree), followed by free-text reasoning. Ratings are parsed by extracting the first digit \([0,5]\) from the response. Figure~\ref{fig:mfq-profiles} illustrates the resulting MFQ relevance profile across models using the self (no-persona) baseline.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{../results/moral_foundations_relevance_profiles.png}
+  \caption{Moral foundation relevance profiles (self/no-persona baseline). Points show mean relevance per foundation; error bars denote standard errors across items within each foundation.}
+  \label{fig:mfq-profiles}
+\end{figure}
+
+\subsection{Experimental Methodology}
+We use a simple, reproducible runner that iterates through MFQ-30 items for a list of personas and repeats each item multiple times to characterize response variability. The runner supports local GGUF models as well as API-hosted models through a uniform interface. Concretely:
+\begin{itemize}
+  \item \textbf{Personas:} A JSON file provides persona descriptions (plain text). By default, each persona is used as-is and identified by its index.
+  \item \textbf{Prompting:} For each persona and item, the model receives a roleplaying instruction ("You are roleplaying as the following persona: \ldots") plus the MFQ item prompt. The prompt requests a leading integer rating in \([0,5]\) and then reasoning.
+  \item \textbf{Repetitions:} Each persona--question pair is queried \(n\) times (default \(n=10\)) to estimate within-persona variability and enable reliability analysis.
+  \item \textbf{Decoding:} We use low temperature (default 0.1) and a small \texttt{max\_tokens} (default 5) to elicit short, rating-first outputs. Ratings are parsed with a conservative regex; failures are recorded as \(-1\).
+  \item \textbf{Logging:} Each response is streamed to CSV with fields: persona\_id, question\_id, run\_index, rating, truncated response text, and timestamp.
+  \item \textbf{Models:} We include local chat-tuned GGUF models (e.g., Mistral, Llama, Qwen) and hosted models (e.g., Anthropic, OpenAI) when API keys are configured.
+\end{itemize}
+
+\subsection{Statistical Analysis}
+
+This section formalizes the quantities we compute from the MFQ runs and how we summarize them into moral susceptibility and robustness metrics with uncertainty.
+
+Let \(\mathcal{P}\) be the set of personas, \(\mathcal{Q}\) the set of 30 scored MFQ items, and \(R\) the number of repeated queries per persona--item pair. For persona \(p\), item \(q\), and repetition \(i=1,\ldots,R\), let \(y_{pqi}\in\{0,\ldots,5\}\) be the parsed rating.
+
+For each persona--item pair we compute the sample mean and the standard deviation across repetitions
+\begin{align}
+  \bar{y}_{pq} &= \frac{1}{R} \sum_{i=1}^{R} y_{pqi}, \label{eq:persona-question-mean}\\
+  u_{pq} &= \sqrt{\frac{1}{R-1} \sum_{i=1}^{R} \big(y_{pqi} - \bar{y}_{pq}\big)^2}, \label{eq:persona-question-se}
+\end{align}
+so that \(u_{pq}\) is the standard deviation (SD) across repetitions.
+
+\paragraph{Susceptibility (between-persona sensitivity)} To stabilize estimates across many personas, we partition \(\mathcal{P}\) into \(G\) disjoint groups \(\mathcal{P}_1,\ldots,\mathcal{P}_G\) of equal size (default 10 personas per group). For each item \(q\) and group \(g\), we compute the sample standard deviation of persona means
+\begin{align}
+  & s_{qg} = \sqrt{\frac{1}{|\mathcal{P}_g|-1} \sum_{p \in \mathcal{P}_g} \Big(\bar{y}_{pq} - \bar{y}_{gq}\Big)^2},\\
+  & \bar{y}_{gq} = \frac{1}{|\mathcal{P}_g|} \sum_{p \in \mathcal{P}_g} \bar{y}_{pq},
+  \label{eq:question-dispersion}
+\end{align}
+and average across items to obtain a group-level susceptibility sample
+\begin{equation}
+  S_g = \frac{1}{|\mathcal{Q}|} \sum_{q \in \mathcal{Q}} s_{qg}.\label{eq:group-susceptibility}
+\end{equation}
+The reported susceptibility is the mean over groups
+\begin{equation}
+  S = \frac{1}{G} \sum_{g=1}^{G} S_g,\label{eq:overall-susceptibility}
+\end{equation}
+with its standard error estimated from the between-group variability
+\begin{equation}
+  \sigma_S = \frac{\sqrt{\frac{1}{G-1} \sum_{g=1}^{G} (S_g - S)^2}}{\sqrt{G}}.\label{eq:susceptibility-se}
+\end{equation}
+Foundation-specific susceptibilities reuse \eqref{eq:question-dispersion}--\eqref{eq:susceptibility-se} after restricting \(\mathcal{Q}\) to the item subset \(\mathcal{Q}_f\) for foundation \(f\).
+
+\paragraph{Robustness (trial-level stability)} We summarize within-pair variability by averaging the SDs in \eqref{eq:persona-question-se} over personas and items
+\begin{equation}
+  \bar{u} = \frac{1}{|\mathcal{P}|\,|\mathcal{Q}|} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} u_{pq}.\label{eq:mean-uncertainty}
+\end{equation}
+Our robustness index is the reciprocal
+\begin{equation}
+  R = \frac{1}{\bar{u}}.\label{eq:robustness}
+\end{equation}
+Let the (sample) standard deviation of the \(u_{pq}\) values be
+\begin{equation}
+  s_u = \sqrt{\frac{1}{|\mathcal{P}|\,|\mathcal{Q}| - 1} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} \Big(u_{pq} - \bar{u}\Big)^2}.\label{eq:uncertainty-sd}
+\end{equation}
+Then the SE of \(\bar{u}\) is \(\sigma_{\bar{u}} = s_u / \sqrt{|\mathcal{P}|\,|\mathcal{Q}|}\). Applying the delta method to \eqref{eq:robustness} yields the propagated SE for robustness
+\begin{equation}
+  \sigma_R = \frac{\sigma_{\bar{u}}}{\bar{u}^2}.\label{eq:robustness-se}
+\end{equation}
+Foundation-level robustness repeats \eqref{eq:mean-uncertainty}--\eqref{eq:robustness-se} with sums over \(\mathcal{Q}_f\).
+
+\paragraph{Cross-model normalization} The z-score panels in Figures~\ref{fig:susceptibility} and~\ref{fig:robustness} highlight relative performance. For each foundation \(f\) and metric \(M \in \{S,R\}\), let \(V_{mf}^{(M)}\) be model \(m\)'s estimate with SE \(\sigma_{V, mf}^{(M)}\). Denoting the across-model mean and standard deviation by \(\mu_f^{(M)}\) and \(\sigma_f^{(M)}\), we plot
+\begin{equation}
+  Z_{mf}^{(M)} = \frac{V_{mf}^{(M)} - \mu_f^{(M)}}{\sigma_f^{(M)}},\qquad
+  \sigma_{Z, mf}^{(M)} = \frac{\sigma_{V, mf}^{(M)}}{\sigma_f^{(M)}}.\label{eq:zscore}
+\end{equation}
+All figure error bars correspond to these propagated standard errors.
+
+\section{Results}
+This section reports susceptibility and robustness for each model and foundation. We recommend the following structure; placeholders are provided for future insertion of tables and figures.
+
+\paragraph{Descriptive statistics}
+Summarize the number of personas, total responses, parse rate, and per-foundation means and standard deviations.
+
+\paragraph{Susceptibility}
+Report between-persona variance and normalized susceptibility per foundation and model. Include pairwise effect sizes for selected persona contrasts.
+
+\paragraph{Robustness}
+Report ICCs across repetitions by persona and foundation. Include stability under persona paraphrases, if evaluated.
+
+
+% Susceptibility and Robustness Figures
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_zscore.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_harm_care_zscore.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_fairness_reciprocity_zscore.png}\\[0.75em]
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_in_group_loyalty_zscore.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_authority_respect_zscore.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_purity_sanctity_zscore.png}
+  \caption{Six-panel summary of moral susceptibility z-scores computed as $(V - \langle V \rangle)/\mathrm{SD}(V)$ across models. Top row: overall benchmark, Harm/Care, and Fairness/Reciprocity. Bottom row: In-group/Loyalty, Authority/Respect, and Purity/Sanctity. Positive values indicate models above the cross-model average susceptibility, negative values indicate below-average susceptibility.}
+  \label{fig:susceptibility}
+\end{figure*}
+
+
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.3\linewidth]{../results/robustness_zscore.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/robustness_harm_care_zscore.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/robustness_fairness_reciprocity_zscore.png}\\[0.75em]
+  \includegraphics[width=0.3\linewidth]{../results/robustness_in_group_loyalty_zscore.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/robustness_authority_respect_zscore.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/robustness_purity_sanctity_zscore.png}
+  \caption{Six-panel summary of robustness z-scores computed as $(V - \langle V \rangle)/\mathrm{SD}(V)$ across models. Top row: overall benchmark, Harm/Care, and Fairness/Reciprocity. Bottom row: In-group/Loyalty, Authority/Respect, and Purity/Sanctity. Positive values indicate models with above-average robustness, negative values indicate below-average robustness.}
+  \label{fig:robustness}
+\end{figure*}
+
+% Summary table tying figures to numerical metrics (auto-generated)
+\input{table_summary_by_model}
+
+\input{table_susceptibility_by_foundation}
+
+\input{table_robustness_by_foundation}
+
+\paragraph{Qualitative analysis}
+Provide representative excerpts of reasoning (with personas anonymized) that illustrate high-susceptibility shifts versus robustly stable judgments.
+
+\section{Conclusion}
+We propose a principled benchmark for quantifying persona-driven shifts in LLM moral judgments using the MFQ-30. Our framework separates susceptibility (persona sensitivity) and robustness (rating stability), supports multiple model classes, and relies on transparent, easily repeatable procedures. Future work includes expanding persona taxonomies, stress-testing prompt formats, modeling reasoning content jointly with ratings, and correlating susceptibility with downstream alignment and safety outcomes.
+
+\appendix
+
+\section{Additional Figures}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_harm_care.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_fairness_reciprocity.png}\\[0.75em]
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_in_group_loyalty.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_authority_respect.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/susceptibility_purity_sanctity.png}
+  \caption{Original susceptibility values with propagated standard errors. Higher values indicate larger persona-driven shifts in MFQ subscale scores.}
+  \label{fig:susceptibility-raw}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.3\linewidth]{../results/robustness.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/robustness_harm_care.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/robustness_fairness_reciprocity.png}\\[0.75em]
+  \includegraphics[width=0.3\linewidth]{../results/robustness_in_group_loyalty.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/robustness_authority_respect.png}\hfill
+  \includegraphics[width=0.3\linewidth]{../results/robustness_purity_sanctity.png}
+  \caption{Original robustness values (inverse of average per-item standard deviation) with propagated standard errors (delta method). Higher values indicate greater rating stability.}
+  \label{fig:robustness-raw}
+\end{figure*}
+
+% Use the official MLSys 2025 bibliography style when available
+\bibliographystyle{mlsys2025}
+\bibliography{references}
+
+\end{document}

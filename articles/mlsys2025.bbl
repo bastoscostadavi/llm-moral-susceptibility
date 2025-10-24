@@ -1,0 +1,57 @@
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Abdulhai et~al.(2024)Abdulhai, Serapio-Garc{\'\i}a, Crepy, Valter, Canny, and Jaques]{abdulhai-etal-2024-moral}
+Abdulhai, M., Serapio-Garc{\'\i}a, G., Crepy, C., Valter, D., Canny, J., and Jaques, N.
+\newblock Moral foundations of large language models.
+\newblock In Al{-}Onaizan, Y., Bansal, M., and Chen, Y. (eds.), \emph{Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing}, pp.\  17737--17752, Miami, Florida, USA, November 2024. Association for Computational Linguistics.
+\newblock \doi{10.18653/v1/2024.emnlp-main.982}.
+\newblock URL \url{https://aclanthology.org/2024.emnlp-main.982/}.
+
+\bibitem[Aksoy(2024)]{aksoy2024whose}
+Aksoy, M.
+\newblock Whose morality do they speak? unraveling cultural bias in multilingual language models, 2024.
+
+\bibitem[Bajpai et~al.(2024)Bajpai, Sameer, and Fatima]{bajpai2024insights}
+Bajpai, S., Sameer, A., and Fatima, R.
+\newblock Insights into moral reasoning capabilities of ai: A comparative study between humans and large language models.
+\newblock Research Square preprint, 2024.
+\newblock URL \url{https://doi.org/10.21203/rs.3.rs-5336157/v1}.
+
+\bibitem[Costa \& Vicente(2025)Costa and Vicente]{costa2025deceivedetectdiscloselarge}
+Costa, D.~B. and Vicente, R.
+\newblock Deceive, detect, and disclose: Large language models play mini-mafia, 2025.
+\newblock URL \url{https://arxiv.org/abs/2509.23023}.
+
+\bibitem[Graham et~al.(2009)Graham, Haidt, and Nosek]{graham2009liberals}
+Graham, J., Haidt, J., and Nosek, B.~A.
+\newblock Liberals and conservatives rely on different sets of moral foundations.
+\newblock \emph{Journal of Personality and Social Psychology}, 96\penalty0 (5):\penalty0 1029--1046, 2009.
+\newblock \doi{10.1037/a0015141}.
+
+\bibitem[Graham et~al.(2011)Graham, Nosek, Haidt, Iyer, Koleva, and Ditto]{graham2011mfq}
+Graham, J., Nosek, B.~A., Haidt, J., Iyer, R., Koleva, S., and Ditto, P.~H.
+\newblock Moral foundations questionnaire.
+\newblock PsycTESTS Dataset, 2011.
+
+\bibitem[Haidt \& Graham(2007)Haidt and Graham]{haidt2007when}
+Haidt, J. and Graham, J.
+\newblock When morality opposes justice: Conservatives have moral intuitions that liberals may not recognize.
+\newblock \emph{Social Justice Research}, 20\penalty0 (1):\penalty0 98--116, 2007.
+\newblock \doi{10.1007/s11211-007-0034-z}.
+
+\bibitem[Ji et~al.(2025)Ji, Chen, Jin, Xu, Hua, and Zhang]{ji2025moralbenchmoralevaluationllms}
+Ji, J., Chen, Y., Jin, M., Xu, W., Hua, W., and Zhang, Y.
+\newblock Moralbench: Moral evaluation of llms, 2025.
+\newblock URL \url{https://arxiv.org/abs/2406.04428}.
+
+\bibitem[Nunes et~al.(2024)Nunes, Almeida, de~Araujo, and Barbosa]{nunes2024hypocrites}
+Nunes, J.~L., Almeida, G. F. C.~F., de~Araujo, M., and Barbosa, S. D.~J.
+\newblock Are large language models moral hypocrites? a study based on moral foundations, 2024.
+\newblock Final version appears in the AAAI/ACM Conference on AI, Ethics, and Society (AIES 2024).
+
+\end{thebibliography}
