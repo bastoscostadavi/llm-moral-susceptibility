@@ -95,32 +95,30 @@ def main() -> None:
         "model",
         "susceptibility",
         "s_uncertainty",
-        "relative_susceptibility",
-        "rs_uncertainty",
         "robustness",
         "r_uncertainty",
     ]
 
     def compute_for_summary(summary_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         summary = pd.read_csv(summary_path)
-        expected_cols = {"persona", "question", "average_score", "uncertainty", "relative_score"}
-        missing = expected_cols.difference(summary.columns)
-        if missing:
+        header = set(summary.columns)
+        needed_base = {"persona", "question", "average_score", "standard_deviation"}
+        if not needed_base.issubset(header):
+            missing = needed_base.difference(header)
             raise ValueError(f"Summary CSV missing columns: {', '.join(sorted(missing))}")
+        sd_col = "standard_deviation"
 
         summary = summary.copy()
         summary["persona"] = summary["persona"].astype(int)
         summary["question"] = summary["question"].astype(int)
 
         # Overall robustness
-        uncertainties = summary["uncertainty"].to_numpy()
-        mean_unc = float(np.mean(uncertainties))
+        stds = summary[sd_col].to_numpy()
+        mean_unc = float(np.mean(stds))
         eps = 1e-6
         robustness = 1.0 / max(mean_unc, eps)
         se_mean_unc = (
-            float(np.std(uncertainties, ddof=1)) / np.sqrt(len(uncertainties))
-            if len(uncertainties) > 1
-            else 0.0
+            float(np.std(stds, ddof=1)) / np.sqrt(len(stds)) if len(stds) > 1 else 0.0
         )
         robustness_uncertainty = (se_mean_unc / (max(mean_unc, eps) ** 2)) if se_mean_unc > 0 else 0.0
 
@@ -134,11 +132,6 @@ def main() -> None:
         if pivot.isnull().any().any():
             missing = int(pivot.isnull().sum().sum())
             raise ValueError(f"Summary contains {missing} missing average_score values.")
-
-        relative_pivot = filtered.pivot(index="persona", columns="question", values="relative_score").sort_index()
-        if relative_pivot.isnull().any().any():
-            missing = int(relative_pivot.isnull().sum().sum())
-            raise ValueError(f"Summary contains {missing} missing relative_score values.")
 
         persona_ids = list(pivot.index)
         if not persona_ids:
@@ -158,27 +151,15 @@ def main() -> None:
             )
 
         susceptibility_samples: List[float] = []
-        relative_samples: List[float] = []
         for group in groups:
             block = pivot.loc[group]
             per_question_std = block.std(axis=0, ddof=1)
             susceptibility_samples.append(float(per_question_std.mean()))
 
-            rel_block = relative_pivot.loc[group]
-            rel_per_question_std = rel_block.std(axis=0, ddof=1)
-            relative_samples.append(float(rel_per_question_std.mean()))
-
         susceptibility = float(np.mean(susceptibility_samples))
         susceptibility_uncertainty = (
             float(np.std(susceptibility_samples, ddof=1)) / np.sqrt(len(susceptibility_samples))
             if len(susceptibility_samples) > 1
-            else 0.0
-        )
-
-        relative_susceptibility = float(np.mean(relative_samples))
-        relative_uncertainty = (
-            float(np.std(relative_samples, ddof=1)) / np.sqrt(len(relative_samples))
-            if len(relative_samples) > 1
             else 0.0
         )
 
@@ -188,8 +169,6 @@ def main() -> None:
                 "model": [model_name],
                 "susceptibility": [susceptibility],
                 "s_uncertainty": [susceptibility_uncertainty],
-                "relative_susceptibility": [relative_susceptibility],
-                "rs_uncertainty": [relative_uncertainty],
                 "robustness": [robustness],
                 "r_uncertainty": [robustness_uncertainty],
             }
@@ -205,7 +184,7 @@ def main() -> None:
             if filt_f.empty:
                 continue
 
-            unc_f = filt_f["uncertainty"].to_numpy()
+            unc_f = filt_f[sd_col].to_numpy()
             mean_unc_f = float(np.mean(unc_f)) if len(unc_f) else 0.0
             robustness_f = 1.0 / max(mean_unc_f, eps)
             se_mean_unc_f = (
@@ -219,24 +198,12 @@ def main() -> None:
                 raise ValueError(
                     f"Summary contains {missing} missing average_score values for foundation {fnd}."
                 )
-            rel_piv_f = filt_f.pivot(index="persona", columns="question", values="relative_score").sort_index()
-            if rel_piv_f.isnull().any().any():
-                missing = int(rel_piv_f.isnull().sum().sum())
-                raise ValueError(
-                    f"Summary contains {missing} missing relative_score values for foundation {fnd}."
-                )
-
             groups_f = groups  # same persona grouping
             s_samples_f: List[float] = []
-            rs_samples_f: List[float] = []
             for group in groups_f:
                 blk = piv_f.loc[group]
                 per_q_std = blk.std(axis=0, ddof=1)
                 s_samples_f.append(float(per_q_std.mean()))
-
-                rblk = rel_piv_f.loc[group]
-                r_per_q_std = rblk.std(axis=0, ddof=1)
-                rs_samples_f.append(float(r_per_q_std.mean()))
 
             sus_f = float(np.mean(s_samples_f))
             s_unc_f = (
@@ -244,21 +211,12 @@ def main() -> None:
                 if len(s_samples_f) > 1
                 else 0.0
             )
-            rs_f = float(np.mean(rs_samples_f))
-            rs_unc_f = (
-                float(np.std(rs_samples_f, ddof=1)) / np.sqrt(len(rs_samples_f))
-                if len(rs_samples_f) > 1
-                else 0.0
-            )
-
             rows.append(
                 {
                     "model": model_name,
                     "foundation": fnd,
                     "susceptibility": sus_f,
                     "s_uncertainty": s_unc_f,
-                    "relative_susceptibility": rs_f,
-                    "rs_uncertainty": rs_unc_f,
                     "robustness": robustness_f,
                     "r_uncertainty": r_uncertainty_f,
                 }
@@ -284,8 +242,9 @@ def main() -> None:
             head = pd.read_csv(p, nrows=1)
         except Exception:
             continue
-        needed = {"persona", "question", "average_score", "uncertainty", "relative_score"}
-        if needed.issubset(set(head.columns)):
+        head_cols = set(head.columns)
+        needed = {"persona", "question", "average_score", "standard_deviation"}
+        if needed.issubset(head_cols):
             valid_candidates.append(p)
 
     if not valid_candidates:
@@ -334,8 +293,6 @@ def main() -> None:
             "foundation",
             "susceptibility",
             "s_uncertainty",
-            "relative_susceptibility",
-            "rs_uncertainty",
             "robustness",
             "r_uncertainty",
         ]

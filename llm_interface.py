@@ -4,7 +4,9 @@ LLM utilities for different model interfaces
 """
 
 import os
+import random
 import time
+import uuid
 from typing import Optional, Dict, Any
 
 DEFAULT_MODELS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
@@ -48,129 +50,195 @@ def _openai_response(model_name: str, prompt: str, **kwargs) -> str:
     """
     try:
         import openai
-        client = openai.OpenAI(api_key=kwargs.get("api_key") or os.getenv("OPENAI_API_KEY"))
 
+        api_key = kwargs.get("api_key") or os.getenv("OPENAI_API_KEY")
+        client = openai.OpenAI(api_key=api_key)
+
+        # Normalise advanced knobs so we only send recognised fields.
         reasoning_effort = kwargs.get("reasoning_effort")
-        # Accept both cookbook-style "minimal" and older "low" synonyms
         if reasoning_effort in {"minimal", "low", "medium", "high"}:
-            pass  # keep as provided
+            pass
         elif reasoning_effort is not None:
-            # Unknown effort hint; coerce to minimal to be safe
             reasoning_effort = "minimal"
+
+        temperature = kwargs.get("temperature", 0.1)
+        top_p = kwargs.get("top_p")
+        presence_penalty = kwargs.get("presence_penalty")
+        frequency_penalty = kwargs.get("frequency_penalty")
+        max_tokens = kwargs.get("max_tokens", 8)
+        system_prompt = kwargs.get("system_prompt") or kwargs.get("system")
+        instructions = kwargs.get("instructions")
 
         is_gpt5 = model_name.startswith("gpt-5") or "gpt-5" in model_name
         use_responses_api = bool(kwargs.get("use_responses_api") or reasoning_effort or is_gpt5)
 
-        if use_responses_api:
-            # Use the newer Responses API to support reasoning parameters
-            max_out = kwargs.get("max_tokens", 8)
-            if is_gpt5:
-                # For GPT-5, prefer the simplest input form: a plain string
-                req: dict = {
-                    "model": model_name,
-                    "input": prompt,
-                    "max_output_tokens": max_out,
+        def _build_responses_input(user_prompt: str) -> list:
+            messages = []
+            if system_prompt:
+                messages.append(
+                    {
+                        "role": "system",
+                        "content": [
+                            {"type": "input_text", "text": system_prompt},
+                        ],
+                    }
+                )
+            messages.append(
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": user_prompt},
+                    ],
                 }
+            )
+            return messages
+
+        def _extract_response_text(response: Any) -> str:
+            text = getattr(response, "output_text", None)
+            if isinstance(text, str) and text.strip():
+                return text.strip()
+
+            try:
+                parts = []
+                for item in getattr(response, "output", []) or []:
+                    content = item.get("content") if isinstance(item, dict) else None
+                    if isinstance(content, list):
+                        for piece in content:
+                            if isinstance(piece, dict) and piece.get("type") in {"output_text", "message"}:
+                                candidate = piece.get("text") or piece.get("content")
+                                if isinstance(candidate, str):
+                                    parts.append(candidate)
+            except Exception:
+                parts = []
+
+            if parts:
+                combined = "\n".join(part for part in parts if part)
+                if combined.strip():
+                    return combined.strip()
+
+            try:
+                return response.model_dump_json()
+            except Exception:
+                return ""
+
+        if use_responses_api:
+            if is_gpt5:
+                # GPT-5 prefers the simplified Responses payload without extra tuning knobs.
+                messages: list = []
+                if system_prompt:
+                    messages.append({"role": "system", "content": system_prompt})
+                messages.append({"role": "user", "content": prompt})
+
+                req: Dict[str, Any] = {
+                    "model": model_name,
+                    "input": messages,
+                }
+
+                if max_tokens is not None:
+                    req["max_output_tokens"] = max_tokens
+                if instructions:
+                    req["instructions"] = instructions
                 if reasoning_effort:
                     req["reasoning"] = {"effort": reasoning_effort}
-
-                response = None
-                last_exc: Optional[Exception] = None
-                for attempt in range(3):
-                    try:
-                        response = client.responses.create(**req)
-                        break
-                    except Exception as exc:
-                        last_exc = exc
-                        # No Chat Completions fallback for GPT-5; retry with backoff
-                        print(
-                            f"OpenAI Responses API error for GPT-5 (attempt {attempt+1}/3): {exc}"
-                        )
-                        time.sleep(1 * (2 ** attempt))
-
-                if response is None:
-                    # Retry once without reasoning effort and with explicit modalities if available
-                    fallback_req = {
-                        "model": model_name,
-                        "input": prompt,
-                        "max_output_tokens": max_out,
-                        "modalities": ["text"],
-                    }
-                    try:
-                        response = client.responses.create(**fallback_req)
-                    except Exception as exc:
-                        print(
-                            "OpenAI Responses API fallback for GPT-5 failed:"
-                            f" {exc}. Giving up."
-                        )
-                        if last_exc is not None:
-                            print(f"Last GPT-5 error before fallback: {last_exc}")
-                        return "ERROR"
-
-                if response is None:
-                    # Give up after retries
-                    return "ERROR"
 
             else:
-                # Non-GPT-5: use structured content with role and input_text
-                req: dict = {
+                req = {
                     "model": model_name,
-                    "input": [
-                        {
-                            "role": "user",
-                            "content": [
-                                {"type": "input_text", "text": prompt},
-                            ],
-                        }
-                    ],
-                    "max_output_tokens": max_out,
+                    "input": _build_responses_input(prompt),
                 }
-                if "temperature" in kwargs:
-                    req["temperature"] = kwargs.get("temperature", 0.1)
+                if max_tokens is not None:
+                    req["max_output_tokens"] = max_tokens
+                if temperature is not None:
+                    req["temperature"] = temperature
+                if top_p is not None:
+                    req["top_p"] = top_p
+                if presence_penalty is not None:
+                    req["presence_penalty"] = presence_penalty
+                if frequency_penalty is not None:
+                    req["frequency_penalty"] = frequency_penalty
+                if instructions:
+                    req["instructions"] = instructions
                 if reasoning_effort:
                     req["reasoning"] = {"effort": reasoning_effort}
 
+            response = None
+            last_exc: Optional[Exception] = None
+
+            max_attempts = kwargs.get("max_retries") or (5 if is_gpt5 else 1)
+            backoff = kwargs.get("initial_backoff") or 1.0
+            idem_key = kwargs.get("idempotency_key") or str(uuid.uuid4())
+
+            extra_headers = dict(kwargs.get("extra_headers", {}) or {})
+            if is_gpt5 and "Idempotency-Key" not in extra_headers:
+                extra_headers["Idempotency-Key"] = idem_key
+
+            for attempt in range(max_attempts):
+                create_kwargs = dict(req)
+                if extra_headers:
+                    create_kwargs["extra_headers"] = extra_headers
+
                 try:
-                    response = client.responses.create(**req)
+                    response = client.responses.create(**create_kwargs)
+                    break
                 except Exception as exc:
-                    # Otherwise, try Chat Completions as a fallback
-                    response = None
-                    print(f"OpenAI Responses API error: {exc}. Falling back to chat.completions.")
+                    last_exc = exc
+                    status = getattr(exc, "status_code", None)
+                    should_retry = is_gpt5 and status in {429, 500, 502, 503, 504}
+                    if not should_retry or attempt + 1 >= max_attempts:
+                        break
+                    print(
+                        "OpenAI Responses API error for GPT-5 "
+                        f"(attempt {attempt + 1}/{max_attempts}): {exc}"
+                    )
+                    sleep_time = backoff + random.uniform(0, 0.25)
+                    time.sleep(sleep_time)
+                    backoff *= 2
 
             if response is not None:
-                # Prefer unified accessor when available
-                text = getattr(response, "output_text", None)
-                if isinstance(text, str) and text.strip():
-                    return text.strip()
+                return _extract_response_text(response)
 
-                # Fallback: concatenate any text items in the output
-                try:
-                    parts = []
-                    for item in getattr(response, "output", []) or []:
-                        content = item.get("content") if isinstance(item, dict) else None
-                        if isinstance(content, list):
-                            for c in content:
-                                if isinstance(c, dict) and c.get("type") == "output_text":
-                                    parts.append(str(c.get("text", "")))
-                    joined = "\n".join(p for p in parts if p)
-                    if joined.strip():
-                        return joined.strip()
-                except Exception:
-                    pass
-                # As a last resort, try .model_dump_json() if available
-                try:
-                    return response.model_dump_json()
-                except Exception:
-                    return ""
+            if last_exc is not None:
+                print(f"OpenAI Responses API error: {last_exc}")
 
-        # Default: Chat Completions API
-        response = client.chat.completions.create(
-            model=model_name,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=kwargs.get("max_tokens", 2),
-            temperature=kwargs.get("temperature", 0.1),
-        )
-        return response.choices[0].message.content.strip()
+            if is_gpt5:
+                return "ERROR"
+
+        # Default: Chat Completions API fallback (older models and general safety net)
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+
+        chat_base_kwargs = {
+            "model": model_name,
+            "messages": messages,
+            "temperature": temperature,
+            "top_p": top_p,
+            "presence_penalty": presence_penalty,
+            "frequency_penalty": frequency_penalty,
+        }
+
+        chat_max_tokens = kwargs.get("chat_max_tokens")
+        if chat_max_tokens is None:
+            chat_max_tokens = max_tokens
+
+        last_chat_error: Optional[Exception] = None
+        for token_param in ("max_completion_tokens", "max_tokens"):
+            chat_kwargs = dict(chat_base_kwargs)
+            if chat_max_tokens is not None:
+                chat_kwargs[token_param] = chat_max_tokens
+
+            try:
+                response = client.chat.completions.create(**chat_kwargs)
+                return response.choices[0].message.content.strip()
+            except Exception as exc:
+                last_chat_error = exc
+                details = str(exc)
+                if f"Unsupported parameter: '{token_param}'" not in details:
+                    raise
+
+        if last_chat_error is not None:
+            raise last_chat_error
 
     except ImportError:
         raise ImportError("Please install openai: pip install openai")

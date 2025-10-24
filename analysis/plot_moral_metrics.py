@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Generate bar plots for susceptibility, relative susceptibility, and robustness."""
+"""Generate bar plots for susceptibility, robustness, and z-score variants."""
 
 from __future__ import annotations
 
 import argparse
 from pathlib import Path
 
-import math
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import math
+import numpy as np
 
 
 def parse_args() -> argparse.Namespace:
@@ -43,6 +43,35 @@ def ensure_columns(frame: pd.DataFrame, required: set[str]) -> None:
     if missing:
         missing_str = ", ".join(sorted(missing))
         raise ValueError(f"Metrics CSV missing columns: {missing_str}")
+
+
+def _add_zscore_columns(
+    frame: pd.DataFrame,
+    value_col: str,
+    error_col: str,
+    z_value_col: str,
+    z_error_col: str,
+) -> None:
+    values = frame[value_col].astype(float)
+    mean = float(values.mean())
+    std = float(values.std(ddof=0))
+
+    if math.isclose(std, 0.0):
+        frame[z_value_col] = 0.0
+        if error_col in frame.columns:
+            errs = frame[error_col].astype(float)
+            frame[z_error_col] = 0.0 * errs
+        else:
+            frame[z_error_col] = np.nan
+        return
+
+    frame[z_value_col] = (values - mean) / std
+
+    if error_col in frame.columns:
+        errs = frame[error_col].astype(float)
+        frame[z_error_col] = np.abs(errs / std)
+    else:
+        frame[z_error_col] = np.nan
 
 
 def _format_value_with_uncertainty(value: float, err: float) -> tuple[str, int, float, float]:
@@ -81,6 +110,7 @@ def plot_metric(
     ylabel: str,
     title: str,
     output_path: Path,
+    zero_line: bool = False,
 ) -> None:
     fig, ax = plt.subplots(figsize=(6, 4))
     models = frame["model"]
@@ -91,23 +121,51 @@ def plot_metric(
 
     # Set ylim to accommodate error bars and labels
     top = 0.0
+    bottom = 0.0
     for v, e in zip(values, errors):
         e = 0.0 if (isinstance(e, float) and math.isnan(e)) else e
         top = max(top, v + max(e, 0.0))
-    ax.set_ylim(0, top * 1.15 + 1e-9)
+        bottom = min(bottom, v - max(e, 0.0))
+
+    if bottom >= 0.0:
+        ymin = 0.0
+        ymax = top * 1.15 + 1e-9
+    elif top <= 0.0:
+        ymax = 0.0
+        ymin = bottom * 1.15 - 1e-9
+    else:
+        span = max(top - bottom, 1e-9)
+        pad = span * 0.1
+        ymin = bottom - pad
+        ymax = top + pad
+
+    if math.isclose(ymax, ymin):
+        ymax = ymin + 1.0
+
+    ax.set_ylim(ymin, ymax)
+
+    if zero_line:
+        ax.axhline(0.0, color="#333333", linewidth=1, linestyle="--", alpha=0.6)
 
     # Annotate above error bars with formatted value±uncertainty
     for bar, value, err in zip(bars, values, errors):
         err = 0.0 if (isinstance(err, float) and math.isnan(err)) else err
         label, decimals, v_round, e_round = _format_value_with_uncertainty(value, err)
-        y = value + max(err, 0.0)
+        if value >= 0:
+            y = value + max(err, 0.0)
+            offset = 6
+            va = "bottom"
+        else:
+            y = value - max(err, 0.0)
+            offset = -6
+            va = "top"
         ax.annotate(
             label,
             xy=(bar.get_x() + bar.get_width() / 2, y),
-            xytext=(0, 6),
+            xytext=(0, offset),
             textcoords="offset points",
             ha="center",
-            va="bottom",
+            va=va,
             fontsize=9,
         )
 
@@ -135,8 +193,6 @@ def main() -> None:
             "model",
             "susceptibility",
             "s_uncertainty",
-            "relative_susceptibility",
-            "rs_uncertainty",
             "robustness",
             "r_uncertainty",
         },
@@ -144,6 +200,22 @@ def main() -> None:
 
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    metrics = metrics.copy()
+    _add_zscore_columns(
+        metrics,
+        "susceptibility",
+        "s_uncertainty",
+        "susceptibility_zscore",
+        "s_z_uncertainty",
+    )
+    _add_zscore_columns(
+        metrics,
+        "robustness",
+        "r_uncertainty",
+        "robustness_zscore",
+        "r_z_uncertainty",
+    )
 
     plot_metric(
         metrics,
@@ -156,20 +228,31 @@ def main() -> None:
 
     plot_metric(
         metrics,
-        "relative_susceptibility",
-        "rs_uncertainty",
-        "Relative Susceptibility",
-        "Relative Susceptibility by Model",
-        output_dir / "relative_susceptibility.png",
-    )
-
-    plot_metric(
-        metrics,
         "robustness",
         "r_uncertainty",
         "Robustness",
         "Moral Robustness by Model",
         output_dir / "robustness.png",
+    )
+
+    plot_metric(
+        metrics,
+        "susceptibility_zscore",
+        "s_z_uncertainty",
+        "Susceptibility z-score",
+        "Moral Susceptibility z-score by Model",
+        output_dir / "susceptibility_zscore.png",
+        zero_line=True,
+    )
+
+    plot_metric(
+        metrics,
+        "robustness_zscore",
+        "r_z_uncertainty",
+        "Robustness z-score",
+        "Moral Robustness z-score by Model",
+        output_dir / "robustness_zscore.png",
+        zero_line=True,
     )
 
     # Per-foundation plots (if available)
@@ -180,8 +263,6 @@ def main() -> None:
             "foundation",
             "susceptibility",
             "s_uncertainty",
-            "relative_susceptibility",
-            "rs_uncertainty",
             "robustness",
             "r_uncertainty",
         }
@@ -199,6 +280,21 @@ def main() -> None:
 
         for fnd, frame in by_fnd.groupby("foundation"):
             slug = _slug(fnd)
+            frame = frame.copy()
+            _add_zscore_columns(
+                frame,
+                "susceptibility",
+                "s_uncertainty",
+                "susceptibility_zscore",
+                "s_z_uncertainty",
+            )
+            _add_zscore_columns(
+                frame,
+                "robustness",
+                "r_uncertainty",
+                "robustness_zscore",
+                "r_z_uncertainty",
+            )
 
             plot_metric(
                 frame,
@@ -211,20 +307,31 @@ def main() -> None:
 
             plot_metric(
                 frame,
-                "relative_susceptibility",
-                "rs_uncertainty",
-                f"Relative Susceptibility — {fnd}",
-                f"Relative Susceptibility — {fnd}",
-                output_dir / f"relative_susceptibility_{slug}.png",
-            )
-
-            plot_metric(
-                frame,
                 "robustness",
                 "r_uncertainty",
                 f"Robustness — {fnd}",
                 f"Robustness — {fnd}",
                 output_dir / f"robustness_{slug}.png",
+            )
+
+            plot_metric(
+                frame,
+                "susceptibility_zscore",
+                "s_z_uncertainty",
+                f"Susceptibility z-score — {fnd}",
+                f"Moral Susceptibility z-score — {fnd}",
+                output_dir / f"susceptibility_{slug}_zscore.png",
+                zero_line=True,
+            )
+
+            plot_metric(
+                frame,
+                "robustness_zscore",
+                "r_z_uncertainty",
+                f"Robustness z-score — {fnd}",
+                f"Robustness z-score — {fnd}",
+                output_dir / f"robustness_{slug}_zscore.png",
+                zero_line=True,
             )
 
 
