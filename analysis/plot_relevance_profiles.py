@@ -48,6 +48,9 @@ MODEL_COLORS = [
     "#7f7f7f",
 ]
 
+MODEL_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*"]
+MODEL_LINESTYLES = ["-", "--", "-.", ":"]
+
 
 def _relevance_foundations() -> Dict[int, str]:
     """Map relevance question ids to the associated moral foundation."""
@@ -123,7 +126,12 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
         raise ValueError("No complete self-assessment datasets were found.")
 
     sorted_models = sorted(model_summaries)
-    color_map = {model: MODEL_COLORS[idx % len(MODEL_COLORS)] for idx, model in enumerate(sorted_models)}
+    style_map = {}
+    for idx, model in enumerate(sorted_models):
+        color = MODEL_COLORS[idx % len(MODEL_COLORS)]
+        marker = MODEL_MARKERS[idx % len(MODEL_MARKERS)]
+        linestyle = MODEL_LINESTYLES[idx % len(MODEL_LINESTYLES)]
+        style_map[model] = (color, marker, linestyle)
 
     x_positions = list(range(len(FOUNDATION_ORDER)))
 
@@ -131,7 +139,7 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
     
 
     for model in sorted_models:
-        color = color_map[model]
+        color, marker, linestyle = style_map[model]
         foundation_summary = model_summaries[model]
         means = [foundation_summary[foundation][0] for foundation in FOUNDATION_ORDER]
         errors = [foundation_summary[foundation][1] for foundation in FOUNDATION_ORDER]
@@ -142,8 +150,9 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
             yerr=errors,
             label=model,
             color=color,
+            linestyle=linestyle,
             linewidth=2.5,
-            marker="o",
+            marker=marker,
             markersize=7,
             capsize=5,
         )
@@ -158,7 +167,7 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
     ax.grid(axis="y", linestyle="--", alpha=0.4)
     ax.set_axisbelow(True)
 
-    ax.legend(frameon=False, loc="upper left", bbox_to_anchor=(0, 0.5), fontsize=14)
+    ax.legend(frameon=False, loc="upper left", bbox_to_anchor=(0, 0.7), fontsize=14)
 
     fig.tight_layout()
     fig.savefig(OUTPUT_PATH, dpi=300)

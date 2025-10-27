@@ -321,7 +321,7 @@ def main():
 
     model_kwargs = {
         "temperature": 0.1,
-        "max_tokens": 1,
+        "max_tokens": 100,
     }
     model_kwargs.update(selection_kwargs)
 

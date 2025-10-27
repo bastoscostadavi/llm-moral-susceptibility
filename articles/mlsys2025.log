@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.26)  25 OCT 2025 14:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.26)  27 OCT 2025 15:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -335,7 +335,7 @@ File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 File: listings.cfg 2024/09/23 1.10c listings configuration
 ))
 Package: listings 2024/09/23 1.10c (Carsten Heinz)
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 40.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 44.
  (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 ) (/usr/local/texlive/2025basic/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
@@ -345,24 +345,24 @@ File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 ) (./mlsys2025.aux)
 \openout1 = `mlsys2025.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
  (/usr/local/texlive/2025basic/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count321
@@ -382,41 +382,41 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (/usr/local/texlive/2025basic/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring OFF on input line 40.
+Package hyperref Info: Link coloring OFF on input line 44.
  (./mlsys2025.out) (./mlsys2025.out)
 \@outlinefile=\write3
 \openout3 = `mlsys2025.out'.
 
 \c@lstlisting=\count327
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 43.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 47.
  (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 43.
+LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 47.
  (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/omspcr.fd
 File: omspcr.fd 
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 43.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 47.
 
-Underfull \hbox (badness 2435) in paragraph at lines 53--54
+Underfull \hbox (badness 2435) in paragraph at lines 57--58
 \OT1/ptm/m/n/10 Foun-da-tions Ques-tion-naire (MFQ-30), a widely used
  []
 
 
-Underfull \hbox (badness 4954) in paragraph at lines 53--54
+Underfull \hbox (badness 4954) in paragraph at lines 57--58
 \OT1/ptm/m/n/10 in-stru-ment in moral psy-chol-ogy that mea-sures five
  []
 
 
-Underfull \hbox (badness 4108) in paragraph at lines 53--54
+Underfull \hbox (badness 4108) in paragraph at lines 57--58
 \OT1/ptm/m/n/10 group/Loyalty, Au-thor-i-ty/Re-spect, and Pu-ri-ty/-Sanc-tity
  []
 
 
 
 
-Underfull \hbox (badness 5374) in paragraph at lines 56--57
+Underfull \hbox (badness 5374) in paragraph at lines 60--61
 []\OT1/ptm/m/n/10 A set of sus-cep-ti-bil-ity and ro-bust-ness met-rics
  []
 
@@ -434,18 +434,20 @@ Underfull \hbox (badness 1365) in paragraph at lines 69--70
 \OT1/ptm/m/n/10 sam-pling and small per-sona per-tur-ba-tions (e.g., para-
  []
 
-<../results/moral_foundations_relevance_profiles.png, id=84, 794.97pt x 433.62pt>
+<../results/moral_foundations_relevance_profiles.png, id=88, 794.97pt x 433.62pt>
 File: ../results/moral_foundations_relevance_profiles.png Graphic file (type png)
 <use ../results/moral_foundations_relevance_profiles.png>
-Package pdftex.def Info: ../results/moral_foundations_relevance_profiles.png  used on input line 78.
+Package pdftex.def Info: ../results/moral_foundations_relevance_profiles.png  used on input line 80.
 (pdftex.def)             Requested size: 234.8775pt x 128.11528pt.
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 86.
+<../results/persona_moral_foundations_relevance_profiles.png, id=90, 794.97pt x 433.62pt>
+File: ../results/persona_moral_foundations_relevance_profiles.png Graphic file (type png)
+<use ../results/persona_moral_foundations_relevance_profiles.png>
+Package pdftex.def Info: ../results/persona_moral_foundations_relevance_profiles.png  used on input line 87.
+(pdftex.def)             Requested size: 234.8775pt x 128.11528pt.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 95.
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-
-
-Underfull \vbox (badness 4752) has occurred while \output is active []
 
 
 
@@ -454,84 +456,45 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                Make it at least 3.30003pt, for example:
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
-[2 <../results/moral_foundations_relevance_profiles.png>]
+[2 <../results/moral_foundations_relevance_profiles.png> <../results/persona_moral_foundations_relevance_profiles.png>]
 
+(./table_summary_by_model_with_z.tex)
+<../results/robustness.png, id=114, 433.62pt x 289.08pt>
+File: ../results/robustness.png Graphic file (type png)
+<use ../results/robustness.png>
+Package pdftex.def Info: ../results/robustness.png  used on input line 178.
+(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
+<../results/robustness_harm_care.png, id=115, 433.62pt x 289.08pt>
+File: ../results/robustness_harm_care.png Graphic file (type png)
+<use ../results/robustness_harm_care.png>
+Package pdftex.def Info: ../results/robustness_harm_care.png  used on input line 179.
+(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
+<../results/robustness_fairness_reciprocity.png, id=116, 433.62pt x 289.08pt>
+File: ../results/robustness_fairness_reciprocity.png Graphic file (type png)
+<use ../results/robustness_fairness_reciprocity.png>
+Package pdftex.def Info: ../results/robustness_fairness_reciprocity.png  used on input line 180.
+(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
+<../results/robustness_in_group_loyalty.png, id=117, 433.62pt x 289.08pt>
+File: ../results/robustness_in_group_loyalty.png Graphic file (type png)
+<use ../results/robustness_in_group_loyalty.png>
+Package pdftex.def Info: ../results/robustness_in_group_loyalty.png  used on input line 181.
+(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
+<../results/robustness_authority_respect.png, id=118, 433.62pt x 289.08pt>
+File: ../results/robustness_authority_respect.png Graphic file (type png)
+<use ../results/robustness_authority_respect.png>
+Package pdftex.def Info: ../results/robustness_authority_respect.png  used on input line 182.
+(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
+<../results/robustness_purity_sanctity.png, id=119, 433.62pt x 289.08pt>
+File: ../results/robustness_purity_sanctity.png Graphic file (type png)
+<use ../results/robustness_purity_sanctity.png>
+Package pdftex.def Info: ../results/robustness_purity_sanctity.png  used on input line 183.
+(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
 
-Underfull \hbox (badness 1286) in paragraph at lines 156--157
-\OT1/ptm/m/n/10 sonas, to-tal re-sponses, parse rate, and per-foundation
+Underfull \hbox (badness 3058) in paragraph at lines 191--192
+[]\OT1/ptm/m/n/10 We as-sess between-persona sen-si-tiv-ity by com-put-ing
  []
 
 
-Underfull \hbox (badness 4967) in paragraph at lines 159--160
- \OT1/ptm/b/n/10 Sus-cep-ti-bil-ity[] \OT1/ptm/m/n/10 Re-port between-persona vari-ance and
- []
-
-<../results/susceptibility_zscore.png, id=105, 433.62pt x 289.08pt>
-File: ../results/susceptibility_zscore.png Graphic file (type png)
-<use ../results/susceptibility_zscore.png>
-Package pdftex.def Info: ../results/susceptibility_zscore.png  used on input line 168.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_harm_care_zscore.png, id=106, 433.62pt x 289.08pt>
-File: ../results/susceptibility_harm_care_zscore.png Graphic file (type png)
-<use ../results/susceptibility_harm_care_zscore.png>
-Package pdftex.def Info: ../results/susceptibility_harm_care_zscore.png  used on input line 169.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_fairness_reciprocity_zscore.png, id=107, 433.62pt x 289.08pt>
-File: ../results/susceptibility_fairness_reciprocity_zscore.png Graphic file (type png)
-<use ../results/susceptibility_fairness_reciprocity_zscore.png>
-Package pdftex.def Info: ../results/susceptibility_fairness_reciprocity_zscore.png  used on input line 170.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_in_group_loyalty_zscore.png, id=108, 433.62pt x 289.08pt>
-File: ../results/susceptibility_in_group_loyalty_zscore.png Graphic file (type png)
-<use ../results/susceptibility_in_group_loyalty_zscore.png>
-Package pdftex.def Info: ../results/susceptibility_in_group_loyalty_zscore.png  used on input line 171.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_authority_respect_zscore.png, id=109, 433.62pt x 289.08pt>
-File: ../results/susceptibility_authority_respect_zscore.png Graphic file (type png)
-<use ../results/susceptibility_authority_respect_zscore.png>
-Package pdftex.def Info: ../results/susceptibility_authority_respect_zscore.png  used on input line 172.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_purity_sanctity_zscore.png, id=110, 433.62pt x 289.08pt>
-File: ../results/susceptibility_purity_sanctity_zscore.png Graphic file (type png)
-<use ../results/susceptibility_purity_sanctity_zscore.png>
-Package pdftex.def Info: ../results/susceptibility_purity_sanctity_zscore.png  used on input line 173.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_zscore.png, id=111, 433.62pt x 289.08pt>
-File: ../results/robustness_zscore.png Graphic file (type png)
-<use ../results/robustness_zscore.png>
-Package pdftex.def Info: ../results/robustness_zscore.png  used on input line 182.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_harm_care_zscore.png, id=112, 433.62pt x 289.08pt>
-File: ../results/robustness_harm_care_zscore.png Graphic file (type png)
-<use ../results/robustness_harm_care_zscore.png>
-Package pdftex.def Info: ../results/robustness_harm_care_zscore.png  used on input line 183.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_fairness_reciprocity_zscore.png, id=113, 433.62pt x 289.08pt>
-File: ../results/robustness_fairness_reciprocity_zscore.png Graphic file (type png)
-<use ../results/robustness_fairness_reciprocity_zscore.png>
-Package pdftex.def Info: ../results/robustness_fairness_reciprocity_zscore.png  used on input line 184.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_in_group_loyalty_zscore.png, id=114, 433.62pt x 289.08pt>
-File: ../results/robustness_in_group_loyalty_zscore.png Graphic file (type png)
-<use ../results/robustness_in_group_loyalty_zscore.png>
-Package pdftex.def Info: ../results/robustness_in_group_loyalty_zscore.png  used on input line 185.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_authority_respect_zscore.png, id=115, 433.62pt x 289.08pt>
-File: ../results/robustness_authority_respect_zscore.png Graphic file (type png)
-<use ../results/robustness_authority_respect_zscore.png>
-Package pdftex.def Info: ../results/robustness_authority_respect_zscore.png  used on input line 186.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_purity_sanctity_zscore.png, id=116, 433.62pt x 289.08pt>
-File: ../results/robustness_purity_sanctity_zscore.png Graphic file (type png)
-<use ../results/robustness_purity_sanctity_zscore.png>
-Package pdftex.def Info: ../results/robustness_purity_sanctity_zscore.png  used on input line 187.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-(./table_summary_by_model.tex
-Overfull \hbox (7.56583pt too wide) in paragraph at lines 5--18
- [][] 
- []
-
-) (./table_susceptibility_by_foundation.tex) (./table_robustness_by_foundation.tex)
 
 
 Package fancyhdr Warning: \footskip is too small (0.0pt): 
@@ -539,78 +502,39 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [3]
-Underfull \hbox (badness 2990) in paragraph at lines 203--204
-[]\OT1/ptm/m/n/10 We pro-pose a prin-ci-pled bench-mark for quan-ti-fy-ing
- []
-
-<../results/susceptibility.png, id=141, 433.62pt x 289.08pt>
+<../results/susceptibility.png, id=150, 433.62pt x 289.08pt>
 File: ../results/susceptibility.png Graphic file (type png)
 <use ../results/susceptibility.png>
-Package pdftex.def Info: ../results/susceptibility.png  used on input line 211.
+Package pdftex.def Info: ../results/susceptibility.png  used on input line 196.
 (pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_harm_care.png, id=142, 433.62pt x 289.08pt>
+<../results/susceptibility_harm_care.png, id=151, 433.62pt x 289.08pt>
 File: ../results/susceptibility_harm_care.png Graphic file (type png)
 <use ../results/susceptibility_harm_care.png>
-Package pdftex.def Info: ../results/susceptibility_harm_care.png  used on input line 212.
+Package pdftex.def Info: ../results/susceptibility_harm_care.png  used on input line 197.
 (pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_fairness_reciprocity.png, id=143, 433.62pt x 289.08pt>
+<../results/susceptibility_fairness_reciprocity.png, id=152, 433.62pt x 289.08pt>
 File: ../results/susceptibility_fairness_reciprocity.png Graphic file (type png)
 <use ../results/susceptibility_fairness_reciprocity.png>
-Package pdftex.def Info: ../results/susceptibility_fairness_reciprocity.png  used on input line 213.
+Package pdftex.def Info: ../results/susceptibility_fairness_reciprocity.png  used on input line 198.
 (pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_in_group_loyalty.png, id=144, 433.62pt x 289.08pt>
+<../results/susceptibility_in_group_loyalty.png, id=153, 433.62pt x 289.08pt>
 File: ../results/susceptibility_in_group_loyalty.png Graphic file (type png)
 <use ../results/susceptibility_in_group_loyalty.png>
-Package pdftex.def Info: ../results/susceptibility_in_group_loyalty.png  used on input line 214.
+Package pdftex.def Info: ../results/susceptibility_in_group_loyalty.png  used on input line 199.
 (pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_authority_respect.png, id=145, 433.62pt x 289.08pt>
+<../results/susceptibility_authority_respect.png, id=154, 433.62pt x 289.08pt>
 File: ../results/susceptibility_authority_respect.png Graphic file (type png)
 <use ../results/susceptibility_authority_respect.png>
-Package pdftex.def Info: ../results/susceptibility_authority_respect.png  used on input line 215.
+Package pdftex.def Info: ../results/susceptibility_authority_respect.png  used on input line 200.
 (pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/susceptibility_purity_sanctity.png, id=146, 433.62pt x 289.08pt>
+<../results/susceptibility_purity_sanctity.png, id=155, 433.62pt x 289.08pt>
 File: ../results/susceptibility_purity_sanctity.png Graphic file (type png)
 <use ../results/susceptibility_purity_sanctity.png>
-Package pdftex.def Info: ../results/susceptibility_purity_sanctity.png  used on input line 216.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness.png, id=147, 433.62pt x 289.08pt>
-File: ../results/robustness.png Graphic file (type png)
-<use ../results/robustness.png>
-Package pdftex.def Info: ../results/robustness.png  used on input line 223.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_harm_care.png, id=148, 433.62pt x 289.08pt>
-File: ../results/robustness_harm_care.png Graphic file (type png)
-<use ../results/robustness_harm_care.png>
-Package pdftex.def Info: ../results/robustness_harm_care.png  used on input line 224.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_fairness_reciprocity.png, id=149, 433.62pt x 289.08pt>
-File: ../results/robustness_fairness_reciprocity.png Graphic file (type png)
-<use ../results/robustness_fairness_reciprocity.png>
-Package pdftex.def Info: ../results/robustness_fairness_reciprocity.png  used on input line 225.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_in_group_loyalty.png, id=150, 433.62pt x 289.08pt>
-File: ../results/robustness_in_group_loyalty.png Graphic file (type png)
-<use ../results/robustness_in_group_loyalty.png>
-Package pdftex.def Info: ../results/robustness_in_group_loyalty.png  used on input line 226.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_authority_respect.png, id=151, 433.62pt x 289.08pt>
-File: ../results/robustness_authority_respect.png Graphic file (type png)
-<use ../results/robustness_authority_respect.png>
-Package pdftex.def Info: ../results/robustness_authority_respect.png  used on input line 227.
-(pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
-<../results/robustness_purity_sanctity.png, id=152, 433.62pt x 289.08pt>
-File: ../results/robustness_purity_sanctity.png Graphic file (type png)
-<use ../results/robustness_purity_sanctity.png>
-Package pdftex.def Info: ../results/robustness_purity_sanctity.png  used on input line 228.
+Package pdftex.def Info: ../results/susceptibility_purity_sanctity.png  used on input line 201.
 (pdftex.def)             Requested size: 146.34824pt x 97.5669pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 234--235
-\OT1/ptm/m/n/10 Foun-da-tions Ques-tion-naire (MFQ-30; see []$\OT1/pcr/m/n/10 https :
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 234--235
-\OT1/pcr/m/n/10 / / moralfoundations . org / questionnaires/$[]\OT1/ptm/m/n/10 )
+Underfull \hbox (badness 2990) in paragraph at lines 214--215
+[]\OT1/ptm/m/n/10 We pro-pose a prin-ci-pled bench-mark for quan-ti-fy-ing
  []
 
 
@@ -618,70 +542,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-
-
-
-Package fancyhdr Warning: \footskip is too small (0.0pt): 
-(fancyhdr)                Make it at least 3.30003pt, for example:
-(fancyhdr)                \setlength{\footskip}{3.30003pt}.
-
-[4 <../results/susceptibility_zscore.png> <../results/susceptibility_harm_care_zscore.png> <../results/susceptibility_fairness_reciprocity_zscore.png> <../results/susceptibility_in_group_loyalty_zscore.png> <../results/susceptibility_authority_respect_zscore.png> <../results/susceptibility_purity_sanctity_zscore.png>]
-
-(./appendix_personas.tex
-
-
-Package fancyhdr Warning: \footskip is too small (0.0pt): 
-(fancyhdr)                Make it at least 3.30003pt, for example:
-(fancyhdr)                \setlength{\footskip}{3.30003pt}.
-
-[5 <../results/robustness_zscore.png> <../results/robustness_harm_care_zscore.png> <../results/robustness_fairness_reciprocity_zscore.png> <../results/robustness_in_group_loyalty_zscore.png> <../results/robustness_authority_respect_zscore.png> <../results/robustness_purity_sanctity_zscore.png>]
-
-
-
-
-Package fancyhdr Warning: \footskip is too small (0.0pt): 
-(fancyhdr)                Make it at least 3.30003pt, for example:
-(fancyhdr)                \setlength{\footskip}{3.30003pt}.
-
-[6 <../results/susceptibility.png> <../results/susceptibility_harm_care.png> <../results/susceptibility_fairness_reciprocity.png> <../results/susceptibility_in_group_loyalty.png> <../results/susceptibility_authority_respect.png> <../results/susceptibility_purity_sanctity.png>]
-Underfull \hbox (badness 1331) in paragraph at lines 30--31
-[]\OT1/ptm/m/n/10 A play-by-play an-nouncer who ex-cels at pro-vid-
- []
-
-
-
-
-Underfull \hbox (badness 1048) in paragraph at lines 40--41
-[]\OT1/ptm/m/n/10 A fel-low an-noyed spouse who com-mis-er-ates and
- []
-
-
-Underfull \hbox (badness 1509) in paragraph at lines 44--45
-\OT1/ptm/m/n/10 States, skep-ti-cal of non-transparent prac-tices and
- []
-
-
-
-
-Package fancyhdr Warning: \footskip is too small (0.0pt): 
-(fancyhdr)                Make it at least 3.30003pt, for example:
-(fancyhdr)                \setlength{\footskip}{3.30003pt}.
-
-[7 <../results/robustness.png> <../results/robustness_harm_care.png> <../results/robustness_fairness_reciprocity.png> <../results/robustness_in_group_loyalty.png> <../results/robustness_authority_respect.png> <../results/robustness_purity_sanctity.png>]
-
-
-Underfull \hbox (badness 6625) in paragraph at lines 79--80
-[]\OT1/ptm/m/n/10 an ul-trA-slan fan, the hard-core fan group of
- []
-
-
-
-
-Package fancyhdr Warning: \footskip is too small (0.0pt): 
-(fancyhdr)                Make it at least 3.30003pt, for example:
-(fancyhdr)                \setlength{\footskip}{3.30003pt}.
-
-[8]) (./mlsys2025.bbl
+(./mlsys2025.bbl
 Underfull \hbox (badness 3407) in paragraph at lines 9--14
 []\OT1/ptm/m/n/10 Abdulhai, M., Serapio-Garc[]^^Pa, G., Crepy, C., Val-
  []
@@ -702,6 +563,73 @@ Underfull \hbox (badness 2635) in paragraph at lines 9--14
  []
 
 
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+
+Package fancyhdr Warning: \footskip is too small (0.0pt): 
+(fancyhdr)                Make it at least 3.30003pt, for example:
+(fancyhdr)                \setlength{\footskip}{3.30003pt}.
+
+[4 <../results/robustness.png> <../results/robustness_harm_care.png> <../results/robustness_fairness_reciprocity.png> <../results/robustness_in_group_loyalty.png> <../results/robustness_authority_respect.png> <../results/robustness_purity_sanctity.png>]
+
+)
+Underfull \hbox (badness 10000) in paragraph at lines 226--227
+\OT1/ptm/m/n/10 Foun-da-tions Ques-tion-naire (MFQ-30; see []$\OT1/pcr/m/n/10 https :
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--227
+\OT1/pcr/m/n/10 / / moralfoundations . org / questionnaires/$[]\OT1/ptm/m/n/10 )
+ []
+
+
+
+
+Package fancyhdr Warning: \footskip is too small (0.0pt): 
+(fancyhdr)                Make it at least 3.30003pt, for example:
+(fancyhdr)                \setlength{\footskip}{3.30003pt}.
+
+[5 <../results/susceptibility.png> <../results/susceptibility_harm_care.png> <../results/susceptibility_fairness_reciprocity.png> <../results/susceptibility_in_group_loyalty.png> <../results/susceptibility_authority_respect.png> <../results/susceptibility_purity_sanctity.png>] (./appendix_personas.tex
+
+
+Underfull \hbox (badness 1331) in paragraph at lines 30--31
+[]\OT1/ptm/m/n/10 A play-by-play an-nouncer who ex-cels at pro-vid-
+ []
+
+
+
+
+Package fancyhdr Warning: \footskip is too small (0.0pt): 
+(fancyhdr)                Make it at least 3.30003pt, for example:
+(fancyhdr)                \setlength{\footskip}{3.30003pt}.
+
+[6]
+Underfull \hbox (badness 1048) in paragraph at lines 40--41
+[]\OT1/ptm/m/n/10 A fel-low an-noyed spouse who com-mis-er-ates and
+ []
+
+
+Underfull \hbox (badness 1509) in paragraph at lines 44--45
+\OT1/ptm/m/n/10 States, skep-ti-cal of non-transparent prac-tices and
+ []
+
+
+
+
+
+
+Package fancyhdr Warning: \footskip is too small (0.0pt): 
+(fancyhdr)                Make it at least 3.30003pt, for example:
+(fancyhdr)                \setlength{\footskip}{3.30003pt}.
+
+[7]
+Underfull \hbox (badness 6625) in paragraph at lines 79--80
+[]\OT1/ptm/m/n/10 an ul-trA-slan fan, the hard-core fan group of
+ []
+
+
 
 )
 
@@ -710,27 +638,27 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                Make it at least 3.30003pt, for example:
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
-[9] (./mlsys2025.aux)
+[8] (./mlsys2025.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `mlsys2025.out' has not changed.
-(rerunfilecheck)             Checksum: 1C7E2F06C59326C704F7D9CC4FCF4D9D;1300.
+(rerunfilecheck)             Checksum: D5411926931023AD0F063CDE892D75F4;1398.
  ) 
 Here is how much of TeX's memory you used:
- 12791 strings out of 473190
- 202415 string characters out of 5713195
- 681737 words of memory out of 5000000
- 35664 multiletter control sequences out of 15000+600000
- 580381 words of font info for 79 fonts, out of 8000000 for 9000
+ 12692 strings out of 473190
+ 197590 string characters out of 5713195
+ 695403 words of memory out of 5000000
+ 35574 multiletter control sequences out of 15000+600000
+ 580888 words of font info for 80 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,79p,972b,1956s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on mlsys2025.pdf (9 pages, 3250520 bytes).
+ 75i,13n,79p,972b,1938s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on mlsys2025.pdf (8 pages, 2553738 bytes).
 PDF statistics:
- 464 PDF objects out of 1000 (max. 8388607)
- 367 compressed objects within 4 object streams
- 184 named destinations out of 1000 (max. 500000)
- 206 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 445 PDF objects out of 1000 (max. 8388607)
+ 373 compressed objects within 4 object streams
+ 181 named destinations out of 1000 (max. 500000)
+ 159 words of extra memory for PDF output out of 10000 (max. 10000000)
 

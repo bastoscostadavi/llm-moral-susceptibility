@@ -178,6 +178,150 @@ def build_summary_table(records: Sequence[Dict[str, str]]) -> str:
     return "\n".join(lines)
 
 
+def build_zscore_summary_table(records: Sequence[Dict[str, str]]) -> str:
+    """Build a by-model z-score table for susceptibility and robustness.
+
+    Z-scores are computed across models: Z = (V - mean(V)) / SD(V).
+    Uncertainties are propagated as sigma_Z = sigma_V / SD(V).
+    """
+    # Extract numeric arrays for means and SEs
+    models = []
+    sus_vals = []
+    sus_ses = []
+    rob_vals = []
+    rob_ses = []
+    for r in records:
+        m = r.get("model")
+        if not m:
+            continue
+        sv = parse_float(r.get("susceptibility"))
+        sse = parse_float(r.get("s_uncertainty"))
+        rv = parse_float(r.get("robustness"))
+        rse = parse_float(r.get("r_uncertainty"))
+        if not (sv == sv and rv == rv):  # check not NaN
+            continue
+        models.append(m)
+        sus_vals.append(sv)
+        sus_ses.append(sse)
+        rob_vals.append(rv)
+        rob_ses.append(rse)
+
+    import math as _math
+
+    def z_and_se(vals, ses):
+        n = len(vals)
+        mu = sum(vals) / n if n else float("nan")
+        sd = (sum((x - mu) ** 2 for x in vals) / n) ** 0.5 if n else float("nan")
+        if not _math.isfinite(sd) or _math.isclose(sd, 0.0):
+            z = [0.0 for _ in vals]
+            se_z = [0.0 for _ in ses]
+        else:
+            z = [(x - mu) / sd for x in vals]
+            se_z = [abs(s) / sd if _math.isfinite(s) else float("nan") for s in ses]
+        return z, se_z
+
+    sus_z, sus_zse = z_and_se(sus_vals, sus_ses)
+    rob_z, rob_zse = z_and_se(rob_vals, rob_ses)
+
+    # Build LaTeX table
+    lines = [
+        "\\begin{table}[t]",
+        "  \\centering",
+        r"  \caption{Z-scores by model for susceptibility and robustness.}",
+        "  \\label{tab:zscores_by_model}",
+        "  \\begin{tabular}{lcc}",
+        "    \\toprule",
+        r"    Model & Susceptibility $Z$ ($\pm$) & Robustness $Z$ ($\pm$) \\",
+        "    \\midrule",
+    ]
+    LINEBREAK = r"\\"
+    for m, sz, szse, rz, rzse in zip(models, sus_z, sus_zse, rob_z, rob_zse):
+        sus_cell = format_value_err(sz, szse)
+        rob_cell = format_value_err(rz, rzse)
+        lines.append(f"    {latex_escape(m)} & {sus_cell} & {rob_cell} {LINEBREAK}")
+    lines += [
+        "    \\bottomrule",
+        "  \\end{tabular}",
+        "\\end{table}",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def build_merged_summary_table(records: Sequence[Dict[str, str]]) -> str:
+    """Build a single table merging raw metrics and their z-scores by model.
+
+    Columns: Model, Robustness (±), Robustness Z (±), Susceptibility (±), Susceptibility Z (±).
+    Z = (V - mean(V)) / SD(V) across models; sigma_Z = sigma_V / SD(V).
+    """
+    # Collect values
+    models: List[str] = []
+    sus_vals: List[float] = []
+    sus_ses: List[float] = []
+    rob_vals: List[float] = []
+    rob_ses: List[float] = []
+    for r in records:
+        m = r.get("model")
+        if not m:
+            continue
+        sv = parse_float(r.get("susceptibility"))
+        sse = parse_float(r.get("s_uncertainty"))
+        rv = parse_float(r.get("robustness"))
+        rse = parse_float(r.get("r_uncertainty"))
+        if not (sv == sv and rv == rv):  # skip NaNs
+            continue
+        models.append(m)
+        sus_vals.append(sv)
+        sus_ses.append(sse)
+        rob_vals.append(rv)
+        rob_ses.append(rse)
+
+    import math as _math
+
+    def z_and_se(vals: List[float], ses: List[float]) -> tuple[List[float], List[float]]:
+        n = len(vals)
+        mu = sum(vals) / n if n else float("nan")
+        sd = (sum((x - mu) ** 2 for x in vals) / n) ** 0.5 if n else float("nan")
+        if not _math.isfinite(sd) or _math.isclose(sd, 0.0):
+            z = [0.0 for _ in vals]
+            se_z = [0.0 for _ in ses]
+        else:
+            z = [(x - mu) / sd for x in vals]
+            se_z = [abs(s) / sd if _math.isfinite(s) else float("nan") for s in ses]
+        return z, se_z
+
+    sus_z, sus_zse = z_and_se(sus_vals, sus_ses)
+    rob_z, rob_zse = z_and_se(rob_vals, rob_ses)
+
+    # Build LaTeX table
+    lines = [
+        "\\begin{table*}[t]",
+        "  \\centering",
+        r"  \caption{Overall susceptibility and robustness by model with z-scores (mean $\pm$ SE; $Z$ computed across models).}",
+        "  \\label{tab:summary_by_model_with_z}",
+        "  \\begin{tabular}{lcccc}",
+        "    \\toprule",
+        r"    Model & Robustness ($\pm$) & Robustness $Z$ ($\pm$) & Susceptibility ($\pm$) & Susceptibility $Z$ ($\pm$) \\",
+        "    \\midrule",
+    ]
+    LINEBREAK = r"\\"
+    for m, rv, rse, rz, rzse, sv, sse, sz, szse in zip(
+        models, rob_vals, rob_ses, rob_z, rob_zse, sus_vals, sus_ses, sus_z, sus_zse
+    ):
+        rob_cell = format_value_err(rv, rse)
+        robz_cell = format_value_err(rz, rzse)
+        sus_cell = format_value_err(sv, sse)
+        susz_cell = format_value_err(sz, szse)
+        lines.append(f"    {latex_escape(m)} & {rob_cell} & {robz_cell} & {sus_cell} & {susz_cell} {LINEBREAK}")
+    lines += [
+        "    \\bottomrule",
+        "  \\end{tabular}",
+        "\\end{table*}",
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def parse_float(value: object | None) -> float:
     if value in {None, ""}:
         return math.nan
@@ -260,8 +404,8 @@ def main() -> None:
                 columns.update(row.keys())
             need = {"model", "susceptibility", "s_uncertainty", "robustness", "r_uncertainty"}
             if need.issubset(columns):
-                summary_tex = build_summary_table(overall_records)
-                (articles_dir / "table_summary_by_model.tex").write_text(summary_tex)
+                merged_tex = build_merged_summary_table(overall_records)
+                (articles_dir / "table_summary_by_model_with_z.tex").write_text(merged_tex)
 
 
 if __name__ == "__main__":
