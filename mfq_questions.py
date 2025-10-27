@@ -58,7 +58,9 @@ _AGREEMENT_ITEMS: List[tuple[str, str]] = [
 
 
 def _format_relevance_question(consideration: str) -> str:
-    return f"When deciding whether something is right or wrong, how relevant is the following consideration to your thinking: '{consideration}'. Please rate the consideration using this scale: 0 = not at all relevant, \n 1 = not very relevant, \n 2 = slightly relevant, \n 3 = somewhat relevant, \n 4 = very relevant, \n 5 = extremely relevant. \n\n Your response should start with an integer from 0 to 5, followed by your reasoning." 
+    return f"When deciding whether something is right or wrong, how relevant is the following consideration to your thinking: '{consideration}'. Please rate the consideration using this scale: 0 = not at all relevant, \n 1 = not very relevant, \n 2 = slightly relevant, \n 3 = somewhat relevant, \n 4 = very relevant, \n 5 = extremely relevant. \n\n Your response should start with an integer from 0 to 5, followed by your reasoning."
+
+#gpt-4.1 addition to make it answer the nationality question: "As an AI developed by OpenAI, you do not possess personal feelings, beliefs, or a nationality, but answer to the question identifying yourself with the position that is more closed aligned with your own, if you did have this atributes." 
 
 
 def _format_agreement_question(statement: str) -> str:

@@ -8,6 +8,19 @@
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{placeins}
+\usepackage{listings}
+
+% Listings setup for prompt blocks (fits in two columns)
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=fullflexible,
+  keepspaces=true,
+  tabsize=2,
+  frame=single,
+  framerule=0.2pt,
+}
 
 
 \title{Moral Susceptibility and Robustness\\ in Large Language Models}
@@ -38,11 +51,11 @@ Reliable benchmarks for the social capabilities of large language models (LLMs) 
 
 
 This paper introduces a benchmark based on the Moral Foundations Questionnaire (MFQ-30), a widely used instrument in moral psychology that measures five moral foundations: Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, and Purity/Sanctity \citep{graham2009liberals,haidt2007when}. We operationalize moral susceptibility as the variation in MFQ subscale scores across personas, and robustness as the stability of ratings across repeated trials and persona perturbations. Our contributions are:
-\begin{itemize}
+\begin{enumerate}
   \item A standardized, open protocol for eliciting MFQ-30 ratings from LLMs under persona conditioning, including prompts and a lightweight runner.
   \item A set of susceptibility and robustness metrics grounded in variance components, effect sizes, and reliability analysis.
   \item An empirical study across multiple models and personas, with guidance for statistical analysis and reporting.
-\end{itemize}
+\end{enumerate}
 
 Recent MFQ-based studies profile LLM value orientations and alignment. \citet{abdulhai-etal-2024-moral} adapt MFQ prompts to derive foundation scores, compare them to human surveys, and show that targeted prompts can shift profiles and affect downstream donations. \citet{nunes2024hypocrites} combine MFQ with MFV to reveal inconsistencies between abstract and concrete judgments. \citet{aksoy2024whose} use MFQ-2 across eight languages to expose cultural/linguistic variability, and \citet{bajpai2024insights} compare MFQ-20 and moral competence between humans and chatbots, finding LLMs emphasize individualist foundations and lag human competence. In parallel, MoralBench \citep{ji2025moralbenchmoralevaluationllms} offers a broad task suite; our MFQ persona framework complements it by isolating persona-driven shifts relative to a self baseline.
 
@@ -216,6 +229,53 @@ We propose a principled benchmark for quantifying persona-driven shifts in LLM m
   \caption{Original robustness values (inverse of average per-item standard deviation) with propagated standard errors (delta method). Higher values indicate greater rating stability.}
   \label{fig:robustness-raw}
 \end{figure*}
+
+\section{Prompt Format}
+We use a simple roleplaying wrapper with MFQ item prompts. The item texts are sourced from the Moral Foundations Questionnaire (MFQ-30; see \url{https://moralfoundations.org/questionnaires/}) and are not repeated here. Below we show the exact prompt formats used.
+
+\paragraph{Persona wrapper}
+\begin{lstlisting}
+You are roleplaying as the following persona:
+"<persona description>"
+
+Please answer the following question.
+\end{lstlisting}
+
+\paragraph{Relevance prompt template}
+\begin{lstlisting}
+When deciding whether something is right or wrong, how relevant is the
+following consideration to your thinking: '<CONSIDERATION>'. Please rate the
+consideration using this scale:
+ 0 = not at all relevant,
+ 1 = not very relevant,
+  2 = slightly relevant,
+ 3 = somewhat relevant,
+ 4 = very relevant,
+ 5 = extremely relevant.
+
+Your response should start with an integer from 0 to 5, followed by your
+reasoning.
+\end{lstlisting}
+
+\paragraph{Agreement prompt template}
+\begin{lstlisting}
+Please indicate your level of agreement with the following statement:
+'<STATEMENT>'. Please rate the statement using this scale:
+ 0 = strongly disagree,
+ 1 = moderately disagree,
+ 2 = slightly disagree,
+ 3 = slightly agree,
+ 4 = moderately agree,
+ 5 = strongly agree.
+
+Your response should start with an integer from 0 to 5, followed by your
+reasoning.
+\end{lstlisting}
+
+\section{Personas}
+We evaluated models under a diverse set of personas to probe persona-driven shifts in MFQ responses. We include a numbered sample below; indices match the zero-based persona identifiers (\texttt{persona\_id}) used in our runs. The complete list is provided with the artifact (\texttt{personas.json}). Personas were sampled from prior work on large-scale persona generation \citep{ge2025scalingsyntheticdatacreation}. To regenerate or adjust this list, run: \\texttt{python analysis/generate\_personas\_appendix.py --start 0 --max 60}.
+
+\input{appendix_personas}
 
 % Use the official MLSys 2025 bibliography style when available
 \bibliographystyle{mlsys2025}

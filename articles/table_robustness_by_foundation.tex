@@ -1,6 +1,6 @@
 \begin{table*}[t]
   \centering
-  \caption{Per-foundation moral robustness by model (inverse of average per-item uncertainty; error bars show propagated SE).}
+  \caption{Per-foundation moral robustness by model (inverse of average per-item standard deviation; error bars show propagated SE via delta method).}
   \label{tab:robustness_by_foundation}
   \begin{tabular}{lccccc}
     \toprule
@@ -8,6 +8,7 @@
     \midrule
     claude-haiku-4-5 & $26\pm 7$ & $29\pm 9$ & $35\pm 9$ & $37\pm 10$ & $33\pm 7$ \\
     claude-sonnet-4-5 & $175\pm 60$ & $80\pm 20$ & $113\pm 30$ & $80\pm 20$ & $147\pm 50$ \\
+    gpt-4.1 & $15\pm 1$ & $20\pm 2$ & $12\pm 1$ & $14\pm 1$ & $13\pm 1$ \\
     gpt-4.1-mini & $12\pm 1$ & $16\pm 2$ & $12\pm 1$ & $9.7\pm 0.8$ & $9.2\pm 0.7$ \\
     gpt-4.1-nano & $9\pm 1$ & $16\pm 2$ & $15\pm 2$ & $11\pm 1$ & $12\pm 1$ \\
     gpt-4o-mini & $20\pm 2$ & $17\pm 2$ & $14\pm 1$ & $11\pm 1$ & $8.3\pm 0.6$ \\

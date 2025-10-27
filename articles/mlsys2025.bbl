@@ -1,4 +1,4 @@
-\begin{thebibliography}{9}
+\begin{thebibliography}{10}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -26,6 +26,11 @@ Bajpai, S., Sameer, A., and Fatima, R.
 Costa, D.~B. and Vicente, R.
 \newblock Deceive, detect, and disclose: Large language models play mini-mafia, 2025.
 \newblock URL \url{https://arxiv.org/abs/2509.23023}.
+
+\bibitem[Ge et~al.(2025)Ge, Chan, Wang, Yu, Mi, and Yu]{ge2025scalingsyntheticdatacreation}
+Ge, T., Chan, X., Wang, X., Yu, D., Mi, H., and Yu, D.
+\newblock Scaling synthetic data creation with 1,000,000,000 personas, 2025.
+\newblock URL \url{https://arxiv.org/abs/2406.20094}.
 
 \bibitem[Graham et~al.(2009)Graham, Haidt, and Nosek]{graham2009liberals}
 Graham, J., Haidt, J., and Nosek, B.~A.
