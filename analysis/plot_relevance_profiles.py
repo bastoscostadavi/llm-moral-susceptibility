@@ -37,6 +37,16 @@ DATA_DIR = PROJECT_ROOT / "data"
 RESULTS_DIR = PROJECT_ROOT / "results"
 OUTPUT_PATH = RESULTS_DIR / "moral_foundations_relevance_profiles.png"
 
+# Restrict plot to a fixed subset of models. Keep both possible Gemini slugs
+# to accommodate dataset naming; only existing ones will be included.
+ALLOWED_MODELS = {
+    "claude-haiku-4-5",
+    "gpt-4.1-nano",
+    "gpt-4.1-mini",
+    "grok-4-fast",
+    "gemini-2.5-flash-lite",
+}
+
 MODEL_COLORS = [
     "#1f77b4",
     "#ff7f0e",
@@ -69,6 +79,9 @@ def load_relevance_scores() -> Dict[str, Dict[str, List[float]]]:
     scores_by_model: Dict[str, Dict[str, List[float]]] = {}
 
     for csv_path in sorted(DATA_DIR.glob("*_self.csv")):
+        model_slug = csv_path.stem.replace("_self", "")
+        if ALLOWED_MODELS and model_slug not in ALLOWED_MODELS:
+            continue
         with csv_path.open(newline="") as handle:
             reader = csv.DictReader(handle)
             if "question_id" not in reader.fieldnames or "rating" not in reader.fieldnames:
@@ -102,8 +115,7 @@ def load_relevance_scores() -> Dict[str, Dict[str, List[float]]]:
         if any(len(values) == 0 for values in foundation_scores.values()):
             continue
 
-        model_name = csv_path.stem.replace("_self", "")
-        scores_by_model[model_name] = foundation_scores
+        scores_by_model[model_slug] = foundation_scores
 
     return scores_by_model
 

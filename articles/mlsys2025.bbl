@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{18}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -22,10 +22,30 @@ Bajpai, S., Sameer, A., and Fatima, R.
 \newblock Research Square preprint, 2024.
 \newblock URL \url{https://doi.org/10.21203/rs.3.rs-5336157/v1}.
 
+\bibitem[Bianchi et~al.(2024)]{bianchi2024negotiationarena}
+Bianchi, F. et~al.
+\newblock How well can llms negotiate? negotiationarena platform and analysis.
+\newblock \emph{arXiv preprint arXiv:2402.05863}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2402.05863}.
+
+\bibitem[Chen et~al.(2024)]{chen-etal-2024-tombench}
+Chen, Z. et~al.
+\newblock Tombench: Benchmarking theory of mind in large language models.
+\newblock In \emph{Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics}, 2024.
+\newblock \doi{10.18653/v1/2024.acl-long.847}.
+\newblock URL \url{https://aclanthology.org/2024.acl-long.847/}.
+
 \bibitem[Costa \& Vicente(2025)Costa and Vicente]{costa2025deceivedetectdiscloselarge}
 Costa, D.~B. and Vicente, R.
 \newblock Deceive, detect, and disclose: Large language models play mini-mafia, 2025.
 \newblock URL \url{https://arxiv.org/abs/2509.23023}.
+
+\bibitem[Costa et~al.(2025)Costa, Alves, and Vicente]{costa2025llmms}
+Costa, D.~B., Alves, F., and Vicente, R.
+\newblock Llm moral susceptibility: Benchmark, prompts, runners, and analysis.
+\newblock GitHub repository, 2025.
+\newblock URL \url{https://github.com/bastoscostadavi/llm-moral-susceptibility}.
+\newblock Accessed 2025-10-28.
 
 \bibitem[Ge et~al.(2025)Ge, Chan, Wang, Yu, Mi, and Yu]{ge2025scalingsyntheticdatacreation}
 Ge, T., Chan, X., Wang, X., Yu, D., Mi, H., and Yu, D.
@@ -49,14 +69,45 @@ Haidt, J. and Graham, J.
 \newblock \emph{Social Justice Research}, 20\penalty0 (1):\penalty0 98--116, 2007.
 \newblock \doi{10.1007/s11211-007-0034-z}.
 
+\bibitem[Hendrycks et~al.(2021)]{hendrycks2021ethics}
+Hendrycks, D. et~al.
+\newblock Aligning ai with shared human values.
+\newblock In \emph{Proceedings of the International Conference on Learning Representations (ICLR)}, 2021.
+\newblock URL \url{https://arxiv.org/abs/2008.02275}.
+
 \bibitem[Ji et~al.(2025)Ji, Chen, Jin, Xu, Hua, and Zhang]{ji2025moralbenchmoralevaluationllms}
 Ji, J., Chen, Y., Jin, M., Xu, W., Hua, W., and Zhang, Y.
 \newblock Moralbench: Moral evaluation of llms, 2025.
 \newblock URL \url{https://arxiv.org/abs/2406.04428}.
 
+\bibitem[{MFQ}(2017)]{moralfoundations2017questionnaires}
+{MFQ}.
+\newblock Moral foundation questionnaires.
+\newblock \url{https://moralfoundations.org/questionnaires/}, August 2017.
+\newblock Accessed: 2025-10-28.
+
 \bibitem[Nunes et~al.(2024)Nunes, Almeida, de~Araujo, and Barbosa]{nunes2024hypocrites}
 Nunes, J.~L., Almeida, G. F. C.~F., de~Araujo, M., and Barbosa, S. D.~J.
 \newblock Are large language models moral hypocrites? a study based on moral foundations, 2024.
 \newblock Final version appears in the AAAI/ACM Conference on AI, Ethics, and Society (AIES 2024).
+
+\bibitem[Pan et~al.(2023)]{pan2023machiavelli}
+Pan, A. et~al.
+\newblock Do the rewards justify the means? measuring trade-offs between rewards and ethical behavior in the {MACHIAVELLI} benchmark.
+\newblock \emph{arXiv preprint arXiv:2304.03279}, 2023.
+\newblock URL \url{https://arxiv.org/abs/2304.03279}.
+
+\bibitem[Sap et~al.(2019)]{sap-etal-2019-social}
+Sap, M. et~al.
+\newblock Social {IQ}a: Commonsense reasoning about social interactions.
+\newblock In \emph{Proceedings of EMNLP-IJCNLP}, 2019.
+\newblock \doi{10.18653/v1/D19-1454}.
+\newblock URL \url{https://aclanthology.org/D19-1454/}.
+
+\bibitem[Zhou et~al.(2024)]{zhou2024sotopia}
+Zhou, X. et~al.
+\newblock Sotopia: Interactive evaluation for social intelligence in language agents.
+\newblock In \emph{Proceedings of the International Conference on Learning Representations (ICLR)}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2312.15880}.
 
 \end{thebibliography}

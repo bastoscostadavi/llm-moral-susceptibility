@@ -3,7 +3,8 @@
 \usepackage{mlsys2025}
 \usepackage{natbib}
 \usepackage{url}
-\usepackage{hyperref}
+\usepackage{xurl} % better URL line-breaking
+\usepackage[hidelinks,breaklinks=true]{hyperref}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{amsmath}
@@ -38,7 +39,7 @@ TELUS Digital Research Hub\\
 Center for Artificial Intelligence and Machine Learning\\
 Institute of Mathematics, Statistics and Computer Science\\
 University of São Paulo \\
-\texttt{\{davi.costa,falves,rvicente\}@usp.br} \\
+\texttt{\{davi.costa,felippe.pereira,rvicente\}@usp.br} \\
 }
 
 \begin{document}
@@ -46,17 +47,14 @@ University of São Paulo \\
 \maketitle
 
 \begin{abstract}
-We study how persona conditioning influences the moral judgments produced by large language models (LLMs). Using the 30-item Moral Foundations Questionnaire (MFQ-30), we elicit repeated ratings across diverse personas and models, and introduce a benchmark that quantifies two properties: (i) moral susceptibility (the variation of MFQ scores under different personas), and (ii) moral robustness (the stability of ratings for personas under repeated sampling). We also display moral foundation profiles for models in a self (no-persona) condition and report moral foundation profiles for persona characterizations averaged across models, providing a complementary view of the moral effect of personas on model outputs. We find that model family explains most of the variance in moral robustness, and while larger models tend to be more robust within a family, this size effect is modest compared to family-level differences. Susceptibility is more idiosyncratic: it shows weak within-family correlation, varies across moral foundations, and exhibits no consistent size trend. We release our prompts, runners, and analysis scaffolding to facilitate replication and comparative evaluation.
+We study how persona conditioning influences the moral judgments produced by large language models (LLMs). Using the 30-item Moral Foundations Questionnaire (MFQ), we elicit repeated ratings across diverse personas and models, and introduce a benchmark that quantifies two properties: (i) moral robustness (the stability of ratings for personas under repeated sampling), and (ii) moral susceptibility (the sensitivity of MFQ scores under different personas). We find that model family explains most of the variance in moral robustness, and while larger models tend to be more robust within a family, this size effect is modest compared to family-level differences. Susceptibility is more idiosyncratic: it shows weak within-family correlation, varies across moral foundations, and exhibits no consistent size trend. Additionally, we display moral foundation profiles for models in a self (no-persona) condition and report moral foundation profiles for persona characterizations averaged across models, providing a complementary view of the moral effect of personas on model outputs. We release our prompts, runners, and analysis to facilitate replication and comparative evaluation.
 \end{abstract}
 
 \section{Introduction}
-Reliable benchmarks for the social capabilities of large language models (LLMs) are increasingly important as these systems are deployed in interactive, multi-agent settings where outcomes hinge on social intelligence and strategic reasoning. Such dynamics include theory-of-mind, reasoning under asymmetric information, and coping with misaligned goals; yet systematic, reproducible evaluations remain scarce. Motivated by this need---and echoing calls to rigorously benchmark social behavior in LLMs \citep{costa2025deceivedetectdiscloselarge}---we focus on moral judgment as a core facet of social decision-making and alignment.
+Reliable benchmarks for the social capabilities of large language models (LLMs) are crucial as models move into interactive, multi-agent settings where outcomes hinge on social intelligence. Recent evaluations probe theory-of-mind, negotiation under asymmetric information, cooperation, and deception through controlled role-play and game-theoretic tasks, e.g.: SOTOPIA for open-ended social interaction \cite{zhou2024sotopia}, MACHIAVELLI for reward–ethics trade-offs \cite{pan2023machiavelli}, NegotiationArena for bargaining \cite{bianchi2024negotiationarena}, ToMBench for structured ToM assessment \cite{chen-etal-2024-tombench}, and Mini-Mafia for emergent deception and detection \cite{costa2025deceivedetectdiscloselarge}. Complementary datasets benchmark social commonsense and moral judgment at scale \cite{sap-etal-2019-social,hendrycks2021ethics}. Motivated by this landscape, we focus on moral judgment as a core facet of social decision-making and alignment.
 
-
-
-This paper introduces a benchmark based on the Moral Foundations Questionnaire (MFQ-30), a widely used instrument in moral psychology that measures five moral foundations: Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, and Purity/Sanctity \citep{graham2009liberals,haidt2007when}. We operationalize moral susceptibility as the variation in MFQ subscale scores across personas, and robustness as the stability of ratings across repeated trials and persona perturbations. Our contributions are:
+This paper introduces a benchmark based on the Moral Foundations Questionnaire \citep{moralfoundations2017questionnaires}, a widely used instrument in moral psychology that measures five moral foundations: Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, and Purity/Sanctity \citep{graham2009liberals,haidt2007when,moralfoundations2017questionnaires}. We operationalize moral susceptibility as the variation in MFQ subscale scores across personas \citep{ge2025scalingsyntheticdatacreation}, and robustness as the stability of ratings across repeated trials and persona. Our contributions are:
 \begin{enumerate}
-  \item A standardized, open protocol for eliciting MFQ-30 ratings from LLMs under persona conditioning, including prompts and a lightweight runner.
   \item A set of susceptibility and robustness metrics grounded in variance components, effect sizes, and reliability analysis.
   \item An empirical study across multiple models and personas, with guidance for statistical analysis and reporting.
 \end{enumerate}
@@ -64,21 +62,18 @@ This paper introduces a benchmark based on the Moral Foundations Questionnaire (
 Recent MFQ-based studies profile LLM value orientations and alignment. \citet{abdulhai-etal-2024-moral} adapt MFQ prompts to derive foundation scores, compare them to human surveys, and show that targeted prompts can shift profiles and affect downstream donations. \citet{nunes2024hypocrites} combine MFQ with MFV to reveal inconsistencies between abstract and concrete judgments. \citet{aksoy2024whose} use MFQ-2 across eight languages to expose cultural/linguistic variability, and \citet{bajpai2024insights} compare MFQ-20 and moral competence between humans and chatbots, finding LLMs emphasize individualist foundations and lag human competence. In parallel, MoralBench \citep{ji2025moralbenchmoralevaluationllms} offers a broad task suite; our MFQ persona framework complements it by isolating persona-driven shifts relative to a self baseline.
 
 \section{Moral Robustness and Susceptibility Benchmark}
-We define a benchmark to evaluate two complementary dimensions of persona sensitivity in LLMs.
 
-\paragraph{Moral robustness} The stability of MFQ ratings under repeated sampling and small persona perturbations (e.g., paraphrases). Operationally, we report a simple index defined as the inverse of the average per-item standard deviation across repetitions (higher is more stable).
+We define a benchmark to evaluate the moral robustness and moral susceptibility of LLMs. Moral robustness, is the stability of MFQ ratings across personas under repeated sampling, precisely defined in \eqref{eq:robustness}. Moral susceptibility is the sensitivity of MFQ scores under different personas, defined in \eqref{eq:overall-susceptibility}.
 
-\paragraph{Moral susceptibility} The degree to which MFQ subscale scores shift as persona descriptions change. High susceptibility indicates strong persona-driven modulation of moral judgments; low susceptibility indicates persona-invariant responses.
+\subsection{Moral Foundation Questionnaire}
+The Moral Foundation Questionnare \citep{moralfoundations2017questionnaires} comprises 30 items split into two sections: 15 relevance judgments (how relevant specific considerations are when deciding right from wrong) and 15 agreement statements (level of agreement with moral propositions) \citep{graham2011mfq,moralfoundations2017questionnaires}. Items map to five moral foundations (Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, Purity/Sanctity). Subscale scores are computed by averaging the items associated with each foundation within each section and then combining sections (mean of relevance and agreement for that foundation).
 
-\subsection{MFQ}
-The MFQ-30 comprises 30 items split into two sections: 15 relevance judgments (how relevant specific considerations are when deciding right from wrong) and 15 agreement statements (level of agreement with moral propositions) \citep{graham2011mfq}. Items map to five moral foundations (Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, Purity/Sanctity). Following common practice, filler items (e.g., canonical item indices 6 and 22 in some MFQ-30 versions) are excluded from subscale scoring. Subscale scores are computed by averaging the items associated with each foundation within each section and then combining sections (e.g., mean of relevance and agreement for that foundation), or by an alternative pre-registered scheme.
-
-In our implementation, each prompt instructs the model to produce a leading integer in \([0,5]\) reflecting either relevance (0=not at all, 5=extremely) or agreement (0=strongly disagree, 5=strongly agree), followed by free-text reasoning. Ratings are parsed by extracting the first digit \([0,5]\) from the response. Figure~\ref{fig:mfq-profiles} illustrates the resulting MFQ relevance profile across models using the self (no-persona) baseline.
+In our implementation, each prompt instructs the model to produce a leading integer in \([0,5]\) reflecting either relevance (0=not at all, 5=extremely) or agreement (0=strongly disagree, 5=strongly agree), followed by free-text reasoning. Ratings are parsed by extracting the first digit \([0,5]\) from the response. Figure~\ref{fig:mfq-profiles} illustrates the resulting MFQ relevance profile across models using the self (no-persona) baseline, specifically, the models where prompted exclusively with the MFQ questions.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{../results/moral_foundations_relevance_profiles.png}
-  \caption{Moral foundation relevance profiles (self/no-persona baseline). Points show mean relevance per foundation; error bars denote standard errors across items within each foundation.}
+  \caption{Average Moral Foundation Profile Across Models (self/no-persona baseline). Points show mean relevance per foundation; error bars denote standard errors across items within each foundation.}
   \label{fig:mfq-profiles}
 \end{figure}
 
@@ -89,15 +84,17 @@ In our implementation, each prompt instructs the model to produce a leading inte
   \label{fig:persona-mfq-profiles}
 \end{figure}
 
+Figure~\ref{fig:persona-mfq-profiles} illustrates the resulting MFQ relevance profile average over all models for different personas. It gives an average characterization of the moral persona conditioning on models. The full per-persona and per-model MFQ ratings are available in CSV files in our GitHub repository \cite{costa2025llmms}. 
+
 \subsection{Experimental Methodology}
-We use a simple, reproducible runner that iterates through MFQ-30 items for a list of personas and repeats each item multiple times to characterize response variability. The runner supports local GGUF models as well as API-hosted models through a uniform interface. Concretely:
+We use a simple, reproducible runner that iterates through MFQ items for a list of personas and repeats each item multiple times to characterize response variability. Concretely:
 \begin{itemize}
-  \item \textbf{Personas:} A JSON file provides persona descriptions (plain text). By default, each persona is used as-is and identified by its index.
-  \item \textbf{Prompting:} For each persona and item, the model receives a roleplaying instruction ("You are roleplaying as the following persona: \ldots") plus the MFQ item prompt. The prompt requests a leading integer rating in \([0,5]\) and then reasoning.
-  \item \textbf{Repetitions:} Each persona--question pair is queried \(n\) times (default \(n=10\)) to estimate within-persona variability and enable reliability analysis.
-  \item \textbf{Decoding:} We use low temperature (default 0.1) and a small \texttt{max\_tokens} (default 5) to elicit short, rating-first outputs. Ratings are parsed with a conservative regex; failures are recorded as \(-1\).
-  \item \textbf{Logging:} Each response is streamed to CSV with fields: persona\_id, question\_id, run\_index, rating, truncated response text, and timestamp.
-  \item \textbf{Models:} We include local chat-tuned GGUF models (e.g., Mistral, Llama, Qwen) and hosted models (e.g., Anthropic, OpenAI) when API keys are configured.
+  \item \textbf{Personas:} A JSON file provides persona descriptions in plain text, extracted from \citep{ge2025scalingsyntheticdatacreation}. By default, each persona is used as-is and identified by its index. See Appendix~\ref{app:personas} for the evaluated personas.
+  \item \textbf{Prompting:} For each persona and item, the model receives a roleplaying instruction plus the MFQ question. Exact prompt templates are provided in Appendix~\ref{app:prompts}.\footnote{We query one MFQ item at a time rather than the full questionnaire in a single prompt to avoid sequence- and order-dependent effects. Studying how MFQ responses change when posed as a single questionnaire and under randomized item orders is interesting in its own right and left for future work.}
+  \item \textbf{Repetitions:} Each persona--question pair is queried \(n\) times (default \(n=10\)) to estimate within-persona variability and uncertainty in the ratings.
+  \item \textbf{Decoding:}  The prompt requests a leading integer rating in \([0,5]\) and we set \texttt{max\_tokens} to 1 to elicit short, just rating outputs. Ratings are parsed with a conservative regex with failures recorded as \(-1\) (see Section~\ref{sec:failures} for details).
+  \item \textbf{Logging:} Each response is streamed to CSV with fields: persona\_id, question\_id, run\_index, rating, and timestamp.
+  \item \textbf{Models:} We included: Claude Haiku 4.5, Claude Sonnet 4.5, Gemini 2.5 Flahs Lite, GPT-4.1, GPT-4.1 Mini, GPT-4.1 Nano, GPT-4o, GPT-4o Mini, Grok-4 and Grok-4 Fast.
 \end{itemize}
 
 
@@ -105,7 +102,7 @@ We use a simple, reproducible runner that iterates through MFQ-30 items for a li
 
 
 
-This section formalizes the quantities we compute from the MFQ runs and how we summarize them into moral robustness susceptibility metrics with uncertainty.
+This section formalizes the quantities we compute from the MFQ runs and how we summarize them into moral robustness and susceptibility metrics.
 
 Let \(\mathcal{P}\) be the set of personas, \(\mathcal{Q}\) the set of 30 scored MFQ items, and \(R\) the number of repeated queries per persona--item pair. For persona \(p\), item \(q\), and repetition \(i=1,\ldots,R\), let \(y_{pqi}\in\{0,\ldots,5\}\) be the parsed rating.
 
@@ -114,15 +111,37 @@ For each persona--item pair we compute the sample mean and the standard deviatio
   \bar{y}_{pq} &= \frac{1}{R} \sum_{i=1}^{R} y_{pqi}, \label{eq:persona-question-mean}\\
   u_{pq} &= \sqrt{\frac{1}{R-1} \sum_{i=1}^{R} \big(y_{pqi} - \bar{y}_{pq}\big)^2}, \label{eq:persona-question-se}
 \end{align}
-so that \(u_{pq}\) is the standard deviation (SD) across repetitions.
 
-\paragraph{Susceptibility (between-persona sensitivity)} To stabilize estimates across many personas, we partition \(\mathcal{P}\) into \(G\) disjoint groups \(\mathcal{P}_1,\ldots,\mathcal{P}_G\) of equal size (default 10 personas per group). For each item \(q\) and group \(g\), we compute the sample standard deviation of persona means
+\paragraph{Moral robustness} We summarize within-pair variability by averaging the SDs in \eqref{eq:persona-question-se} over personas and items
+\begin{equation}
+  \bar{u} = \frac{1}{|\mathcal{P}|\,|\mathcal{Q}|} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} u_{pq}.\label{eq:mean-uncertainty}
+\end{equation}
+Our robustness index is the reciprocal
+\begin{equation}
+  R = \frac{1}{\bar{u}}.\label{eq:robustness}
+\end{equation}
+Let the (sample) standard deviation of the \(u_{pq}\) values be
+\begin{equation}
+  s_u = \sqrt{\frac{1}{|\mathcal{P}|\,|\mathcal{Q}| - 1} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} \Big(u_{pq} - \bar{u}\Big)^2}.\label{eq:uncertainty-sd}
+\end{equation}
+Then the SE of \(\bar{u}\) is \(\sigma_{\bar{u}} = s_u / \sqrt{|\mathcal{P}|\,|\mathcal{Q}|}\) which we propagate to get an estimate for robustness SE:
+\begin{equation}
+  \sigma_R = \frac{\sigma_{\bar{u}}}{\bar{u}^2}.
+  \label{eq:robustness-se}
+\end{equation}
+Foundation-level robustness repeats \eqref{eq:mean-uncertainty}--\eqref{eq:robustness-se} with sums over \(\mathcal{Q}_f\).
+
+
+\paragraph{Moral susceptibility} To stabilize estimates across many personas, we partition \(\mathcal{P}\) into \(G\) disjoint groups \(\mathcal{P}_1,\ldots,\mathcal{P}_G\) of equal size. For each item \(q\) and group \(g\), we compute the sample standard deviation of persona means
 \begin{align}
-  & s_{qg} = \sqrt{\frac{1}{|\mathcal{P}_g|-1} \sum_{p \in \mathcal{P}_g} \Big(\bar{y}_{pq} - \bar{y}_{gq}\Big)^2},\\
-  & \bar{y}_{gq} = \frac{1}{|\mathcal{P}_g|} \sum_{p \in \mathcal{P}_g} \bar{y}_{pq},
+  & s_{qg} = \sqrt{\frac{1}{|\mathcal{P}_g|-1} \sum_{p \in \mathcal{P}_g} \Big(\bar{y}_{pq} - \bar{y}_{gq}\Big)^2},
   \label{eq:question-dispersion}
 \end{align}
-and average across items to obtain a group-level susceptibility sample
+with $\bar{y}_{gq}$ the average over $\mathcal{P}_g$, i.e.: 
+\begin{align}
+  \bar{y}_{gq} = \frac{1}{|\mathcal{P}_g|} \sum_{p \in \mathcal{P}_g} \bar{y}_{pq}.
+\end{align}
+From $s_{qg}$ we obtain a group-level susceptibility sample
 \begin{equation}
   S_g = \frac{1}{|\mathcal{Q}|} \sum_{q \in \mathcal{Q}} s_{qg}.\label{eq:group-susceptibility}
 \end{equation}
@@ -136,29 +155,12 @@ with its standard error estimated from the between-group variability
 \end{equation}
 Foundation-specific susceptibilities reuse \eqref{eq:question-dispersion}--\eqref{eq:susceptibility-se} after restricting \(\mathcal{Q}\) to the item subset \(\mathcal{Q}_f\) for foundation \(f\).
 
-\paragraph{Robustness (trial-level stability)} We summarize within-pair variability by averaging the SDs in \eqref{eq:persona-question-se} over personas and items
+\paragraph{Cross-model normalization} To facilitate comparison, we also present the z-scores that symmarize relative performance across models. The $z$-score for metric $M\in \{S,R\}$ is
 \begin{equation}
-  \bar{u} = \frac{1}{|\mathcal{P}|\,|\mathcal{Q}|} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} u_{pq}.\label{eq:mean-uncertainty}
+  z_{M} = \frac{M - \mu_M}{\sigma_M},
+  \label{eq:zscore}
 \end{equation}
-Our robustness index is the reciprocal
-\begin{equation}
-  R = \frac{1}{\bar{u}}.\label{eq:robustness}
-\end{equation}
-Let the (sample) standard deviation of the \(u_{pq}\) values be
-\begin{equation}
-  s_u = \sqrt{\frac{1}{|\mathcal{P}|\,|\mathcal{Q}| - 1} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} \Big(u_{pq} - \bar{u}\Big)^2}.\label{eq:uncertainty-sd}
-\end{equation}
-Then the SE of \(\bar{u}\) is \(\sigma_{\bar{u}} = s_u / \sqrt{|\mathcal{P}|\,|\mathcal{Q}|}\). Applying the delta method to \eqref{eq:robustness} yields the propagated SE for robustness
-\begin{equation}
-  \sigma_R = \frac{\sigma_{\bar{u}}}{\bar{u}^2}.\label{eq:robustness-se}
-\end{equation}
-Foundation-level robustness repeats \eqref{eq:mean-uncertainty}--\eqref{eq:robustness-se} with sums over \(\mathcal{Q}_f\).
-
-\paragraph{Cross-model normalization} The z-score table (Table~\ref{tab:summary_by_model_with_z}) summarizes relative performance across models. For metric \(M \in \{S,R\}\) and foundation \(f\), let \(V_{mf}^{(M)}\) be model \(m\)'s estimate with SE \(\sigma_{V, mf}^{(M)}\). With across-model mean \(\mu_f^{(M)}\) and SD \(\sigma_f^{(M)}\), the z-score is
-\begin{equation}
-  Z_{mf}^{(M)} = \frac{V_{mf}^{(M)} - \mu_f^{(M)}}{\sigma_f^{(M)}},\qquad
-  \sigma_{Z, mf}^{(M)} = \frac{\sigma_{V, mf}^{(M)}}{\sigma_f^{(M)}}.\label{eq:zscore}
-\end{equation}
+where $M$ is the models's score, $\mu_M$ is the mean, and $\sigma_M$ is the standard deviation over different models. The uncertainty of $z_M$ is propagated from that of $M$, $\mu_M$ and $\sigma_M$.
 
 \subsection{Failures to Respond}
 \label{sec:failures}
@@ -189,7 +191,6 @@ Table~\ref{tab:failures_by_model} reports, for completeness, the number of trial
   \end{tabular}
 \end{table}
 
-\paragraph{Probabilistic imputation}
 Rather than estimating item ratings via repeated sampling (10 trials), a more principled alternative is to use the model’s next-token distribution to directly compute an expected rating. Given the question prompt (that includes a the instruction that the response should begin with the rating from 0--5), let \(p_n = p(n\mid\text{prompt})\) denote the probability that the next token is the digit \(n\). Then estimate
 \begin{equation}
   \hat r = \frac{p_1+2p_2+3p_3+4p_4+5p_5}{p_0+p_1+p_2+p_3+p_4+p_5}
@@ -200,7 +201,7 @@ In expectation, this equals the average that our 10-trial procedure approximates
 
 \section{Results}
 
-We present robustness and susceptibility by model and foundation, plus a z-score summary table across models.
+We present moral robustness and susceptibility by model both overall and by foundation, plus a $z$-score summary table across models.
 
 % Merged summary + z-score table across models
 \input{table_summary_by_model_with_z}
@@ -221,7 +222,7 @@ We quantify trial-level stability by first computing the sample standard deviati
   \label{fig:robustness}
 \end{figure*}
 
-\noindent\textit{Observations.} Robustness exhibits clear within-family structure across models. We observe a strong correlation by model family (e.g., families cluster together across foundations), with the Claude family consistently the most robust; notably, \emph{Claude Sonnet} outperforms all others by a sizeable margin across foundations. In contrast, the Grok models are the least robust on average. We do, however, observe a modest size effect: within a family, larger variants tend to be more robust (e.g., GPT-4.1 > mini > nano; Grok-4 > Grok-4-fast), but these differences are small relative to the family-level gaps. These trends are visible in Figure~\ref{fig:robustness} and summarized in the z-score table (Table~\ref{tab:summary_by_model_with_z}).
+Robustness exhibits clear within-family structure across models. We observe a strong correlation by model family (e.g., families cluster together across foundations), with the Claude family consistently the most robust; notably, \emph{Claude Sonnet} outperforms all others by a sizeable margin across foundations. In contrast, the Grok models are the least robust on average. We do, however, observe a modest size effect: within a family, larger variants tend to be more robust (e.g., GPT-4.1 > mini > nano; Grok-4 > Grok-4-fast), but these differences are small relative to the family-level gaps. These trends are visible in Figure~\ref{fig:robustness} and summarized in the z-score table (Table~\ref{tab:summary_by_model_with_z}).
 
 \subsection{Moral Susceptibility}
 We assess between-persona sensitivity by computing within-group dispersion of persona means per item (Eq.~\ref{eq:question-dispersion}), averaging across items to form group-level samples (Eq.~\ref{eq:group-susceptibility}), and reporting the across-group mean and its SE (Eqs.~\ref{eq:overall-susceptibility}--\ref{eq:susceptibility-se}).
@@ -239,15 +240,11 @@ We assess between-persona sensitivity by computing within-group dispersion of pe
   \label{fig:susceptibility}
 \end{figure*}
 
-\noindent\textit{Observations.} Susceptibility is more idiosyncratic: we do not observe strong correlation within model families, and rankings vary across foundations. The most susceptible model overall is \emph{Grok-4-fast}, indicating larger persona-driven shifts relative to peers. Across GPT-4.1 variants there is no consistent size pattern (normal, mini, nano are comparable). See Figure~\ref{fig:susceptibility} for the multi-foundation view and Table~\ref{tab:summary_by_model_with_z} for the corresponding z-scores. Complete moral foundation profiles for each persona and model are available in our GitHub repository.
+Susceptibility is more idiosyncratic: we do not observe strong correlation within model families, and rankings vary across foundations. The most susceptible model overall is \emph{Grok-4-fast}, indicating larger persona-driven shifts relative to peers. Across GPT-4.1 variants there is no consistent size pattern (normal, mini, nano are comparable). See Figure~\ref{fig:susceptibility} for the multi-foundation view and Table~\ref{tab:summary_by_model_with_z} for the corresponding z-scores. Complete moral foundation profiles for each persona and model are available in our GitHub repository \citep{costa2025llmms}.
 
-
-
-\paragraph{Qualitative analysis}
-Provide representative excerpts of reasoning (with personas anonymized) that illustrate high-susceptibility shifts versus robustly stable judgments.
 
 \section{Conclusion}
-We propose a principled benchmark for quantifying persona-driven shifts in LLM moral judgments using the MFQ-30. Our framework separates susceptibility (persona sensitivity) and robustness (rating stability), supports multiple model classes, and relies on transparent, easily repeatable procedures. Future work includes expanding persona taxonomies, stress-testing prompt formats, modeling reasoning content jointly with ratings, and correlating susceptibility with downstream alignment and safety outcomes.
+We propose a principled benchmark for quantifying persona-driven shifts in LLM moral judgments using the MFQ. Our framework separates susceptibility (persona sensitivity) and robustness (rating stability), supports multiple model classes, and relies on transparent, easily repeatable procedures. Future work includes expanding persona taxonomies, stress-testing prompt formats, modeling reasoning content jointly with ratings, and correlating susceptibility with downstream alignment and safety outcomes.
 
 
 
@@ -259,9 +256,10 @@ We propose a principled benchmark for quantifying persona-driven shifts in LLM m
 \appendix
 
 \section{Prompt Format}
-We use a simple roleplaying wrapper with MFQ item prompts. The item texts are sourced from the Moral Foundations Questionnaire (MFQ-30; see \url{https://moralfoundations.org/questionnaires/}) and are not repeated here. Below we show the exact prompt formats used.
+\label{app:prompts}
+We use a simple roleplaying wrapper with MFQ item prompts. The item texts are sourced from the Moral Foundations Questionnaire \cite{moralfoundations2017questionnaires} and are not repeated here. Below we show the exact prompt formats used.
 
-\paragraph{Persona wrapper}
+\subsection*{Persona wrapper}
 
 \begin{lstlisting}
 You are roleplaying as the following persona:
@@ -270,7 +268,7 @@ You are roleplaying as the following persona:
 Please answer the following question.
 \end{lstlisting}
 
-\paragraph{Relevance prompt template}
+\subsection*{Relevance prompt template}
 
 \begin{lstlisting}
 When deciding whether something is right or wrong, how relevant is the
@@ -287,7 +285,7 @@ Your response should start with an integer from 0 to 5, followed by your
 reasoning.
 \end{lstlisting}
 
-\paragraph{Agreement prompt template}
+\subsection*{Agreement prompt template}
 \begin{lstlisting}
 Please indicate your level of agreement with the following statement:
 '<STATEMENT>'. Please rate the statement using this scale:
@@ -303,9 +301,9 @@ reasoning.
 \end{lstlisting}
 
 \section{Personas}
+\label{app:personas}
 We evaluated models under a diverse set of personas to probe persona-driven shifts in MFQ responses. We include a numbered sample below; indices match the zero-based persona identifiers (\texttt{persona\_id}) used in our runs. The complete list is provided with the artifact (\texttt{personas.json}). Personas were sampled from prior work on large-scale persona generation \citep{ge2025scalingsyntheticdatacreation}.
 
 \IfFileExists{appendix_personas.tex}{\input{appendix_personas}}{\small\emph{Personas list will appear after running the generator script.}}
-
 
 \end{document}
