@@ -4,12 +4,44 @@
 from __future__ import annotations
 
 import argparse
+import math
+import re
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import pandas as pd
-import math
 import numpy as np
+import pandas as pd
+
+
+SUFFIX_PRIORITY = {
+    "": 0,
+    "mini": 1,
+    "nano": 2,
+    "fast": 3,
+    "flash": 4,
+    "lite": 5,
+    "self": 6,
+}
+
+
+def model_sort_key(name: str) -> tuple[str, int, str]:
+    match = re.match(r"^(.*?)(?:[-_](mini|nano|fast|flash|lite|self))?$", name)
+    if match:
+        base, suffix = match.groups()
+        suffix = suffix or ""
+        return base, SUFFIX_PRIORITY.get(suffix, 100), name
+    return name, 0, name
+
+
+def sort_by_model_order(frame: pd.DataFrame) -> pd.DataFrame:
+    models = frame["model"].astype(str)
+    order = {
+        model: idx for idx, model in enumerate(sorted(models.unique(), key=model_sort_key))
+    }
+    ordered = frame.copy()
+    ordered["__order"] = models.map(order)
+    ordered = ordered.sort_values("__order").drop(columns=["__order"])
+    return ordered.reset_index(drop=True)
 
 
 def parse_args() -> argparse.Namespace:
@@ -201,7 +233,7 @@ def main() -> None:
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    metrics = metrics.copy()
+    metrics = sort_by_model_order(metrics.copy())
     _add_zscore_columns(
         metrics,
         "susceptibility",
@@ -280,7 +312,7 @@ def main() -> None:
 
         for fnd, frame in by_fnd.groupby("foundation"):
             slug = _slug(fnd)
-            frame = frame.copy()
+            frame = sort_by_model_order(frame.copy())
             _add_zscore_columns(
                 frame,
                 "susceptibility",

@@ -27,7 +27,7 @@
 }
 
 
-\title{Moral Susceptibility and Robustness\\ in Large Language Models}
+\title{Moral Robustness and Susceptibility\\ in Large Language Models}
 
 
 
@@ -46,7 +46,7 @@ University of São Paulo \\
 \maketitle
 
 \begin{abstract}
-We study how persona conditioning influences the moral judgments produced by large language models (LLMs). Using the 30-item Moral Foundations Questionnaire (MFQ-30), we elicit repeated ratings across diverse personas and models, and introduce a benchmark that quantifies two properties: (i) moral susceptibility (the extent to which MFQ subscale scores shift under different personas), and (ii) robustness (the stability of ratings under repeated sampling and persona variation). We describe a simple, reproducible experimental protocol and propose variance- and effect-size-based metrics alongside mixed-effects analyses to isolate persona-related variance components. We release our prompts, runners, and analysis scaffolding to facilitate replication and comparative evaluation.
+We study how persona conditioning influences the moral judgments produced by large language models (LLMs). Using the 30-item Moral Foundations Questionnaire (MFQ-30), we elicit repeated ratings across diverse personas and models, and introduce a benchmark that quantifies two properties: (i) moral susceptibility (the variation of MFQ scores under different personas), and (ii) moral robustness (the stability of ratings for personas under repeated sampling). We also display moral foundation profiles for models in a self (no-persona) condition and report moral foundation profiles for persona characterizations averaged across models, providing a complementary view of the moral effect of personas on model outputs. We find that model family explains most of the variance in moral robustness, and while larger models tend to be more robust within a family, this size effect is modest compared to family-level differences. Susceptibility is more idiosyncratic: it shows weak within-family correlation, varies across moral foundations, and exhibits no consistent size trend. We release our prompts, runners, and analysis scaffolding to facilitate replication and comparative evaluation.
 \end{abstract}
 
 \section{Introduction}
@@ -66,7 +66,7 @@ Recent MFQ-based studies profile LLM value orientations and alignment. \citet{ab
 \section{Moral Robustness and Susceptibility Benchmark}
 We define a benchmark to evaluate two complementary dimensions of persona sensitivity in LLMs.
 
-\paragraph{Robustness} The stability of MFQ ratings under repeated sampling and small persona perturbations (e.g., paraphrases). Operationally, we report a simple index defined as the inverse of the average per-item standard deviation across repetitions (higher is more stable).
+\paragraph{Moral robustness} The stability of MFQ ratings under repeated sampling and small persona perturbations (e.g., paraphrases). Operationally, we report a simple index defined as the inverse of the average per-item standard deviation across repetitions (higher is more stable).
 
 \paragraph{Moral susceptibility} The degree to which MFQ subscale scores shift as persona descriptions change. High susceptibility indicates strong persona-driven modulation of moral judgments; low susceptibility indicates persona-invariant responses.
 
@@ -160,6 +160,42 @@ Foundation-level robustness repeats \eqref{eq:mean-uncertainty}--\eqref{eq:robus
   \sigma_{Z, mf}^{(M)} = \frac{\sigma_{V, mf}^{(M)}}{\sigma_f^{(M)}}.\label{eq:zscore}
 \end{equation}
 
+\subsection{Failures to Respond}
+\label{sec:failures}
+We treat rows flagged as failed generations as unusable signal. Concretely, during summarization we discard any trial with a positive failure flag (e.g., \texttt{failures}~$>$~0), and we exclude any persona that exhibits a \emph{complete} failure for one or more MFQ items (i.e., all 10 retries for that persona–question failed). This prevents missing cells when forming the persona~\(\times\)~question matrices required by our metrics.
+
+In practice, the following personas met the complete-failure criterion and were removed from the analysis set: \texttt{\{1, 26, 29, 66, 78, 80, 86, 90, 94, 95, 98\}}. To obtain an exact factorization for the susceptibility grouping (\(88 = 11 \times 8\)), we additionally dropped persona \texttt{0}.
+
+Table~\ref{tab:failures_by_model} reports, for completeness, the number of trials flagged as failed (rows with \texttt{failures}~$>$~0) per dataset; we list only datasets with non-zero counts.
+
+\begin{table}[t]
+  \centering
+  \caption{Non-zero failed trial counts by dataset (raw reruns under \texttt{data/}). A failed trial is any row with a positive failure flag.}
+  \label{tab:failures_by_model}
+  \begin{tabular}{lr}
+    \toprule
+    Dataset & Failed rows \\
+    \midrule
+    claude-sonnet-4-5 & 24 \\
+    claude-sonnet-4-5\_self & 213 \\
+    gemini-2.5-flash-lite & 129 \\
+    gemini-2.5-flash-lite\_self & 6 \\
+    gpt-4.1 & 4 \\
+    gpt-4.1\_self & 13 \\
+    gpt-4o-mini & 71 \\
+    gpt-4o-mini\_self & 18 \\
+    grok-4\_self & 5 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Probabilistic imputation}
+Rather than estimating item ratings via repeated sampling (10 trials), a more principled alternative is to use the model’s next-token distribution to directly compute an expected rating. Given the question prompt (that includes a the instruction that the response should begin with the rating from 0--5), let \(p_n = p(n\mid\text{prompt})\) denote the probability that the next token is the digit \(n\). Then estimate
+\begin{equation}
+  \hat r = \frac{p_1+2p_2+3p_3+4p_4+5p_5}{p_0+p_1+p_2+p_3+p_4+p_5}
+\end{equation}
+In expectation, this equals the average that our 10-trial procedure approximates, while avoiding failures and sampling variance. Implementing this requires access to token-level probabilities/log-probabilities from provider APIs. Care is needed around tokenization (e.g., space-prefixed digits or multiple token aliases) and to ensure probabilities are measured at the very first output position.
+
 
 
 \section{Results}
@@ -169,7 +205,7 @@ We present robustness and susceptibility by model and foundation, plus a z-score
 % Merged summary + z-score table across models
 \input{table_summary_by_model_with_z}
 
-\subsection{Robustness}
+\subsection{Moral Robustness}
 We quantify trial-level stability by first computing the sample standard deviation across repetitions for each persona–question pair (Eq.~\ref{eq:persona-question-se}), averaging these to obtain \(\bar{u}\) (Eq.~\ref{eq:mean-uncertainty}), and defining robustness as \(R = 1/\bar{u}\) (Eq.~\ref{eq:robustness}) with uncertainty propagated via Eq.~\ref{eq:robustness-se}.
 
 % Robustness (overall + five foundations)
@@ -185,9 +221,9 @@ We quantify trial-level stability by first computing the sample standard deviati
   \label{fig:robustness}
 \end{figure*}
 
-\noindent\textit{Observations.} Robustness exhibits clear within-family structure across models. We observe a strong correlation by model family (e.g., families cluster together across foundations), with the Claude family consistently the most robust; notably, \emph{Claude Sonnet} outperforms all others by a sizeable margin across foundations. In contrast, the Grok models are the least robust on average. We do not find a meaningful dependence on model size or SKU within families: the GPT-4.1 variants (normal, mini, nano) perform similarly, and Grok-4 versus Grok-4-fast shows no systematic size effect on robustness. These trends are visible in Figure~\ref{fig:robustness} and summarized in the z-score table (Table~\ref{tab:summary_by_model_with_z}).
+\noindent\textit{Observations.} Robustness exhibits clear within-family structure across models. We observe a strong correlation by model family (e.g., families cluster together across foundations), with the Claude family consistently the most robust; notably, \emph{Claude Sonnet} outperforms all others by a sizeable margin across foundations. In contrast, the Grok models are the least robust on average. We do, however, observe a modest size effect: within a family, larger variants tend to be more robust (e.g., GPT-4.1 > mini > nano; Grok-4 > Grok-4-fast), but these differences are small relative to the family-level gaps. These trends are visible in Figure~\ref{fig:robustness} and summarized in the z-score table (Table~\ref{tab:summary_by_model_with_z}).
 
-\subsection{Susceptibility}
+\subsection{Moral Susceptibility}
 We assess between-persona sensitivity by computing within-group dispersion of persona means per item (Eq.~\ref{eq:question-dispersion}), averaging across items to form group-level samples (Eq.~\ref{eq:group-susceptibility}), and reporting the across-group mean and its SE (Eqs.~\ref{eq:overall-susceptibility}--\ref{eq:susceptibility-se}).
 
 % Susceptibility (overall + five foundations)
@@ -203,7 +239,7 @@ We assess between-persona sensitivity by computing within-group dispersion of pe
   \label{fig:susceptibility}
 \end{figure*}
 
-\noindent\textit{Observations.} Susceptibility is more idiosyncratic: we do not observe strong correlation within model families, and rankings vary across foundations. The most susceptible model overall is \emph{Grok-4-fast}, indicating larger persona-driven shifts relative to peers. Across GPT-4.1 variants there is no consistent size pattern (normal, mini, nano are comparable). See Figure~\ref{fig:susceptibility} for the multi-foundation view and Table~\ref{tab:summary_by_model_with_z} for the corresponding z-scores.
+\noindent\textit{Observations.} Susceptibility is more idiosyncratic: we do not observe strong correlation within model families, and rankings vary across foundations. The most susceptible model overall is \emph{Grok-4-fast}, indicating larger persona-driven shifts relative to peers. Across GPT-4.1 variants there is no consistent size pattern (normal, mini, nano are comparable). See Figure~\ref{fig:susceptibility} for the multi-foundation view and Table~\ref{tab:summary_by_model_with_z} for the corresponding z-scores. Complete moral foundation profiles for each persona and model are available in our GitHub repository.
 
 
 

@@ -1,15 +1,15 @@
 # Fdb version 4
-["bibtex mlsys2025"] 1761590846.98999 "mlsys2025.aux" "mlsys2025.bbl" "mlsys2025" 1761590850.97843 0
+["bibtex mlsys2025"] 1761666048.82998 "mlsys2025.aux" "mlsys2025.bbl" "mlsys2025" 1761666051.35602 0
   "./mlsys2025.bst" 1694806655 26917 d7ddf50f3ace2f76b21ad88d918927a1 ""
   "./references.bib" 1761414773.53447 4002 93afe3ba9866af59c179b33db26cfdea ""
-  "mlsys2025.aux" 1761590850.74436 7278 b6a81656b629167da97ca65447251479 "pdflatex"
+  "mlsys2025.aux" 1761666051.22571 8007 2d9b55105d3875e5671d00649bc81629 "pdflatex"
   (generated)
   "mlsys2025.bbl"
   "mlsys2025.blg"
   (rewritten before read)
-["pdflatex"] 1761590847.07455 "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/mlsys2025.tex" "mlsys2025.pdf" "mlsys2025" 1761590850.97868 0
-  "../results/moral_foundations_relevance_profiles.png" 1761586767.55598 448111 97a4f455e14e02624fa03ddc2b853cc8 ""
-  "../results/persona_moral_foundations_relevance_profiles.png" 1761587431.42248 490400 88789260dcffc572e61b88d3df535225 ""
+["pdflatex"] 1761666048.87551 "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/mlsys2025.tex" "mlsys2025.pdf" "mlsys2025" 1761666051.35614 0
+  "../results/moral_foundations_relevance_profiles.png" 1761656655.38495 457381 6cdd5538654b726aa7059aa6e43945a7 ""
+  "../results/persona_moral_foundations_relevance_profiles.png" 1761656635.71224 459268 77ae05643b8c75c6340cad45c52a1238 ""
   "../results/robustness.png" 1761588271.74624 140729 ce18a5b1dbed4542cef5a26b509cf571 ""
   "../results/robustness_authority_respect.png" 1761588272.12081 142100 33340d46fd8edc94b25999386a844654 ""
   "../results/robustness_fairness_reciprocity.png" 1761588272.50248 144169 a3f8cfe3ad8fd80ba18419a9cc3cd03e ""
@@ -22,7 +22,7 @@
   "../results/susceptibility_harm_care.png" 1761588272.79863 151880 75a8d77462dc662f2257e2a453769188 ""
   "../results/susceptibility_in_group_loyalty.png" 1761588273.17519 160589 cb4c52a15bb44c8b77a1e9eceb3ed72d ""
   "../results/susceptibility_purity_sanctity.png" 1761588273.56201 157600 d96af4ae1349742c8954b82a49204a39 ""
-  "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/mlsys2025.tex" 1761590842.86157 19517 2a231295924c106326b76cdde69e665a ""
+  "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/mlsys2025.tex" 1761666046.18134 22582 ac53697a55f7293e4177f201ac2f2e26 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -146,12 +146,12 @@
   "/usr/local/texlive/2025basic/texmf-var/web2c/pdftex/pdflatex.fmt" 1756215981 3345719 9f2101240b5130a899dd5fd4380981ff ""
   "/usr/local/texlive/2025basic/texmf.cnf" 1741448314 628 81d1ada0f601fb1ffa62f1323192d946 ""
   "appendix_personas.tex" 1761414419.82015 10252 5f63b1dfb9f89d49c45a2cbb6c3c57ad ""
-  "mlsys2025.aux" 1761590850.74436 7278 b6a81656b629167da97ca65447251479 "pdflatex"
-  "mlsys2025.bbl" 1761590847.07192 3476 3741d23e0f071441019ee3e9c81e0634 "bibtex mlsys2025"
-  "mlsys2025.out" 1761590850.7454 1398 d5411926931023ad0f063cde892d75f4 "pdflatex"
+  "mlsys2025.aux" 1761666051.22571 8007 2d9b55105d3875e5671d00649bc81629 "pdflatex"
+  "mlsys2025.bbl" 1761666048.87377 3476 3741d23e0f071441019ee3e9c81e0634 "bibtex mlsys2025"
+  "mlsys2025.out" 1761666051.22659 1623 e96311de2fb507c0ee383264928efae5 "pdflatex"
   "mlsys2025.sty" 1741303933 25967 14259a72e7438565bca9a995786db1b2 ""
-  "mlsys2025.tex" 1761590842.86157 19517 2a231295924c106326b76cdde69e665a ""
-  "table_summary_by_model_with_z.tex" 1761588666.02399 1078 1d332fd0d187141294f1d43a22527705 ""
+  "mlsys2025.tex" 1761666046.18134 22582 ac53697a55f7293e4177f201ac2f2e26 ""
+  "table_summary_by_model_with_z.tex" 1761655980.06874 1168 614c2e0b6cf20cf629fa3c991dd34d3d ""
   (generated)
   "mlsys2025.aux"
   "mlsys2025.log"

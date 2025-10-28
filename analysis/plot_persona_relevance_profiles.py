@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plot averaged MFQ relevance profiles for a random persona sample across models."""
+"""Plot averaged MFQ moral foundation profiles for a random persona sample across models."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from mfq_questions import get_question
+from mfq_questions import iter_questions
 
 FOUNDATION_ORDER: List[str] = [
     "Harm/Care",
@@ -53,14 +53,13 @@ SERIES_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*"]
 SERIES_LINESTYLES = ["-", "--", "-.", ":"]
 
 
-def _relevance_foundations() -> Dict[int, str]:
-    """Map relevance question ids to their moral foundation."""
+def _foundation_questions() -> Dict[int, str]:
+    """Map MFQ item ids (relevance and agreement) to their foundations."""
 
     mapping: Dict[int, str] = {}
-    for question_id in range(1, 16):
-        question = get_question(question_id)
-        if question.question_type == "relevance":
-            mapping[question_id] = question.foundation
+    for question in iter_questions():
+        if question.question_type in {"relevance", "agreement"} and question.foundation:
+            mapping[question.id] = question.foundation
     return mapping
 
 
@@ -88,7 +87,7 @@ def available_personas() -> List[int]:
 def load_persona_scores(persona_filter: Set[int] | None = None) -> Dict[int, Dict[str, List[float]]]:
     """Aggregate per-foundation mean scores across models for selected personas."""
 
-    question_to_foundation = _relevance_foundations()
+    question_to_foundation = _foundation_questions()
     persona_scores: Dict[int, Dict[str, List[float]]] = {}
 
     def empty_foundation_dict() -> Dict[str, List[float]]:
@@ -175,7 +174,14 @@ def plot_persona_profiles(
     sorted_personas = sorted(persona_summaries)
     x_positions = list(range(len(FOUNDATION_ORDER)))
 
-    fig, ax = plt.subplots(figsize=(11, 6))
+    legend_cols = min(5, max(1, len(sorted_personas)))
+    legend_rows = ceil(len(sorted_personas) / legend_cols)
+
+    fig = plt.figure(figsize=(11, 7.2))
+    gs = fig.add_gridspec(nrows=2, ncols=1, height_ratios=[14, max(legend_rows, 1)], hspace=0.3)
+    ax = fig.add_subplot(gs[0])
+    legend_ax = fig.add_subplot(gs[1])
+    legend_ax.axis('off')
 
     for idx, persona in enumerate(sorted_personas):
         color = SERIES_COLORS[idx % len(SERIES_COLORS)]
@@ -211,15 +217,12 @@ def plot_persona_profiles(
     ax.grid(axis="y", linestyle="--", alpha=0.4)
     ax.set_axisbelow(True)
 
-    legend_cols = min(5, max(1, len(sorted_personas)))
-    legend_rows = ceil(len(sorted_personas) / legend_cols)
-    # Anchor the legend near the bottom of the axes so it sits between y=0 and y=1.
-    bbox_y = 0.08 + 0.04 * max(0, legend_rows - 1)
-
-    legend = ax.legend(
+    handles, labels = ax.get_legend_handles_labels()
+    legend = legend_ax.legend(
+        handles,
+        labels,
         frameon=False,
-        loc="lower center",
-        bbox_to_anchor=(0.5, bbox_y),
+        loc="center",
         ncol=legend_cols,
         fontsize=14,
         columnspacing=1.2,
@@ -237,7 +240,7 @@ def plot_persona_profiles(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Plot averaged MFQ relevance profiles for a random sample of personas.",
+        description="Plot averaged MFQ moral foundation profiles for a random sample of personas.",
     )
     parser.add_argument(
         "--sample-size",

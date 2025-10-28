@@ -19,6 +19,40 @@ if str(REPO_ROOT) not in sys.path:
 from mfq_questions import MFQ_QUESTIONS
 
 
+SUFFIX_PRIORITY = {
+    "": 0,
+    "mini": 1,
+    "nano": 2,
+    "fast": 3,
+    "flash": 4,
+    "lite": 5,
+    "self": 6,
+}
+
+
+def model_sort_key(name: str) -> tuple[str, int, str]:
+    match = re.match(r"^(.*?)(?:[-_](mini|nano|fast|flash|lite|self))?$", name)
+    if match:
+        base, suffix = match.groups()
+        suffix = suffix or ""
+        return base, SUFFIX_PRIORITY.get(suffix, 100), name
+    return name, 0, name
+
+
+def sort_by_model_order(frame: pd.DataFrame, secondary: str | None = None) -> pd.DataFrame:
+    models = frame["model"].astype(str)
+    order = {
+        model: idx for idx, model in enumerate(sorted(models.unique(), key=model_sort_key))
+    }
+    ordered = frame.copy()
+    ordered["__order"] = models.map(order)
+    sort_cols = ["__order"]
+    if secondary is not None and secondary in ordered.columns:
+        sort_cols.append(secondary)
+    ordered = ordered.sort_values(sort_cols).drop(columns=["__order"])
+    return ordered.reset_index(drop=True)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -281,6 +315,7 @@ def main() -> None:
         metrics = new_overall
 
     metrics = metrics[metrics_columns]
+    metrics = sort_by_model_order(metrics)
     metrics.to_csv(metrics_path, index=False)
 
     # Per-foundation
@@ -306,6 +341,7 @@ def main() -> None:
             by_fnd_df = pd.concat([existing[by_fnd_cols], new_by_fnd[by_fnd_cols]], ignore_index=True)
         else:
             by_fnd_df = new_by_fnd[by_fnd_cols]
+        by_fnd_df = sort_by_model_order(by_fnd_df, secondary="foundation")
         by_fnd_df.to_csv(by_fnd_path, index=False)
 
     # Done

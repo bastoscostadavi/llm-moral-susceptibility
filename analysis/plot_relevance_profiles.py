@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Plot MFQ relevance profiles for no-persona model self-assessments using Matplotlib."""
+"""Plot MFQ moral foundation profiles for no-persona self-assessments using Matplotlib."""
 
 from __future__ import annotations
 
 import csv
 import os
 import sys
-from math import sqrt
+from math import ceil, sqrt
 from pathlib import Path
 from statistics import mean, stdev
 from typing import Dict, Iterable, List, Tuple
@@ -23,7 +23,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from mfq_questions import get_question
+from mfq_questions import iter_questions
 
 FOUNDATION_ORDER: List[str] = [
     "Harm/Care",
@@ -52,21 +52,20 @@ MODEL_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*"]
 MODEL_LINESTYLES = ["-", "--", "-.", ":"]
 
 
-def _relevance_foundations() -> Dict[int, str]:
-    """Map relevance question ids to the associated moral foundation."""
+def _foundation_questions() -> Dict[int, str]:
+    """Map MFQ item ids (relevance and agreement) to their foundations."""
 
     mapping: Dict[int, str] = {}
-    for question_id in range(1, 16):
-        question = get_question(question_id)
-        if question.question_type == "relevance":
-            mapping[question_id] = question.foundation
+    for question in iter_questions():
+        if question.question_type in {"relevance", "agreement"} and question.foundation:
+            mapping[question.id] = question.foundation
     return mapping
 
 
 def load_relevance_scores() -> Dict[str, Dict[str, List[float]]]:
-    """Collect raw relevance scores from each *_self.csv file."""
+    """Collect raw MFQ scores (relevance and agreement) from each *_self.csv file."""
 
-    question_to_foundation = _relevance_foundations()
+    question_to_foundation = _foundation_questions()
     scores_by_model: Dict[str, Dict[str, List[float]]] = {}
 
     for csv_path in sorted(DATA_DIR.glob("*_self.csv")):
@@ -77,9 +76,23 @@ def load_relevance_scores() -> Dict[str, Dict[str, List[float]]]:
 
             foundation_scores = {foundation: [] for foundation in FOUNDATION_ORDER}
             for row in reader:
-                foundation = question_to_foundation.get(int(row["question_id"]))
+                try:
+                    question_id = int(row["question_id"])
+                except (TypeError, ValueError):
+                    continue
+
+                foundation = question_to_foundation.get(question_id)
                 if foundation is None:
                     continue
+
+                failures_raw = (row.get("failures") or "").strip()
+                if failures_raw:
+                    try:
+                        if int(float(failures_raw)) > 0:
+                            continue
+                    except ValueError:
+                        continue
+
                 try:
                     score = float(row["rating"])
                 except ValueError:
@@ -135,8 +148,14 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
 
     x_positions = list(range(len(FOUNDATION_ORDER)))
 
-    fig, ax = plt.subplots(figsize=(11, 6))
-    
+    legend_cols = min(5, max(1, len(sorted_models)))
+    legend_rows = ceil(len(sorted_models) / legend_cols)
+
+    fig = plt.figure(figsize=(11, 7.2))
+    gs = fig.add_gridspec(nrows=2, ncols=1, height_ratios=[14, max(legend_rows, 1)], hspace=0.3)
+    ax = fig.add_subplot(gs[0])
+    legend_ax = fig.add_subplot(gs[1])
+    legend_ax.axis('off')
 
     for model in sorted_models:
         color, marker, linestyle = style_map[model]
@@ -167,7 +186,21 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
     ax.grid(axis="y", linestyle="--", alpha=0.4)
     ax.set_axisbelow(True)
 
-    ax.legend(frameon=False, loc="upper left", bbox_to_anchor=(0, 0.7), fontsize=14)
+    handles, labels = ax.get_legend_handles_labels()
+    legend = legend_ax.legend(
+        handles,
+        labels,
+        frameon=False,
+        loc="center",
+        ncol=legend_cols,
+        fontsize=14,
+        columnspacing=1.2,
+        handlelength=2.0,
+        handletextpad=0.4,
+        labelspacing=0.3,
+        borderaxespad=0.0,
+    )
+    legend._legend_box.align = "left"
 
     fig.tight_layout()
     fig.savefig(OUTPUT_PATH, dpi=300)
