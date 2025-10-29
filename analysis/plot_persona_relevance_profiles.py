@@ -34,9 +34,24 @@ FOUNDATION_ORDER: List[str] = [
     "Purity/Sanctity",
 ]
 
+DATA_DIR = PROJECT_ROOT / "data"
 RESULTS_DIR = PROJECT_ROOT / "results"
 DEFAULT_OUTPUT_PATH = RESULTS_DIR / "persona_moral_foundations_relevance_profiles.png"
-DEFAULT_SAMPLE_SIZE = 5
+DEFAULT_SAMPLE_SIZE = 10
+
+# Reuse the same model allowlist as the self-assessment plots to keep figures aligned.
+ALLOWED_MODELS = {
+    "claude-haiku-4-5",
+    "claude-sonnet-4-5",
+    "gpt-4.1",
+    "gpt-4.1-nano",
+    "gpt-4.1-mini",
+    "gpt-4o",
+    "gpt-4o-mini",
+    "grok-4",
+    "grok-4-fast",
+    "gemini-2.5-flash-lite",
+}
 
 SERIES_COLORS = [
     "#1f77b4",
@@ -67,75 +82,132 @@ def available_personas() -> List[int]:
     """Discover persona ids present in the results CSV files."""
 
     persona_ids: Set[int] = set()
-    for csv_path in sorted(RESULTS_DIR.glob("*.csv")):
-        if csv_path.name.startswith("moral_"):
+    for csv_path in sorted(DATA_DIR.glob("*.csv")):
+        if csv_path.name.endswith("_self.csv"):
+            continue
+
+        model_slug = csv_path.stem
+        if ALLOWED_MODELS and model_slug not in ALLOWED_MODELS:
             continue
 
         with csv_path.open(newline="") as handle:
             reader = csv.DictReader(handle)
-            if reader.fieldnames is None or "persona" not in reader.fieldnames:
+            if reader.fieldnames is None or "persona_id" not in reader.fieldnames:
                 continue
             for row in reader:
+                persona_raw = row.get("persona_id")
+                if persona_raw is None:
+                    continue
                 try:
-                    persona_ids.add(int(row["persona"]))
+                    persona_ids.add(int(persona_raw))
                 except (TypeError, ValueError):
                     continue
 
     return sorted(persona_ids)
 
 
-def load_persona_scores(persona_filter: Set[int] | None = None) -> Dict[int, Dict[str, List[float]]]:
-    """Aggregate per-foundation mean scores across models for selected personas."""
+def load_persona_scores(persona_filter: Set[int]) -> Dict[int, Dict[str, List[float]]]:
+    """Collect per-foundation means for each persona by averaging across models and runs."""
 
     question_to_foundation = _foundation_questions()
-    persona_scores: Dict[int, Dict[str, List[float]]] = {}
+    per_model_data: Dict[str, Dict[int, Dict[int, List[float]]]] = {}
 
-    def empty_foundation_dict() -> Dict[str, List[float]]:
-        return {foundation: [] for foundation in FOUNDATION_ORDER}
-
-    for csv_path in sorted(RESULTS_DIR.glob("*.csv")):
-        if csv_path.name.startswith("moral_"):
+    for csv_path in sorted(DATA_DIR.glob("*.csv")):
+        if csv_path.name.endswith("_self.csv"):
             continue
 
-        per_persona: Dict[int, Dict[str, List[float]]] = {}
+        model_slug = csv_path.stem
+        if ALLOWED_MODELS and model_slug not in ALLOWED_MODELS:
+            continue
+
         with csv_path.open(newline="") as handle:
             reader = csv.DictReader(handle)
             if reader.fieldnames is None:
                 continue
-            required_fields = {"persona", "question", "average_score"}
-            if not required_fields.issubset(reader.fieldnames):
+
+            required_fields = {"persona_id", "question_id", "rating", "run_index"}
+            if required_fields.difference(reader.fieldnames):
                 continue
 
+            model_personas = per_model_data.setdefault(model_slug, {})
+
             for row in reader:
+                persona_raw = row.get("persona_id")
+                question_raw = row.get("question_id")
+                rating_raw = row.get("rating")
+
+                if persona_raw is None or question_raw is None or rating_raw is None:
+                    continue
+
                 try:
-                    persona_id = int(row["persona"])
-                    question_id = int(row["question"])
-                    score = float(row["average_score"])
+                    persona_id = int(persona_raw)
                 except (TypeError, ValueError):
                     continue
 
-                if persona_filter is not None and persona_id not in persona_filter:
+                if persona_id not in persona_filter:
+                    continue
+
+                try:
+                    question_id = int(question_raw)
+                except (TypeError, ValueError):
+                    continue
+
+                if question_id not in question_to_foundation:
+                    continue
+
+                failures_raw = (row.get("failures") or "").strip()
+                if failures_raw:
+                    try:
+                        if int(float(failures_raw)) > 0:
+                            continue
+                    except ValueError:
+                        continue
+
+                run_index_raw = row.get("run_index")
+                if run_index_raw is None or not run_index_raw.strip():
+                    continue
+
+                try:
+                    int(run_index_raw)
+                except (TypeError, ValueError):
+                    continue
+
+                try:
+                    rating = float(rating_raw)
+                except (TypeError, ValueError):
+                    continue
+
+                persona_entries = model_personas.setdefault(persona_id, {})
+                persona_entries.setdefault(question_id, []).append(rating)
+
+    persona_scores: Dict[int, Dict[str, List[float]]] = {}
+
+    for model_personas in per_model_data.values():
+        for persona_id, question_scores in model_personas.items():
+            foundation_question_means = {foundation: [] for foundation in FOUNDATION_ORDER}
+
+            for question_id, scores in question_scores.items():
+                if not scores:
                     continue
 
                 foundation = question_to_foundation.get(question_id)
                 if foundation is None:
                     continue
 
-                foundation_values = per_persona.setdefault(
-                    persona_id,
-                    {name: [] for name in FOUNDATION_ORDER},
-                )
-                foundation_values[foundation].append(score)
+                foundation_question_means[foundation].append(mean(scores))
 
-        for persona_id, foundation_values in per_persona.items():
-            if persona_filter is not None and persona_id not in persona_filter:
-                continue
-            if any(len(foundation_values[foundation]) == 0 for foundation in FOUNDATION_ORDER):
+            if any(len(foundation_question_means[foundation]) == 0 for foundation in FOUNDATION_ORDER):
                 continue
 
-            persona_summary = persona_scores.setdefault(persona_id, empty_foundation_dict())
+            persona_foundations = persona_scores.setdefault(
+                persona_id,
+                {foundation: [] for foundation in FOUNDATION_ORDER},
+            )
+
             for foundation in FOUNDATION_ORDER:
-                persona_summary[foundation].append(mean(foundation_values[foundation]))
+                persona_foundations[foundation].append(
+                    mean(foundation_question_means[foundation])
+                )
 
     return {
         persona: foundation_scores
@@ -211,7 +283,7 @@ def plot_persona_profiles(
     ax.set_xlim(-0.2, len(FOUNDATION_ORDER) - 0.8)
     ax.set_ylabel("Relevance to Moral Decisions", fontsize=16)
     ax.set_title(
-        "Average Moral Foundation Profile Across Models (Random Personas)",
+        "Average Moral Foundation Profile Across Models",
         fontsize=20,
     )
     ax.grid(axis="y", linestyle="--", alpha=0.4)

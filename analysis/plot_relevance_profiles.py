@@ -87,12 +87,14 @@ def load_relevance_scores() -> Dict[str, Dict[str, List[float]]]:
         model_slug = csv_path.stem.replace("_self", "")
         if ALLOWED_MODELS and model_slug not in ALLOWED_MODELS:
             continue
+        question_scores: Dict[int, List[float]] = {}
+
         with csv_path.open(newline="") as handle:
             reader = csv.DictReader(handle)
-            if "question_id" not in reader.fieldnames or "rating" not in reader.fieldnames:
+            required_headers = {"question_id", "rating", "run_index"}
+            if not reader.fieldnames or required_headers.difference(reader.fieldnames):
                 continue
 
-            foundation_scores = {foundation: [] for foundation in FOUNDATION_ORDER}
             for row in reader:
                 try:
                     question_id = int(row["question_id"])
@@ -101,6 +103,19 @@ def load_relevance_scores() -> Dict[str, Dict[str, List[float]]]:
 
                 foundation = question_to_foundation.get(question_id)
                 if foundation is None:
+                    continue
+
+                run_index_raw = row.get("run_index")
+                if run_index_raw is None:
+                    continue
+
+                run_index_raw = run_index_raw.strip()
+                if not run_index_raw:
+                    continue
+
+                try:
+                    int(run_index_raw)
+                except (TypeError, ValueError):
                     continue
 
                 failures_raw = (row.get("failures") or "").strip()
@@ -115,7 +130,22 @@ def load_relevance_scores() -> Dict[str, Dict[str, List[float]]]:
                     score = float(row["rating"])
                 except ValueError:
                     continue
-                foundation_scores[foundation].append(score)
+
+                question_scores.setdefault(question_id, []).append(score)
+
+        if not question_scores:
+            continue
+
+        foundation_scores = {foundation: [] for foundation in FOUNDATION_ORDER}
+        for question_id, responses in question_scores.items():
+            if not responses:
+                continue
+
+            foundation = question_to_foundation.get(question_id)
+            if foundation is None:
+                continue
+
+            foundation_scores[foundation].append(mean(responses))
 
         if any(len(values) == 0 for values in foundation_scores.values()):
             continue
