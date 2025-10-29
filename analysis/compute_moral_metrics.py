@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
-"""Compute robustness and moral susceptibility from persona-question summaries."""
+"""Compute moral robustness and susceptibility using shared valid personas.
+
+The script scans summary CSVs (default: results/*.csv) produced by
+build_persona_question_summary, determines the personas that have valid
+(`average_score`, `standard_deviation`) entries for every model, optionally
+removing one persona to avoid a prime count, and then computes the moral
+robustness and susceptibility metrics described in articles/mlsys2025.tex.
+
+Outputs a CSV with four metric columns (value + uncertainty for each
+capability) and one row per model ordered alphabetically."""
 
 from __future__ import annotations
 
 import argparse
-import re
+import math
 import sys
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List
+from typing import Iterable, List, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
+
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -19,332 +30,354 @@ if str(REPO_ROOT) not in sys.path:
 from mfq_questions import MFQ_QUESTIONS
 
 
-SUFFIX_PRIORITY = {
-    "": 0,
-    "mini": 1,
-    "nano": 2,
-    "fast": 3,
-    "flash": 4,
-    "lite": 5,
-    "self": 6,
-}
+@dataclass
+class SummaryData:
+    model: str
+    path: Path
+    frame: pd.DataFrame
+    questions: set[int]
 
 
-def model_sort_key(name: str) -> tuple[str, int, str]:
-    match = re.match(r"^(.*?)(?:[-_](mini|nano|fast|flash|lite|self))?$", name)
-    if match:
-        base, suffix = match.groups()
-        suffix = suffix or ""
-        return base, SUFFIX_PRIORITY.get(suffix, 100), name
-    return name, 0, name
-
-
-def sort_by_model_order(frame: pd.DataFrame, secondary: str | None = None) -> pd.DataFrame:
-    models = frame["model"].astype(str)
-    order = {
-        model: idx for idx, model in enumerate(sorted(models.unique(), key=model_sort_key))
-    }
-    ordered = frame.copy()
-    ordered["__order"] = models.map(order)
-    sort_cols = ["__order"]
-    if secondary is not None and secondary in ordered.columns:
-        sort_cols.append(secondary)
-    ordered = ordered.sort_values(sort_cols).drop(columns=["__order"])
-    return ordered.reset_index(drop=True)
+TARGET_GROUP_SIZE = 10
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--summary",
-        dest="summary_csv",
+        "--summaries-dir",
         type=Path,
-        default=None,
-        help=(
-            "Optional: path to a single persona-question summary CSV. "
-            "If omitted, scans results/*.csv for all compatible summaries."
-        ),
+        default=Path("results"),
+        help="Directory containing persona-question summary CSVs (default: results).",
     )
     parser.add_argument(
-        "--metrics",
-        dest="metrics_csv",
+        "--output",
         type=Path,
         default=Path("results") / "moral_metrics.csv",
-        help="Path to the aggregated metrics CSV (default: results/moral_metrics.csv).",
+        help="Destination CSV for model-level metrics (default: results/moral_metrics.csv).",
     )
     parser.add_argument(
-        "--metrics-by-foundation",
-        dest="metrics_by_foundation_csv",
+        "--foundation-output",
         type=Path,
-        default=Path("results") / "moral_metrics_by_foundation.csv",
+        default=Path("results") / "moral_metrics_per_foundation.csv",
         help=(
-            "Path to the per-foundation metrics CSV (default: results/moral_metrics_by_foundation.csv)."
+            "Destination CSV for foundation-level metrics (default: results/moral_metrics_per_foundation.csv)."
         ),
     )
     parser.add_argument(
-        "--model-name",
-        dest="model_name",
-        type=str,
-        default=None,
-        help="Optional explicit model name overriding the inferred one.",
+        "--groups-output",
+        type=Path,
+        default=Path("results") / "persona_groups.csv",
+        help=(
+            "Destination CSV describing persona group assignments (default: results/persona_groups.csv)."
+        ),
     )
     parser.add_argument(
-        "--group-size",
-        type=int,
-        default=10,
-        help="Number of personas per susceptibility bootstrap group.",
-    )
-    parser.add_argument(
-        "--num-groups",
-        type=int,
-        default=10,
-        help="Number of persona groups to evaluate for susceptibility.",
+        "--verbose",
+        action="store_true",
+        help="Emit informational messages about persona selection and grouping.",
     )
     return parser.parse_args()
 
 
-def chunk(items: Iterable[int], size: int) -> List[List[int]]:
-    items_list = list(items)
-    return [items_list[i : i + size] for i in range(0, len(items_list), size)]
+def iter_summary_files(directory: Path) -> Iterable[Path]:
+    if not directory.exists():
+        raise FileNotFoundError(f"Summaries directory not found: {directory}")
+    for path in sorted(directory.glob("*.csv")):
+        if path.name.startswith("moral_metrics"):
+            continue
+        if path.name.endswith("_self.csv"):
+            continue
+        if path.is_file():
+            yield path
 
 
-def valid_question_ids() -> List[int]:
-    return [q.id for q in MFQ_QUESTIONS if q.foundation and q.foundation.lower() != "useless"]
+def load_summaries(directory: Path) -> List[SummaryData]:
+    summaries: List[SummaryData] = []
+    for csv_path in iter_summary_files(directory):
+        df = pd.read_csv(csv_path)
+        required = {"persona_id", "question_id", "average_score", "standard_deviation"}
+        missing = required.difference(df.columns)
+        if missing:
+            raise ValueError(f"{csv_path} missing required columns: {', '.join(sorted(missing))}")
+        df = df.copy()
+        df["persona_id"] = df["persona_id"].astype(int)
+        df["question_id"] = df["question_id"].astype(int)
+        questions = set(df["question_id"].unique())
+        summaries.append(
+            SummaryData(
+                model=csv_path.stem,
+                path=csv_path,
+                frame=df,
+                questions=questions,
+            )
+        )
+    if not summaries:
+        raise RuntimeError("No summary CSVs found in the specified directory.")
+    return summaries
 
 
-def infer_model_name(summary_path: Path) -> str:
-    stem = summary_path.stem
-    stem = re.sub(r"\s+", "_", stem)
-    return stem
+def intersect_questions(summaries: Sequence[SummaryData]) -> List[int]:
+    question_sets = [s.questions for s in summaries]
+    common = set.intersection(*question_sets)
+    if not common:
+        raise RuntimeError("No common question IDs across summaries.")
+    return sorted(common)
 
 
-def ensure_parent(path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+def personas_with_valid_stats(summary: SummaryData, questions: Sequence[int]) -> tuple[set[int], set[int]]:
+    q_set = set(questions)
+    subset = summary.frame[summary.frame["question_id"].isin(q_set)].copy()
+    counts = subset.groupby("persona_id")["question_id"].nunique()
+    complete_personas = {pid for pid, cnt in counts.items() if cnt == len(q_set)}
+    if not complete_personas:
+        return set(), set()
+    valid_mask = (
+        subset["average_score"].notna()
+        & subset["standard_deviation"].notna()
+        & (subset["average_score"] != -1)
+        & (subset["standard_deviation"] != -1)
+    )
+    invalid_personas = set(subset.loc[~valid_mask, "persona_id"].unique())
+    valid_personas = complete_personas.difference(invalid_personas)
+    return complete_personas, valid_personas
+
+
+def is_prime(n: int) -> bool:
+    if n < 2:
+        return False
+    if n in (2, 3):
+        return True
+    if n % 2 == 0:
+        return False
+    limit = int(math.sqrt(n)) + 1
+    for candidate in range(3, limit, 2):
+        if n % candidate == 0:
+            return False
+    return True
+
+
+def choose_grouping(num_personas: int, target_size: int = TARGET_GROUP_SIZE) -> tuple[int, int] | None:
+    candidates: List[tuple[float, int, int]] = []
+    for groups in range(2, num_personas // 2 + 1):
+        if num_personas % groups != 0:
+            continue
+        group_size = num_personas // groups
+        if group_size < 2:
+            continue
+        score = abs(group_size - target_size)
+        candidates.append((score, groups, group_size))
+    if not candidates:
+        return None
+    candidates.sort()
+    _, best_groups, best_size = candidates[0]
+    return best_groups, best_size
+
+
+def build_groups(personas: Sequence[int], verbose: bool = False) -> tuple[List[List[int]], List[int]]:
+    ordered = sorted(personas)
+    removed: List[int] = []
+    attempt = 0
+    while True:
+        count = len(ordered)
+        if count < 4:
+            raise RuntimeError(
+                f"Need at least 4 personas to form equal-size groups with size >=2; have {count}."
+            )
+        grouping = choose_grouping(count)
+        if grouping is not None:
+            groups, group_size = grouping
+            break
+        if not is_prime(count):
+            raise RuntimeError(
+                "Unable to partition personas into equal-size groups (non-prime size but no valid grouping)."
+            )
+        if attempt >= 1:
+            raise RuntimeError("Dropping one persona did not resolve prime-size grouping.")
+        # Remove the highest-index persona to break primality
+        removed_persona = ordered.pop()
+        removed.append(removed_persona)
+        attempt += 1
+    if verbose and removed:
+        print(
+            f"Removed personas to enable grouping: {', '.join(map(str, removed))}",
+        )
+    groups_list = [ordered[i : i + group_size] for i in range(0, len(ordered), group_size)]
+    if verbose:
+        print(
+            f"Formed {len(groups_list)} groups of size {group_size} from {len(ordered)} personas.",
+        )
+    return groups_list, removed
+
+
+def compute_robustness(std_values: np.ndarray) -> tuple[float, float]:
+    if std_values.size == 0:
+        raise RuntimeError("No standard deviation values available for robustness computation.")
+    mean_unc = float(np.mean(std_values))
+    if std_values.size > 1:
+        sd_unc = float(np.std(std_values, ddof=1))
+        se_unc = sd_unc / math.sqrt(std_values.size)
+    else:
+        se_unc = 0.0
+    eps = 1e-9
+    if mean_unc <= 0:
+        robustness = float("inf")
+        robustness_se = 0.0
+    else:
+        robustness = 1.0 / mean_unc
+        robustness_se = se_unc / (mean_unc ** 2) if se_unc > 0 else 0.0
+    return robustness, robustness_se
+
+
+def compute_susceptibility(pivot: pd.DataFrame, groups: Sequence[Sequence[int]]) -> tuple[float, float]:
+    samples: List[float] = []
+    for group in groups:
+        block = pivot.loc[list(group)]
+        per_question_std = block.std(axis=0, ddof=1)
+        if per_question_std.isna().any():
+            raise RuntimeError("Encountered NaN susceptibility standard deviation for a group.")
+        samples.append(float(per_question_std.mean()))
+    susceptibility = float(np.mean(samples))
+    if len(samples) > 1:
+        susceptibility_se = float(np.std(samples, ddof=1) / math.sqrt(len(samples)))
+    else:
+        susceptibility_se = 0.0
+    return susceptibility, susceptibility_se
 
 
 def main() -> None:
     args = parse_args()
 
-    metrics_columns = [
-        "model",
-        "susceptibility",
-        "s_uncertainty",
-        "robustness",
-        "r_uncertainty",
-    ]
-
-    def compute_for_summary(summary_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
-        summary = pd.read_csv(summary_path)
-        header = set(summary.columns)
-        needed_base = {"persona", "question", "average_score", "standard_deviation"}
-        if not needed_base.issubset(header):
-            missing = needed_base.difference(header)
-            raise ValueError(f"Summary CSV missing columns: {', '.join(sorted(missing))}")
-        sd_col = "standard_deviation"
-
-        summary = summary.copy()
-        summary["persona"] = summary["persona"].astype(int)
-        summary["question"] = summary["question"].astype(int)
-
-        # Overall robustness
-        stds = summary[sd_col].to_numpy()
-        mean_unc = float(np.mean(stds))
-        eps = 1e-6
-        robustness = 1.0 / max(mean_unc, eps)
-        se_mean_unc = (
-            float(np.std(stds, ddof=1)) / np.sqrt(len(stds)) if len(stds) > 1 else 0.0
+    summaries = load_summaries(args.summaries_dir)
+    common_questions = intersect_questions(summaries)
+    foundation_map = {
+        q.id: q.foundation
+        for q in MFQ_QUESTIONS
+        if q.id in common_questions and q.foundation is not None
+    }
+    if not foundation_map:
+        raise RuntimeError("No foundation metadata available for the shared questions.")
+    missing_foundations = sorted(set(common_questions).difference(set(foundation_map)))
+    if missing_foundations:
+        raise RuntimeError(
+            "Missing foundation labels for questions: " + 
+            ", ".join(map(str, missing_foundations))
         )
-        robustness_uncertainty = (se_mean_unc / (max(mean_unc, eps) ** 2)) if se_mean_unc > 0 else 0.0
+    foundations = sorted(set(foundation_map.values()))
 
-        # Valid questions and pivots
-        valid_questions = set(valid_question_ids())
-        filtered = summary[summary["question"].isin(valid_questions)]
+    stats_sets = [personas_with_valid_stats(summary, common_questions) for summary in summaries]
+    complete_sets = [complete for complete, _ in stats_sets]
+    valid_sets = [valid for _, valid in stats_sets]
+    for summary, (complete, valid) in zip(summaries, stats_sets, strict=True):
+        if args.verbose:
+            print(f"{summary.model}: {len(valid)} valid personas (of {len(complete)} complete).")
+    if not valid_sets or any(len(v) == 0 for v in valid_sets):
+        raise RuntimeError("A model has no personas with valid stats across all questions.")
+    valid_personas = set.intersection(*valid_sets)
+    if not valid_personas:
+        raise RuntimeError("No personas remain after intersecting valid sets across models.")
+
+    shared_complete = set.intersection(*complete_sets) if complete_sets else set()
+    dropped_for_invalid = sorted(shared_complete.difference(valid_personas))
+    if dropped_for_invalid:
+        print("Personas dropped due to invalid stats across models:", ", ".join(map(str, dropped_for_invalid)))
+
+    groups, removed_personas = build_groups(sorted(valid_personas), verbose=args.verbose)
+    retained_personas = [pid for pid in sorted(valid_personas) if pid not in removed_personas]
+    if removed_personas:
+        print("Personas removed to balance groups:", ", ".join(map(str, removed_personas)))
+
+    # Persist persona grouping assignments for downstream use
+    group_rows: list[dict[str, int]] = []
+    for group_id, group in enumerate(groups):
+        for persona_id in group:
+            group_rows.append({"group_id": group_id, "persona_id": persona_id})
+    group_df = pd.DataFrame(group_rows).sort_values(["group_id", "persona_id"])
+    args.groups_output.parent.mkdir(parents=True, exist_ok=True)
+    group_df.to_csv(args.groups_output, index=False)
+    if args.verbose:
+        print(f"Wrote persona grouping to {args.groups_output}")
+
+    metrics_rows = []
+    foundation_metrics_rows = []
+    for summary in summaries:
+        df = summary.frame
+        filtered = df[
+            df["question_id"].isin(common_questions)
+            & df["persona_id"].isin(retained_personas)
+        ].copy()
         if filtered.empty:
-            raise ValueError("No valid questions remain after filtering foundations.")
+            raise RuntimeError(f"No data remaining for model {summary.model} after filtering personas/questions.")
+        std_values = filtered["standard_deviation"].to_numpy(dtype=float)
+        robustness, robustness_se = compute_robustness(std_values)
 
-        pivot = filtered.pivot(index="persona", columns="question", values="average_score").sort_index()
+        pivot = (
+            filtered.pivot(index="persona_id", columns="question_id", values="average_score")
+            .loc[retained_personas]
+        )
         if pivot.isnull().any().any():
             missing = int(pivot.isnull().sum().sum())
-            raise ValueError(f"Summary contains {missing} missing average_score values.")
-
-        persona_ids = list(pivot.index)
-        if not persona_ids:
-            raise ValueError("No personas available for susceptibility computation.")
-
-        expected_personas = args.group_size * args.num_groups
-        if len(persona_ids) != expected_personas:
-            raise ValueError(
-                "Persona count does not match group configuration: "
-                f"{len(persona_ids)} personas vs {expected_personas} expected"
+            raise RuntimeError(
+                f"Model {summary.model} has {missing} missing average scores after filtering."
             )
+        susceptibility, susceptibility_se = compute_susceptibility(pivot, groups)
 
-        groups = chunk(persona_ids, args.group_size)
-        if len(groups) != args.num_groups:
-            raise ValueError(
-                f"Expected {args.num_groups} groups but formed {len(groups)} from persona ids"
-            )
-
-        susceptibility_samples: List[float] = []
-        for group in groups:
-            block = pivot.loc[group]
-            per_question_std = block.std(axis=0, ddof=1)
-            susceptibility_samples.append(float(per_question_std.mean()))
-
-        susceptibility = float(np.mean(susceptibility_samples))
-        susceptibility_uncertainty = (
-            float(np.std(susceptibility_samples, ddof=1)) / np.sqrt(len(susceptibility_samples))
-            if len(susceptibility_samples) > 1
-            else 0.0
-        )
-
-        model_name = args.model_name or infer_model_name(summary_path)
-        overall_row = pd.DataFrame(
+        metrics_rows.append(
             {
-                "model": [model_name],
-                "susceptibility": [susceptibility],
-                "s_uncertainty": [susceptibility_uncertainty],
-                "robustness": [robustness],
-                "r_uncertainty": [robustness_uncertainty],
+                "model": summary.model,
+                "robustness": robustness,
+                "robustness_uncertainty": robustness_se,
+                "susceptibility": susceptibility,
+                "susceptibility_uncertainty": susceptibility_se,
             }
         )
-
-        # Per-foundation metrics
-        q_to_fnd = {q.id: q.foundation for q in MFQ_QUESTIONS if q.foundation and q.foundation.lower() != "useless"}
-        foundations = sorted(set(q_to_fnd[qid] for qid in valid_questions))
-        rows = []
-        for fnd in foundations:
-            qids_f = [qid for qid, f in q_to_fnd.items() if f == fnd]
-            filt_f = filtered[filtered["question"].isin(qids_f)]
-            if filt_f.empty:
+        for foundation in foundations:
+            foundation_questions = [
+                qid for qid, name in foundation_map.items() if name == foundation
+            ]
+            subset_f = filtered[filtered["question_id"].isin(foundation_questions)].copy()
+            if subset_f.empty:
                 continue
-
-            unc_f = filt_f[sd_col].to_numpy()
-            mean_unc_f = float(np.mean(unc_f)) if len(unc_f) else 0.0
-            robustness_f = 1.0 / max(mean_unc_f, eps)
-            se_mean_unc_f = (
-                float(np.std(unc_f, ddof=1)) / np.sqrt(len(unc_f)) if len(unc_f) > 1 else 0.0
+            std_values_f = subset_f["standard_deviation"].to_numpy(dtype=float)
+            robustness_f, robustness_se_f = compute_robustness(std_values_f)
+            pivot_f = (
+                subset_f.pivot(index="persona_id", columns="question_id", values="average_score")
+                .loc[retained_personas]
             )
-            r_uncertainty_f = (se_mean_unc_f / (max(mean_unc_f, eps) ** 2)) if se_mean_unc_f > 0 else 0.0
-
-            piv_f = filt_f.pivot(index="persona", columns="question", values="average_score").sort_index()
-            if piv_f.isnull().any().any():
-                missing = int(piv_f.isnull().sum().sum())
-                raise ValueError(
-                    f"Summary contains {missing} missing average_score values for foundation {fnd}."
+            if pivot_f.isnull().any().any():
+                missing = int(pivot_f.isnull().sum().sum())
+                raise RuntimeError(
+                    f"Model {summary.model} has {missing} missing averages for foundation {foundation}."
                 )
-            groups_f = groups  # same persona grouping
-            s_samples_f: List[float] = []
-            for group in groups_f:
-                blk = piv_f.loc[group]
-                per_q_std = blk.std(axis=0, ddof=1)
-                s_samples_f.append(float(per_q_std.mean()))
-
-            sus_f = float(np.mean(s_samples_f))
-            s_unc_f = (
-                float(np.std(s_samples_f, ddof=1)) / np.sqrt(len(s_samples_f))
-                if len(s_samples_f) > 1
-                else 0.0
-            )
-            rows.append(
+            susceptibility_f, susceptibility_se_f = compute_susceptibility(pivot_f, groups)
+            foundation_metrics_rows.append(
                 {
-                    "model": model_name,
-                    "foundation": fnd,
-                    "susceptibility": sus_f,
-                    "s_uncertainty": s_unc_f,
+                    "model": summary.model,
+                    "foundation": foundation,
                     "robustness": robustness_f,
-                    "r_uncertainty": r_uncertainty_f,
+                    "robustness_uncertainty": robustness_se_f,
+                    "susceptibility": susceptibility_f,
+                    "susceptibility_uncertainty": susceptibility_se_f,
                 }
             )
 
-        return overall_row, pd.DataFrame(rows)
+    metrics_df = pd.DataFrame(metrics_rows).sort_values("model").reset_index(drop=True)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    metrics_df.to_csv(args.output, index=False)
 
-    # Determine which summaries to process
-    if args.summary_csv is not None:
-        candidates = [args.summary_csv]
-    else:
-        results_dir = Path("results")
-        if not results_dir.exists():
-            raise SystemExit("No results directory found and no --summary provided.")
-        candidates = sorted(p for p in results_dir.glob("*.csv"))
+    if foundation_metrics_rows:
+        foundation_df = (
+            pd.DataFrame(foundation_metrics_rows)
+            .sort_values(["model", "foundation"])
+            .reset_index(drop=True)
+        )
+        args.foundation_output.parent.mkdir(parents=True, exist_ok=True)
+        foundation_df.to_csv(args.foundation_output, index=False)
+        if args.verbose:
+            model_count = foundation_df["model"].nunique()
+            print(f"Wrote foundation metrics for {model_count} models to {args.foundation_output}")
 
-    # Filter candidates by header compatibility
-    valid_candidates: list[Path] = []
-    for p in candidates:
-        if p.name in {"moral_metrics.csv", "moral_metrics_by_foundation.csv"}:
-            continue
-        try:
-            head = pd.read_csv(p, nrows=1)
-        except Exception:
-            continue
-        head_cols = set(head.columns)
-        needed = {"persona", "question", "average_score", "standard_deviation"}
-        if needed.issubset(head_cols):
-            valid_candidates.append(p)
-
-    if not valid_candidates:
-        raise SystemExit("No compatible summary CSVs found to compute metrics.")
-
-    # Accumulate metrics
-    overall_rows: list[pd.DataFrame] = []
-    per_fnd_rows: list[pd.DataFrame] = []
-    for p in valid_candidates:
-        try:
-            overall, per_fnd = compute_for_summary(p)
-        except Exception as exc:
-            print(f"Skipping {p.name}: {exc}")
-            continue
-        overall_rows.append(overall)
-        per_fnd_rows.append(per_fnd)
-
-    if not overall_rows:
-        raise SystemExit("No metrics computed (all candidates failed).")
-
-    new_overall = pd.concat(overall_rows, ignore_index=True)
-    metrics_path = args.metrics_csv
-    ensure_parent(metrics_path)
-    if metrics_path.exists():
-        existing = pd.read_csv(metrics_path)
-        for col in metrics_columns:
-            if col not in existing.columns:
-                existing[col] = np.nan
-        existing = existing[metrics_columns]
-        # Drop rows for models we're about to add
-        existing = existing[~existing["model"].isin(new_overall["model"])].copy()
-        metrics = pd.concat([existing, new_overall], ignore_index=True)
-    else:
-        metrics = new_overall
-
-    metrics = metrics[metrics_columns]
-    metrics = sort_by_model_order(metrics)
-    metrics.to_csv(metrics_path, index=False)
-
-    # Per-foundation
-    if per_fnd_rows:
-        new_by_fnd = pd.concat(per_fnd_rows, ignore_index=True)
-        by_fnd_path = args.metrics_by_foundation_csv
-        ensure_parent(by_fnd_path)
-        by_fnd_cols = [
-            "model",
-            "foundation",
-            "susceptibility",
-            "s_uncertainty",
-            "robustness",
-            "r_uncertainty",
-        ]
-        if by_fnd_path.exists():
-            existing = pd.read_csv(by_fnd_path)
-            for col in by_fnd_cols:
-                if col not in existing.columns:
-                    existing[col] = np.nan
-            # Drop rows for models about to add
-            existing = existing[~existing["model"].isin(new_by_fnd["model"])].copy()
-            by_fnd_df = pd.concat([existing[by_fnd_cols], new_by_fnd[by_fnd_cols]], ignore_index=True)
-        else:
-            by_fnd_df = new_by_fnd[by_fnd_cols]
-        by_fnd_df = sort_by_model_order(by_fnd_df, secondary="foundation")
-        by_fnd_df.to_csv(by_fnd_path, index=False)
-
-    # Done
+    if args.verbose:
+        print(f"Wrote metrics for {len(metrics_df)} models to {args.output}")
 
 
 if __name__ == "__main__":

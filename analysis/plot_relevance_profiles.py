@@ -41,8 +41,13 @@ OUTPUT_PATH = RESULTS_DIR / "moral_foundations_relevance_profiles.png"
 # to accommodate dataset naming; only existing ones will be included.
 ALLOWED_MODELS = {
     "claude-haiku-4-5",
+    "claude-sonnet-4-5",
+    "gpt-4.1",
     "gpt-4.1-nano",
     "gpt-4.1-mini",
+    "gpt-4o",
+    "gpt-4o-mini",
+    "grok-4",
     "grok-4-fast",
     "gemini-2.5-flash-lite",
 }

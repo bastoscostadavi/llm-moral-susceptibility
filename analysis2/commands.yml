@@ -1,4 +1,0 @@
-#excluding problematic personas:
-python analysis2/build_persona_question_summary.py --exclude-persona 1 --exclude-persona 26 --exclude-persona 29 --exclude-persona 66 --exclude-persona 78 --exclude-persona 80 --exclude-persona 86 --exclude-persona 90 --exclude-persona 94 --exclude-persona 95 --exclude-persona 98 --exclude-persona 0
-#reshaping group size for analysis:
-analysis2/compute_moral_metrics.py --group-size 11 --num-groups 8
