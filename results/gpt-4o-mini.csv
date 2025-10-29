@@ -1,4 +1,4 @@
-persona,question,average_score,standard_deviation
+persona_id,question_id,average_score,standard_deviation
 0,1,4.0,0.0
 0,2,4.0,0.0
 0,3,2.0,0.0

@@ -421,7 +421,17 @@ def _google_response(model_name: str, prompt: str, **kwargs) -> str:
         if "max_tokens" in kwargs:
             gen_cfg["max_output_tokens"] = kwargs.get("max_tokens")
 
-        response = model.generate_content(prompt, generation_config=gen_cfg or None)
+        thinking_cfg = kwargs.get("thinking_config") or None
+        if "thinkingBudget" in kwargs:
+            thinking_cfg = dict(thinking_cfg or {})
+            thinking_cfg["max_thinking_tokens"] = kwargs.get("thinkingBudget")
+
+        call_kwargs = {"generation_config": gen_cfg or None}
+        # For thinking-enabled models, allow passing explicit thinking_config.
+        if thinking_cfg is not None:
+            call_kwargs["thinking_config"] = thinking_cfg
+
+        response = model.generate_content(prompt, **call_kwargs)
         text = getattr(response, "text", None)
         if isinstance(text, str) and text.strip():
             return text.strip()
