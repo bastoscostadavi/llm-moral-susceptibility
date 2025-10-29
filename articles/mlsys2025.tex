@@ -217,7 +217,7 @@ Table~\ref{tab:failures_by_model} reports, for completeness, the total number of
 
 \section{Results}
 
-Our results for the moral robustness Eq.~\eqref{eq:robustness} and susceptibility Eq.~\eqref{eq:overall-susceptibility} by model, with $z$-score comparison Eq.~\eqref{eq:zscore}, is displayed in Table~\ref{tab:summary_by_model_with_z}. Qualitatively there appear to be an inverse correlation between moral robustness and susceptibility among families, with the Grok family the most susceptible and least robust, and the Claude family the most robust and one of the least susceptible.
+Our results for the moral robustness Eq.~\eqref{eq:robustness} and susceptibility Eq.~\eqref{eq:overall-susceptibility} by model, with $z$-score comparison Eq.~\eqref{eq:zscore}, is displayed in Table~\ref{tab:summary_by_model_with_z} and figure \ref{fig:overall}. Qualitatively there appear to be an inverse correlation between moral robustness and susceptibility among families, with the Grok family the most susceptible and least robust, and the Claude family the most robust and one of the least susceptible.
 
 % Merged summary + z-score table across models
 \input{table_summary_by_model_with_z}
@@ -227,23 +227,11 @@ Our results for the moral robustness Eq.~\eqref{eq:robustness} and susceptibilit
 Our results for foundation-level moral robustness Eq.~\eqref{eq:robustness} is displayd in Figure~\ref{fig:robustness}. Moral robustness exhibits clear within-family structure across models. The Claude family is consistently the most robust, outperforming all other models by a sizeable margin across all foundations. In contrast, the Grok models are the least robust, underperforming all other models by a sizeable margin across all foundations. On the other hand, model size does not appear to have a systematic effect on moral robustness. These trends are visible in Figure~\ref{fig:robustness} and summarized in the $z$-score Table~\ref{tab:summary_by_model_with_z}.
 
 % Robustness (overall + five foundations)
-% \begin{figure*}[!t]
-%   \centering
-%   \includegraphics[width=0.3\linewidth]{../results/robustness_overall.png}\hfill
-%   \includegraphics[width=0.3\linewidth]{../results/robustness_harm_care.png}\hfill
-%   \includegraphics[width=0.3\linewidth]{../results/robustness_fairness_reciprocity.png}\\[0.75em]
-%   \includegraphics[width=0.3\linewidth]{../results/robustness_in_group_loyalty.png}\hfill
-%   \includegraphics[width=0.3\linewidth]{../results/robustness_authority_respect.png}\hfill
-%   \includegraphics[width=0.3\linewidth]{../results/robustness_purity_sanctity.png}
-%   \caption{Six-panel summary of robustness (inverse of average per-question standard deviation across repetitions). Top row: overall benchmark, Harm/Care, and Fairness/Reciprocity. Bottom row: In-group/Loyalty, Authority/Respect, and Purity/Sanctity. Error bars show propagated standard error via delta method; higher values indicate greater rating stability.}
-%   \label{fig:robustness}
-% \end{figure*}
-
 \begin{figure*}[!t]
   \centering
   \includegraphics[width=0.9\linewidth]{../results/robustness_bars.pdf}\hfill
   \caption{Robustness across models and foundations. Error bars show propagated standard error via delta method; higher values indicate greater rating stability. The highlighted bars indicate the overall robustness over all foundations for that model.}
-  \label{fig:robustness2}
+  \label{fig:robustness}
 \end{figure*}
 
 \subsection{Moral Susceptibility}
@@ -251,24 +239,21 @@ Our results for foundation-level moral robustness Eq.~\eqref{eq:robustness} is d
 Our results for foundation-level moral susceptibility Eq.~\ref{eq:overall-susceptibility} are displayed in Figure~\ref{fig:susceptibility}. Moral susceptibility exhibits a mild family effect as families tend to lie close together. However, there is a clear within-family size effect with larger variants having higher moral susceptibility. We refrain from fitting parametric trends versus model size because most model sizes are not publicly disclosed. These patterns are visible in Figure~\ref{fig:susceptibility} and summarized in the $z$-score Table~\ref{tab:summary_by_model_with_z}. The most susceptible model overall is Grok-4-fast and the least is GPT-4o Mini.
 
 % Susceptibility (overall + five foundations)
-% \begin{figure*}[!t]
-%   \centering
-%   \includegraphics[width=0.3\linewidth]{../results/susceptibility_overall.png}\hfill
-%   \includegraphics[width=0.3\linewidth]{../results/susceptibility_harm_care.png}\hfill
-%   \includegraphics[width=0.3\linewidth]{../results/susceptibility_fairness_reciprocity.png}\\[0.75em]
-%   \includegraphics[width=0.3\linewidth]{../results/susceptibility_in_group_loyalty.png}\hfill
-%   \includegraphics[width=0.3\linewidth]{../results/susceptibility_authority_respect.png}\hfill
-%   \includegraphics[width=0.3\linewidth]{../results/susceptibility_purity_sanctity.png}
-%   \caption{Six-panel summary of moral susceptibility (mean $\pm$ standard error across persona groups). Top row: overall benchmark, Harm/Care, and Fairness/Reciprocity. Bottom row: In-group/Loyalty, Authority/Respect, and Purity/Sanctity. Higher values indicate larger persona-driven shifts in MFQ subscale scores.}
-%   \label{fig:susceptibility}
-% \end{figure*}
-
 \begin{figure*}[!t]
   \centering
   \includegraphics[width=0.9\linewidth]{../results/susceptibility_bars.pdf}\hfill
-  \caption{Susceptibility across models and foundations. Error bars show propagated standard error via delta method; higher values indicate greater rating stability. The highlighted bars indicate the overall susceptibility over all foundations for that model.}
-  \label{fig:susceptibility2}
+  \caption{Susceptibility across models and foundations. Error bars show propagated standard error via delta method; higher values indicate larger persona-driven shifts in MFQ subscale scores. The highlighted bars indicate the overall susceptibility over all foundations for that model.}
+  \label{fig:susceptibility}
 \end{figure*}
+
+% Overall Susceptibility and Robustness
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{../results/moral_metrics_overall_bars.pdf}\hfill
+  \caption{Overall susceptibility and robustness across models. Error bars show propagated standard error via delta method; higher susceptibility values indicate larger persona-driven shifts in MFQ subscale scores; higher robustness values indicate greater rating stability. The bars in this figures are the highlighted ones in the in figures \ref{fig:robustness} and \ref{fig:susceptibility}.}
+  \label{fig:overall}
+\end{figure*}
+
 
 \subsection{Uninstructed Personas}
 \label{sec:unistructed_personas}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.10.29)  29 OCT 2025 19:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.10.29)  29 OCT 2025 20:21
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -440,26 +440,26 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 ]
-Underfull \hbox (badness 3417) in paragraph at lines 75--76
+Underfull \hbox (badness 3417) in paragraph at lines 77--78
 \OT1/ptm/m/n/10 scores across mod-els us-ing no-persona con-di-tion-ing.
  []
 
+<../results/moral_foundations_relevance_profiles.png, id=130, 794.97pt x 520.344pt>
+File: ../results/moral_foundations_relevance_profiles.png Graphic file (type png)
+<use ../results/moral_foundations_relevance_profiles.png>
+Package pdftex.def Info: ../results/moral_foundations_relevance_profiles.png  used on input line 81.
+(pdftex.def)             Requested size: 234.8775pt x 153.73833pt.
+<../results/persona_moral_foundations_relevance_profiles.png, id=132, 794.97pt x 520.344pt>
+File: ../results/persona_moral_foundations_relevance_profiles.png Graphic file (type png)
+<use ../results/persona_moral_foundations_relevance_profiles.png>
+Package pdftex.def Info: ../results/persona_moral_foundations_relevance_profiles.png  used on input line 88.
+(pdftex.def)             Requested size: 234.8775pt x 153.73833pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-<../results/moral_foundations_relevance_profiles.png, id=122, 794.97pt x 520.344pt>
-File: ../results/moral_foundations_relevance_profiles.png Graphic file (type png)
-<use ../results/moral_foundations_relevance_profiles.png>
-Package pdftex.def Info: ../results/moral_foundations_relevance_profiles.png  used on input line 79.
-(pdftex.def)             Requested size: 234.8775pt x 153.73833pt.
-<../results/persona_moral_foundations_relevance_profiles.png, id=124, 794.97pt x 520.344pt>
-File: ../results/persona_moral_foundations_relevance_profiles.png Graphic file (type png)
-<use ../results/persona_moral_foundations_relevance_profiles.png>
-Package pdftex.def Info: ../results/persona_moral_foundations_relevance_profiles.png  used on input line 86.
-(pdftex.def)             Requested size: 234.8775pt x 153.73833pt.
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 97.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 99.
 (/usr/local/texlive/2025/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
@@ -470,11 +470,6 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [2 <../results/moral_foundations_relevance_profiles.png> <../results/persona_moral_foundations_relevance_profiles.png>]
-Underfull \hbox (badness 1048) in paragraph at lines 99--100
-\OML/cmm/m/it/10 n \OT1/cmr/m/n/10 = 10$ \OT1/ptm/m/n/10 times to es-ti-mate within-persona mean
- []
-
-
 
 
 
@@ -484,28 +479,28 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [3]
-
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 186.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 188.
 
-Underfull \hbox (badness 1132) in paragraph at lines 186--187
+Underfull \hbox (badness 1132) in paragraph at lines 188--189
 []\OT1/ptm/m/n/10 In our ex-per-i-ment, the fol-low-ing $\OT1/cmr/m/n/10 9$ \OT1/ptm/m/n/10 per-sonas met the
  []
 
 
-Overfull \hbox (5.89978pt too wide) in paragraph at lines 194--211
+
+
+Overfull \hbox (5.89978pt too wide) in paragraph at lines 196--213
  [][] 
  []
 
 (./table_summary_by_model_with_z.tex)
+<../results/robustness_bars.pdf, id=205, 1125.20375pt x 326.21875pt>
+File: ../results/robustness_bars.pdf Graphic file (type pdf)
+<use ../results/robustness_bars.pdf>
+Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 232.
+(pdftex.def)             Requested size: 439.03726pt x 127.28452pt.
 
-LaTeX Warning: Reference `fig:robustness' on page 4 undefined on input line 225.
-
-
-LaTeX Warning: Reference `fig:robustness' on page 4 undefined on input line 225.
-
-
-Underfull \vbox (badness 4492) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
@@ -515,30 +510,18 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [4]
-<../results/robustness_bars.pdf, id=209, 1125.20375pt x 326.21875pt>
-File: ../results/robustness_bars.pdf Graphic file (type pdf)
-<use ../results/robustness_bars.pdf>
-Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 242.
-(pdftex.def)             Requested size: 439.03726pt x 127.28452pt.
-
-
-LaTeX Warning: Reference `fig:susceptibility' on page 5 undefined on input line 249.
-
-
-LaTeX Warning: Reference `fig:robustness' on page 5 undefined on input line 249.
-
-
-Underfull \hbox (badness 4492) in paragraph at lines 249--250
-[]\OT1/ptm/m/n/10 Our re-sults for foundation-level moral sus-cep-ti-bil-ity
- []
-
-<../results/susceptibility_bars.pdf, id=212, 1064.97874pt x 324.21124pt>
+<../results/susceptibility_bars.pdf, id=222, 1064.97874pt x 324.21124pt>
 File: ../results/susceptibility_bars.pdf Graphic file (type pdf)
 <use ../results/susceptibility_bars.pdf>
-Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 266.
+Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 244.
 (pdftex.def)             Requested size: 439.03726pt x 133.65468pt.
+<../results/moral_metrics_overall_bars.pdf, id=223, 759.83875pt x 242.9075pt>
+File: ../results/moral_metrics_overall_bars.pdf Graphic file (type pdf)
+<use ../results/moral_metrics_overall_bars.pdf>
+Package pdftex.def Info: ../results/moral_metrics_overall_bars.pdf  used on input line 252.
+(pdftex.def)             Requested size: 439.03726pt x 140.35641pt.
 
-Underfull \hbox (badness 2990) in paragraph at lines 295--296
+Underfull \hbox (badness 2990) in paragraph at lines 282--283
 []\OT1/ptm/m/n/10 We pro-pose a prin-ci-pled bench-mark for quan-ti-fy-ing
  []
 
@@ -548,13 +531,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 (./mlsys2025.bbl
-
-
-Package fancyhdr Warning: \footskip is too small (0.0pt): 
-(fancyhdr)                Make it at least 3.30003pt, for example:
-(fancyhdr)                \setlength{\footskip}{3.30003pt}.
-
-[5]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
@@ -563,9 +540,18 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                Make it at least 3.30003pt, for example:
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
-[6 <../results/robustness_bars.pdf> <../results/susceptibility_bars.pdf
+[5 <../results/robustness_bars.pdf>]
 
-pdfTeX warning: pdflatex (file ../results/susceptibility_bars.pdf): PDF inclusion: multiple pdfs with page group included in a single page
+
+
+
+Package fancyhdr Warning: \footskip is too small (0.0pt): 
+(fancyhdr)                Make it at least 3.30003pt, for example:
+(fancyhdr)                \setlength{\footskip}{3.30003pt}.
+
+[6 <../results/susceptibility_bars.pdf> <../results/moral_metrics_overall_bars.pdf
+
+pdfTeX warning: pdflatex (file ../results/moral_metrics_overall_bars.pdf): PDF inclusion: multiple pdfs with page group included in a single page
 >])
 
 (./appendix_personas.tex
@@ -576,20 +562,15 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [7]
+
+
 Underfull \hbox (badness 1331) in paragraph at lines 30--31
 []\OT1/ptm/m/n/10 A play-by-play an-nouncer who ex-cels at pro-vid-
  []
 
 
-
-
 Underfull \hbox (badness 1048) in paragraph at lines 40--41
 []\OT1/ptm/m/n/10 A fel-low an-noyed spouse who com-mis-er-ates and
- []
-
-
-Underfull \hbox (badness 1509) in paragraph at lines 44--45
-\OT1/ptm/m/n/10 States, skep-ti-cal of non-transparent prac-tices and
  []
 
 
@@ -600,6 +581,11 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [8]
+Underfull \hbox (badness 1509) in paragraph at lines 44--45
+\OT1/ptm/m/n/10 States, skep-ti-cal of non-transparent prac-tices and
+ []
+
+
 
 
 Underfull \hbox (badness 6625) in paragraph at lines 79--80
@@ -613,42 +599,36 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                Make it at least 3.30003pt, for example:
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
-[9])
+[9]
 
-
+)
 
 
 Package fancyhdr Warning: \footskip is too small (0.0pt): 
 (fancyhdr)                Make it at least 3.30003pt, for example:
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
-[10
-
-] (./mlsys2025.aux)
+[10] (./mlsys2025.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
 Package rerunfilecheck Info: File `mlsys2025.out' has not changed.
 (rerunfilecheck)             Checksum: 338081EC9F0B74EAEB2A04A45BE8B7D7;2185.
  ) 
 Here is how much of TeX's memory you used:
- 13240 strings out of 473190
- 201382 string characters out of 5715799
- 749134 words of memory out of 5000000
- 36079 multiletter control sequences out of 15000+600000
- 588630 words of font info for 100 fonts, out of 8000000 for 9000
+ 13234 strings out of 473190
+ 201551 string characters out of 5715799
+ 731433 words of memory out of 5000000
+ 36083 multiletter control sequences out of 15000+600000
+ 586946 words of font info for 98 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,82p,1508b,1057s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on mlsys2025.pdf (10 pages, 1121208 bytes).
+ 75i,13n,82p,1235b,1120s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on mlsys2025.pdf (10 pages, 1156851 bytes).
 PDF statistics:
- 831 PDF objects out of 1000 (max. 8388607)
- 623 compressed objects within 7 object streams
- 198 named destinations out of 1000 (max. 500000)
- 133 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 904 PDF objects out of 1000 (max. 8388607)
+ 660 compressed objects within 7 object streams
+ 189 named destinations out of 1000 (max. 500000)
+ 138 words of extra memory for PDF output out of 10000 (max. 10000000)
 
