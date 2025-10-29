@@ -1,0 +1,31 @@
+persona_id,persona_name,claude-sonnet-4-5,gemini-2.5-flash-lite,gpt-4.1,gpt-4o,gpt-4o-mini,total_failures
+66,A researcher who studies moose populations and provides insights on conservation efforts,0.0,30.0,0.0,6.0,60.0,96.0
+94,A curriculum developer designing language courses that integrate effective pronunciation instruction,0.0,58.0,0.0,4.0,30.0,92.0
+86,I am a skeptical statistician who is cautious about misinterpreting results from dimensionality reduction techniques.,0.0,80.0,0.0,0.0,0.0,80.0
+26,A play-by-play announcer who excels at providing captivating player background stories during golf broadcasts,0.0,0.0,0.0,0.0,55.0,55.0
+90,A research associate who assists in analyzing retention data and identifying areas for improvement,0.0,32.0,0.0,7.0,0.0,39.0
+29,A science writer who relies on the geologist's knowledge and explanations for their articles,0.0,35.0,0.0,0.0,0.0,35.0
+1,A hardcore Arknights fan who is always excited to introduce new anime fans to the series,0.0,0.0,0.0,0.0,30.0,30.0
+78,A retired historian interested in habitat laws and regulations in Texas.,0.0,28.0,0.0,0.0,0.0,28.0
+98,A medical professional who values personalized attention and relies on the sales representative's expertise to choose the best supplies for their practice,0.0,28.0,0.0,0.0,0.0,28.0
+80,A local health clinic director seeking guidance on improving healthcare access for underserved populations,0.0,27.0,0.0,0.0,0.0,27.0
+69,A video game developer who provides insider knowledge and references for the cosplayer's next character transformation,0.0,0.0,0.0,0.0,26.0,26.0
+43,A political scientist writing a comprehensive analysis of global politics,8.0,0.0,0.0,16.0,0.0,24.0
+95,A dedicated music historian who helps research and uncover information about these obscure bands,0.0,21.0,0.0,0.0,0.0,21.0
+44,a fangirl who has been following Elene's career from the start.,10.0,0.0,0.0,0.0,0.0,10.0
+51,a big fan of Ryota Muranishi who follows his games faithfully,2.0,0.0,3.0,0.0,0.0,5.0
+42,A project manager who is interested in the benefits of CSS Grid and wants guidance on implementing it in future projects,0.0,0.0,1.0,4.0,0.0,5.0
+45,An elderly Italian man who tends to be suspicious of modern banking tools and prefers cash transactions,4.0,0.0,0.0,0.0,0.0,4.0
+46,a tech-savvy receptionist at a wellness center,4.0,0.0,0.0,0.0,0.0,4.0
+50,A current resident of the mansion whose family has a long history with the property,3.0,0.0,0.0,0.0,0.0,3.0
+47,a resident of Torregaveta who takes local pride seriously.,2.0,0.0,0.0,0.0,0.0,2.0
+48,An experienced mobile app developer who is a minimalist.,1.0,0.0,0.0,0.0,0.0,1.0
+49,An eco-conscious local Miles from Fort Junction,1.0,0.0,0.0,0.0,0.0,1.0
+54,A massage therapist exploring the connection between breathwork and relaxation techniques,1.0,0.0,0.0,0.0,0.0,1.0
+57,I am a history teacher from Clare with a huge interest in local sports and cultural heritage.,1.0,0.0,0.0,0.0,0.0,1.0
+63,"A public policy major, focusing on healthcare disparities, inspired by their parent's work",0.0,1.0,0.0,0.0,0.0,1.0
+72,A fresh business graduate in Pakistan,0.0,1.0,0.0,0.0,0.0,1.0
+83,A local real estate expert with extensive knowledge of the ancestral lands and its economic prospects,0.0,1.0,0.0,0.0,0.0,1.0
+87,a 70-year-old veteran who served at Camp Holloway,0.0,1.0,0.0,0.0,0.0,1.0
+91,A genealogist tracing the lineage of women who played influential roles during the Industrial Revolution,0.0,1.0,0.0,0.0,0.0,1.0
+75,"an ultrAslan fan, the hardcore fan group of Galatasaray SK",0.0,0.0,0.0,0.0,1.0,1.0
