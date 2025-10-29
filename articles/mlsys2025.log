@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.10.29)  29 OCT 2025 18:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.10.29)  29 OCT 2025 19:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -498,6 +498,13 @@ Overfull \hbox (5.89978pt too wide) in paragraph at lines 194--211
  []
 
 (./table_summary_by_model_with_z.tex)
+
+LaTeX Warning: Reference `fig:robustness' on page 4 undefined on input line 225.
+
+
+LaTeX Warning: Reference `fig:robustness' on page 4 undefined on input line 225.
+
+
 Underfull \vbox (badness 4492) has occurred while \output is active []
 
 
@@ -508,23 +515,30 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [4]
-<../results/robustness_bars.pdf, id=212, 1125.20375pt x 326.21875pt>
+<../results/robustness_bars.pdf, id=209, 1125.20375pt x 326.21875pt>
 File: ../results/robustness_bars.pdf Graphic file (type pdf)
 <use ../results/robustness_bars.pdf>
-Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 230.
+Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 242.
 (pdftex.def)             Requested size: 439.03726pt x 127.28452pt.
 
-Underfull \hbox (badness 4492) in paragraph at lines 237--238
+
+LaTeX Warning: Reference `fig:susceptibility' on page 5 undefined on input line 249.
+
+
+LaTeX Warning: Reference `fig:robustness' on page 5 undefined on input line 249.
+
+
+Underfull \hbox (badness 4492) in paragraph at lines 249--250
 []\OT1/ptm/m/n/10 Our re-sults for foundation-level moral sus-cep-ti-bil-ity
  []
 
-<../results/susceptibility_bars.pdf, id=217, 1064.97874pt x 324.21124pt>
+<../results/susceptibility_bars.pdf, id=212, 1064.97874pt x 324.21124pt>
 File: ../results/susceptibility_bars.pdf Graphic file (type pdf)
 <use ../results/susceptibility_bars.pdf>
-Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 242.
+Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 266.
 (pdftex.def)             Requested size: 439.03726pt x 133.65468pt.
 
-Underfull \hbox (badness 2990) in paragraph at lines 271--272
+Underfull \hbox (badness 2990) in paragraph at lines 295--296
 []\OT1/ptm/m/n/10 We pro-pose a prin-ci-pled bench-mark for quan-ti-fy-ing
  []
 
@@ -615,22 +629,26 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
+
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `mlsys2025.out' has not changed.
 (rerunfilecheck)             Checksum: 338081EC9F0B74EAEB2A04A45BE8B7D7;2185.
  ) 
 Here is how much of TeX's memory you used:
- 13238 strings out of 473190
- 201344 string characters out of 5715799
+ 13240 strings out of 473190
+ 201382 string characters out of 5715799
  749134 words of memory out of 5000000
- 36077 multiletter control sequences out of 15000+600000
+ 36079 multiletter control sequences out of 15000+600000
  588630 words of font info for 100 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,13n,82p,1508b,1057s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on mlsys2025.pdf (10 pages, 1120679 bytes).
+Output written on mlsys2025.pdf (10 pages, 1121208 bytes).
 PDF statistics:
- 835 PDF objects out of 1000 (max. 8388607)
- 627 compressed objects within 7 object streams
+ 831 PDF objects out of 1000 (max. 8388607)
+ 623 compressed objects within 7 object streams
  198 named destinations out of 1000 (max. 500000)
  133 words of extra memory for PDF output out of 10000 (max. 10000000)
 
