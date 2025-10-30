@@ -29,11 +29,7 @@ def _():
     from pathlib import Path
     import marimo as mo
     import vl_convert
-    from pyobsplot import Plot, d3, js
     import pyarrow
-    import seaborn as sns
-    import seaborn.objects as so
-    import plotnine as pn
     return Path, alt, pl
 
 
@@ -206,14 +202,14 @@ def _():
 
     MODELS_ORDER = [
         "claude-haiku-4-5",
-        "gpt-4.1-nano",
-        "gpt-4o-mini",
-        "gpt-4.1",
+        "gemini-2.5-flash-lite",
+        "gpt-4.1-mini",
+        "gpt-4o",
         "grok-4",
         "claude-sonnet-4-5",
-        "gpt-4o",
-        "gpt-4.1-mini",
-        "gemini-2.5-flash-lite",
+        "gpt-4.1",
+        "gpt-4.1-nano",
+        "gpt-4o-mini",
         "grok-4-fast",
     ]
     return FOUNDATIONS_ORDER, MODELS_ORDER
@@ -268,7 +264,11 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 
     _p = (
         (_p_bars + _p_error + _p_label)
-        .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
+        .facet(
+            facet=alt.Facet("model:N", title="Model", sort=MODELS_ORDER),
+            columns=5,
+            title="",
+        )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
         # .properties(
@@ -339,7 +339,11 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 
     _p = (
         (_p_bars + _p_error + _p_label)
-        .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
+        .facet(
+            facet=alt.Facet("model:N", title="Model", sort=MODELS_ORDER),
+            columns=5,
+            title="",
+        )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
         # .properties(
@@ -404,7 +408,11 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 
     _p = (
         (_p_bars + _p_error + _p_label)
-        .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
+        .facet(
+            facet=alt.Facet("model:N", title="Model", sort=MODELS_ORDER),
+            columns=5,
+            title="",
+        )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
         # .properties(
@@ -469,7 +477,11 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 
     _p = (
         (_p_bars + _p_error + _p_label)
-        .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
+        .facet(
+            facet=alt.Facet("model:N", title="Model", sort=MODELS_ORDER),
+            columns=5,
+            title="",
+        )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
         # .properties(
@@ -489,17 +501,23 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 def _(RESULTS_DIR, alt, table):
     _p_data = alt.Chart(table["moral_metrics"], height=200, width=200)
 
-    _p_bars_s = _p_data.mark_bar(size=15, opacity=0.6).encode(
+    _p_bars_s = _p_data.mark_bar(
+        size=15, opacity=0.6
+    ).encode(
         alt.Y(
-            "model:O", sort="-x"#alt.SortField("suscepitibility:Q", order="descending")
-        ),
+            "model:N"  # , sort=alt.EncodingSortField("susceptibility:Q", op="mean", order="descending")
+        ).sort("-x"),
         alt.X("susceptibility:Q"),
-        alt.Color("model:N", legend=None,sort="-x")#alt.SortField("suscepitibility:Q", order="descending")),
+        alt.Color(
+            "model:N",
+            legend=None,
+            # sort=alt.SortField("suscepitibility:Q", order="descending"),
+        ),
     )
 
     _p_error_s = _p_data.mark_errorbar().encode(
         alt.Y(
-            "model:N", sort=alt.SortField("susceptibility:Q", order="descending")
+            "model:N"  # , sort=alt.SortField("susceptibility:Q", order="descending")
         ),
         alt.X("susceptibility:Q"),
         alt.XError("susceptibility_uncertainty:Q"),
@@ -518,16 +536,16 @@ def _(RESULTS_DIR, alt, table):
     _p_bars_r = _p_data.mark_bar(size=15, opacity=0.6).encode(
         alt.Y(
             "model:N",
-            sort=alt.SortField("robustness:Q", order="descending"),
+            # sort=alt.SortField("robustness:Q", order="descending"),
             title=None,
         ),
         alt.X("robustness:Q"),
-        alt.Color("model:N",sort=alt.SortField("suscepitibility:Q", order="descending")),
+        alt.Color("model:N"),
     )
 
     _p_error_r = _p_data.mark_errorbar().encode(
         alt.Y(
-            "model:N", sort=alt.SortField("susceptibility:Q", order="descending")
+            "model:N"  # , sort=alt.SortField("susceptibility:Q", order="descending")
         ),
         alt.X("robustness:Q"),
         alt.XError("robustness_uncertainty:Q"),
@@ -540,7 +558,6 @@ def _(RESULTS_DIR, alt, table):
         dy=0,
         fontSize=9,
         opacity=1.0,
-        color="#000000",
     ).encode(alt.Text("r_label"), color=alt.value("black"), opacity=alt.value(1.0))
 
     _p = (
@@ -550,13 +567,50 @@ def _(RESULTS_DIR, alt, table):
         )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
-        .resolve_scale(y='independent', x='independent')
+        .resolve_scale(y="independent", x="independent")
     )
 
     _p.save(RESULTS_DIR / "moral_metrics_overall_bars.png")
     _p.save(RESULTS_DIR / "moral_metrics_overall_bars.pdf")
 
     _p
+    return
+
+
+@app.cell
+def _(alt, table):
+    _p_data = alt.Chart(table["moral_metrics"], height=200, width=200)
+
+    _p_bars_s = _p_data.mark_bar(size=15, opacity=0.6).encode(
+        alt.Y(
+            "model:N"  # , sort=alt.EncodingSortField("susceptibility:Q")
+        ).sort("-x"),
+        alt.X("susceptibility:Q"),
+        alt.Color(
+            "model:N",
+            legend=None,
+        ),
+    )
+
+    _p_label_s = _p_bars_s.mark_text().encode(alt.Text("s_label"))
+
+    _p_errors_s = _p_bars_s.mark_errorbar(opacity=1.0).encode(
+        alt.Y("model:N").sort("-x"),
+        alt.XError("susceptibility_uncertainty:Q"),
+        color=alt.value("black"),
+    )
+
+    _p_bars_s + _p_label_s + _p_errors_s
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _():
     return
 
 

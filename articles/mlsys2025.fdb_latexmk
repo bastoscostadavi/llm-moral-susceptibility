@@ -1,19 +1,19 @@
 # Fdb version 4
-["bibtex mlsys2025"] 1761786808.62826 "mlsys2025.aux" "mlsys2025.bbl" "mlsys2025" 1761787082.6096 0
+["bibtex mlsys2025"] 1761786808.62826 "mlsys2025.aux" "mlsys2025.bbl" "mlsys2025" 1761788868.83361 0
   "./mlsys2025.bst" 1761661047.7481 26917 d7ddf50f3ace2f76b21ad88d918927a1 ""
   "./references.bib" 1761776735.31534 6638 e03ab69d522394653cf51910ac81e1d0 ""
-  "mlsys2025.aux" 1761787082.42788 9581 f9cb4cec7f3e0e9714b60860cb4a60b8 "pdflatex"
+  "mlsys2025.aux" 1761788868.65471 9581 f9cb4cec7f3e0e9714b60860cb4a60b8 "pdflatex"
   (generated)
   "mlsys2025.bbl"
   "mlsys2025.blg"
   (rewritten before read)
-["pdflatex"] 1761787081.36 "/Users/felippealves/Documents/GitHub/davibastos-llm-moral-susceptibility/articles/mlsys2025.tex" "mlsys2025.pdf" "mlsys2025" 1761787082.60972 0
+["pdflatex"] 1761788867.5372 "/Users/felippealves/Documents/GitHub/davibastos-llm-moral-susceptibility/articles/mlsys2025.tex" "mlsys2025.pdf" "mlsys2025" 1761788868.83373 0
   "../results/moral_foundations_relevance_profiles.png" 1761776735.32678 474710 d04766be21cc5f0d18bce087fb7f496a ""
-  "../results/moral_metrics_overall_bars.pdf" 1761787080.84877 44786 236dbca677b3938c0a5aa63b2c9ee931 ""
+  "../results/moral_metrics_overall_bars.pdf" 1761788867.06375 44786 b3eb6a68ccb7aafeafe0f2fb68d3583a ""
   "../results/persona_moral_foundations_relevance_profiles.png" 1761776735.3292 446293 afed9139666f8d39d22ce41bf7445767 ""
-  "../results/robustness_bars.pdf" 1761786376.74215 74960 0332ec620c785c3cd2d03a0fad786e67 ""
-  "../results/susceptibility_bars.pdf" 1761786353.85585 75121 b3c04605bf6581bc74ec9c7e216d918f ""
-  "/Users/felippealves/Documents/GitHub/davibastos-llm-moral-susceptibility/articles/mlsys2025.tex" 1761785534.50319 26237 61b66a7a97fc53604ff303dd60b70182 ""
+  "../results/robustness_bars.pdf" 1761788079.0912 74928 25f6aee1d8fe92acdb3691de4922a9cf ""
+  "../results/susceptibility_bars.pdf" 1761788078.46352 75117 d45e49dc762330c645237c14e5d11c5a ""
+  "/Users/felippealves/Documents/GitHub/davibastos-llm-moral-susceptibility/articles/mlsys2025.tex" 1761787138.66564 26237 61b66a7a97fc53604ff303dd60b70182 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -148,11 +148,11 @@
   "/usr/local/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1761772936 3345740 d2b6c13d51ca5c82a36c847a23af4a31 ""
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
   "appendix_personas.tex" 1761661047.74749 10252 5f63b1dfb9f89d49c45a2cbb6c3c57ad ""
-  "mlsys2025.aux" 1761787082.42788 9581 f9cb4cec7f3e0e9714b60860cb4a60b8 "pdflatex"
+  "mlsys2025.aux" 1761788868.65471 9581 f9cb4cec7f3e0e9714b60860cb4a60b8 "pdflatex"
   "mlsys2025.bbl" 1761786808.69506 5856 315b32c3f1596ca4d26f976758ace4c2 "bibtex mlsys2025"
-  "mlsys2025.out" 1761787082.42846 2185 338081ec9f0b74eaeb2a04a45be8b7d7 "pdflatex"
+  "mlsys2025.out" 1761788868.65555 2185 338081ec9f0b74eaeb2a04a45be8b7d7 "pdflatex"
   "mlsys2025.sty" 1761661047.75461 25967 14259a72e7438565bca9a995786db1b2 ""
-  "mlsys2025.tex" 1761785534.50319 26237 61b66a7a97fc53604ff303dd60b70182 ""
+  "mlsys2025.tex" 1761787138.66564 26237 61b66a7a97fc53604ff303dd60b70182 ""
   "table_summary_by_model_with_z.tex" 1761777351.963 1245 cceb2ea640d5f7f98b10b1a894a61849 ""
   (generated)
   "mlsys2025.aux"
