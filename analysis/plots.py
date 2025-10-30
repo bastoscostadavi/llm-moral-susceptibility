@@ -251,9 +251,9 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     )
 
     _p_label = _p_bars.mark_text(
-        align="right",
+        align="left",
         baseline="middle",
-        dx=-8.5,
+        dx=8.5,
         dy=0,
         fontSize=8,
         opacity=1.0,
@@ -271,6 +271,7 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
         .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
+        .resolve_scale(x="independent")
         # .properties(
         #     width=100,
         #     height=50,
@@ -342,6 +343,7 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
         .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
+        .resolve_scale(x="independent")
         # .properties(
         #     width=100,
         #     height=50,
@@ -407,6 +409,7 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
         .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
+        .resolve_scale(x="independent")
         # .properties(
         #     width=100,
         #     height=50,
@@ -487,28 +490,27 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 
 @app.cell
 def _(RESULTS_DIR, alt, table):
-    _p_data = alt.Chart(table["moral_metrics"], height=200, width=200)
+    _moral_metrics = table["moral_metrics"]
+    model_order = sorted(_moral_metrics.get_column("model").to_list())
+
+    _p_data = alt.Chart(_moral_metrics, height=200, width=200)
 
     _p_bars_s = _p_data.mark_bar(size=15, opacity=0.6).encode(
-        alt.Y(
-            "model:O", sort="-x"#alt.SortField("suscepitibility:Q", order="descending")
-        ),
-        alt.X("susceptibility:Q"),
-        alt.Color("model:N", legend=None,sort="-x")#alt.SortField("suscepitibility:Q", order="descending")),
+        alt.Y("model:N", sort=model_order, title=None),
+        alt.X("susceptibility:Q", title="Susceptibility"),
+        alt.Color("model:N", legend=None, sort=model_order),
     )
 
     _p_error_s = _p_data.mark_errorbar().encode(
-        alt.Y(
-            "model:N", sort=alt.SortField("susceptibility:Q", order="descending")
-        ),
-        alt.X("susceptibility:Q"),
+        alt.Y("model:N", sort=model_order),
+        alt.X("susceptibility:Q", title="Susceptibility"),
         alt.XError("susceptibility_uncertainty:Q"),
     )
 
     _p_label_s = _p_bars_s.mark_text(
-        align="right",
+        align="left",
         baseline="middle",
-        dx=-15,
+        dx=12,
         dy=0,
         fontSize=9,
         opacity=1.0,
@@ -516,27 +518,21 @@ def _(RESULTS_DIR, alt, table):
     ).encode(alt.Text("s_label"), color=alt.value("black"), opacity=alt.value(1.0))
 
     _p_bars_r = _p_data.mark_bar(size=15, opacity=0.6).encode(
-        alt.Y(
-            "model:N",
-            sort=alt.SortField("robustness:Q", order="descending"),
-            title=None,
-        ),
-        alt.X("robustness:Q"),
-        alt.Color("model:N",sort=alt.SortField("suscepitibility:Q", order="descending")),
+        alt.Y("model:N", sort=model_order, title=None),
+        alt.X("robustness:Q", title="Robustness"),
+        alt.Color("model:N", legend=None, sort=model_order),
     )
 
     _p_error_r = _p_data.mark_errorbar().encode(
-        alt.Y(
-            "model:N", sort=alt.SortField("susceptibility:Q", order="descending")
-        ),
-        alt.X("robustness:Q"),
+        alt.Y("model:N", sort=model_order),
+        alt.X("robustness:Q", title="Robustness"),
         alt.XError("robustness_uncertainty:Q"),
     )
 
-    _p_label_r = _p_bars_s.mark_text(
-        align="right",
+    _p_label_r = _p_bars_r.mark_text(
+        align="left",
         baseline="middle",
-        dx=100,
+        dx=12,
         dy=0,
         fontSize=9,
         opacity=1.0,
@@ -545,12 +541,12 @@ def _(RESULTS_DIR, alt, table):
 
     _p = (
         (
-            (_p_bars_s + _p_error_s + _p_label_s)
-            | (_p_bars_r + _p_error_r + _p_label_r)
+            (_p_bars_r + _p_error_r + _p_label_r)
+            | (_p_bars_s + _p_error_s + _p_label_s)
         )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
-        .resolve_scale(y='independent', x='independent')
+        .resolve_scale(y="independent", x="independent")
     )
 
     _p.save(RESULTS_DIR / "moral_metrics_overall_bars.png")

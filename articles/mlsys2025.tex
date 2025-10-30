@@ -35,7 +35,7 @@
 }
 
 
-\title{Moral Susceptibility and Robustness\\ in Large Language Models}
+\title{Moral Robustness and Susceptibility \\ in Large Language Models}
 
 
 
@@ -217,10 +217,17 @@ Table~\ref{tab:failures_by_model} reports, for completeness, the total number of
 
 \section{Results}
 
-Our results for the moral robustness Eq.~\eqref{eq:robustness} and susceptibility Eq.~\eqref{eq:overall-susceptibility} by model, with $z$-score comparison Eq.~\eqref{eq:zscore}, is displayed in Table~\ref{tab:summary_by_model_with_z} and figure \ref{fig:overall}. Qualitatively there appear to be an inverse correlation between moral robustness and susceptibility among families, with the Grok family the most susceptible and least robust, and the Claude family the most robust and one of the least susceptible.
+Our results for the overall moral robustness Eq.~\eqref{eq:robustness} and susceptibility Eq.~\eqref{eq:overall-susceptibility} by model are displayed in Figure~\ref{fig:overall}. To facilitate comparison we also present the $z$-scores Eq.~\eqref{eq:zscore} in Table~\ref{tab:summary_by_model_with_z},  Qualitatively there appear to be an inverse correlation between moral robustness and susceptibility among families, with the Grok family the most susceptible and least robust, and the Claude family the most robust and one of the least susceptible.
 
-% Merged summary + z-score table across models
-\input{table_summary_by_model_with_z}
+% Overall Susceptibility and Robustness
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{../results/moral_metrics_overall_bars.pdf}\hfill
+  \caption{Overall susceptibility and robustness across models. Error bars show propagated standard error via delta method; higher susceptibility values indicate larger persona-driven shifts in MFQ subscale scores; higher robustness values indicate greater rating stability.}
+  \label{fig:overall}
+\end{figure*}
+
+\input{table_summary_by_model_with_z.tex}
 
 \subsection{Moral Robustness}
 
@@ -230,7 +237,7 @@ Our results for foundation-level moral robustness Eq.~\eqref{eq:robustness} is d
 \begin{figure*}[!t]
   \centering
   \includegraphics[width=0.9\linewidth]{../results/robustness_bars.pdf}\hfill
-  \caption{Robustness across models and foundations. Error bars show propagated standard error via delta method; higher values indicate greater rating stability. The highlighted bars indicate the overall robustness over all foundations for that model.}
+  \caption{Robustness foundation profile across models. Error bars show propagated standard error via delta method; higher values indicate greater rating stability. The highlighted bars indicate the overall robustness over all foundations for that model. Note that the x-axis range varies, see Figure~\ref{fig:overall} to visualize the different scales.}
   \label{fig:robustness}
 \end{figure*}
 
@@ -242,16 +249,8 @@ Our results for foundation-level moral susceptibility Eq.~\ref{eq:overall-suscep
 \begin{figure*}[!t]
   \centering
   \includegraphics[width=0.9\linewidth]{../results/susceptibility_bars.pdf}\hfill
-  \caption{Susceptibility across models and foundations. Error bars show propagated standard error via delta method; higher values indicate larger persona-driven shifts in MFQ subscale scores. The highlighted bars indicate the overall susceptibility over all foundations for that model.}
+  \caption{Susceptibility foundation profile across models. Error bars show propagated standard error via delta method; higher values indicate larger persona-driven shifts in MFQ subscale scores. The highlighted bars indicate the overall susceptibility over all foundations for that model. Note that the x-axis range varies, see Figure~\ref{fig:overall} to visualize the different scales.}
   \label{fig:susceptibility}
-\end{figure*}
-
-% Overall Susceptibility and Robustness
-\begin{figure*}[!t]
-  \centering
-  \includegraphics[width=0.9\linewidth]{../results/moral_metrics_overall_bars.pdf}\hfill
-  \caption{Overall susceptibility and robustness across models. Error bars show propagated standard error via delta method; higher susceptibility values indicate larger persona-driven shifts in MFQ subscale scores; higher robustness values indicate greater rating stability. The bars in this figures are the highlighted ones in the in figures \ref{fig:robustness} and \ref{fig:susceptibility}.}
-  \label{fig:overall}
 \end{figure*}
 
 

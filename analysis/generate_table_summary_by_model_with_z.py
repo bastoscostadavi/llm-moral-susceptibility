@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the LaTeX table summarizing model robustness/susceptibility with z-scores."""
+"""Generate the LaTeX table summarizing model robustness/susceptibility z-scores."""
 
 from __future__ import annotations
 
@@ -110,23 +110,19 @@ def main() -> None:
     lines.append("\\begin{table*}[t]")
     lines.append("  \\centering")
     lines.append(
-        "  \\caption{Overall susceptibility and robustness by model with z-scores (mean $\\pm$ SE; $Z$ computed across models).}"
+        "  \\caption{Overall susceptibility and robustness $Z$-scores by model (mean $\\pm$ SE; $Z$ computed across models).}"
     )
     lines.append("  \\label{tab:summary_by_model_with_z}")
-    lines.append("  \\begin{tabular}{lcccc}")
+    lines.append("  \\begin{tabular}{lcc}")
     lines.append("    \\toprule")
-    header = "    Model & Robustness ($\pm$) & Robustness $Z$ ($\pm$) & "
-    header += "Susceptibility ($\pm$) & Susceptibility $Z$ ($\pm$) \\"
-    lines.append(header)
+    lines.append("    Model & Robustness $Z$ ($\\pm$) & Susceptibility $Z$ ($\\pm$) \\")
     lines.append("    \\midrule")
 
     for _, row in df.iterrows():
         model = latex_escape(str(row["model"]))
-        rob = format_value_with_uncertainty(row["robustness"], row["robustness_uncertainty"])
         rob_z = format_value_with_uncertainty(row["robustness_z"], row["robustness_z_uncertainty"])
-        sus = format_value_with_uncertainty(row["susceptibility"], row["susceptibility_uncertainty"])
         sus_z = format_value_with_uncertainty(row["susceptibility_z"], row["susceptibility_z_uncertainty"])
-        row = f"    {model} & ${rob}$ & ${rob_z}$ & ${sus}$ & ${sus_z}$ \\"
+        row = f"    {model} & ${rob_z}$ & ${sus_z}$ \\"
         lines.append(row)
 
     lines.append("    \\bottomrule")
