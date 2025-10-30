@@ -204,7 +204,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
         .mark_bar(size=15).encode(
             alt.X("susceptibility:Q", title="Susceptibility"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title=""),
+            alt.Color("model:N", title="", legend=None),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -269,7 +269,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
         .mark_bar(size=15).encode(
             alt.X("s_zscore:Q", title="Susceptibility Z-Score"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title=""),
+            alt.Color("model:N", title="",legend=None),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -334,7 +334,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
         .mark_bar(size=15).encode(
             alt.X("robustness:Q", title="Robustness"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title=""),
+            alt.Color("model:N", title="", legend=None),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -399,7 +399,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
         .mark_bar(size=15).encode(
             alt.X("r_zscore:Q", title="Robustness Z-Score"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title=""),
+            alt.Color("model:N", title="",legend=None),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -451,7 +451,7 @@ def _(RESULTS_DIR, alt, table):
     _p_data = alt.Chart(table["moral_metrics"], height=200, width=200)
 
     _p_bars_s = _p_data.mark_bar(size=15, opacity=0.6).encode(
-        alt.Y("model:N"), alt.X("susceptibility:Q"), alt.Color("model:N")
+        alt.Y("model:N"), alt.X("susceptibility:Q"), alt.Color("model:N",legend=None)
     )
 
     _p_error_s = _p_data.mark_errorbar().encode(
