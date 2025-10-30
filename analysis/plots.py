@@ -182,16 +182,18 @@ def _():
 
 @app.cell
 def _():
-    MODEL_COLORS = [
-        "#1f77b4",
-        "#ff7f0e",
-        "#2ca02c",
-        "#d62728",
-        "#9467bd",
-        "#8c564b",
-        "#e377c2",
-        "#7f7f7f",
-    ]
+    MODEL_COLORS = {
+        "claude-haiku-4-5": "#F9C784",
+        "claude-sonnet-4-5": "#E67E22",
+        "gpt-4.1-nano": "#D9F0D3",
+        "gpt-4o-mini": "#A6DBA0",
+        "gpt-4.1": "#52B788",
+        "grok-4": "#BDA0E3",
+        "gpt-4o": "#2F855A",
+        "gpt-4.1-mini": "#74C69D",
+        "gemini-2.5-flash-lite": "#4A90E2",
+        "grok-4-fast": "#7E57C2",
+    }
 
     FOUNDATION_COLORS = ["blue", "green", "yellow", "red", "lime"]
 
@@ -216,11 +218,11 @@ def _():
         "gemini-2.5-flash-lite",
         "grok-4-fast",
     ]
-    return FOUNDATIONS_ORDER, MODELS_ORDER
+    return FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
+def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     _p_data = alt.Chart(
         df.with_columns(
             f_color=pl.when(pl.col("foundation") == "All Foundations")
@@ -231,13 +233,23 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
         width=150,
     )
 
+    _color_domain = [model for model in MODELS_ORDER if model in MODEL_COLORS]
+    _color_range = [MODEL_COLORS[model] for model in _color_domain]
+    _color_scale = alt.Scale(domain=_color_domain, range=_color_range)
+
     _p_bars = (
         _p_data
         # .transform_filter(alt.datum.foundat)
         .mark_bar(size=15).encode(
             alt.X("susceptibility:Q", title="Susceptibility"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title="", sort=MODELS_ORDER, legend=None),
+            alt.Color(
+                "model:N",
+                title="",
+                sort=MODELS_ORDER,
+                legend=None,
+                scale=_color_scale,
+            ),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -292,7 +304,7 @@ def _(alt):
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
+def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     _p_data = alt.Chart(
         df.with_columns(
             f_color=pl.when(pl.col("foundation") == "All Foundations")
@@ -303,13 +315,17 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
         width=150,
     )
 
+    _color_domain = [model for model in MODELS_ORDER if model in MODEL_COLORS]
+    _color_range = [MODEL_COLORS[model] for model in _color_domain]
+    _color_scale = alt.Scale(domain=_color_domain, range=_color_range)
+
     _p_bars = (
         _p_data
         # .transform_filter(alt.datum.foundat)
         .mark_bar(size=15).encode(
             alt.X("s_zscore:Q", title="Susceptibility Z-Score"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title="", legend=None),
+            alt.Color("model:N", title="", legend=None, scale=_color_scale),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -358,7 +374,7 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
+def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     _p_data = alt.Chart(
         df.with_columns(
             f_color=pl.when(pl.col("foundation") == "All Foundations")
@@ -369,13 +385,17 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
         width=150,
     )
 
+    _color_domain = [model for model in MODELS_ORDER if model in MODEL_COLORS]
+    _color_range = [MODEL_COLORS[model] for model in _color_domain]
+    _color_scale = alt.Scale(domain=_color_domain, range=_color_range)
+
     _p_bars = (
         _p_data
         # .transform_filter(alt.datum.foundat)
         .mark_bar(size=15).encode(
             alt.X("robustness:Q", title="Robustness"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title="", legend=None),
+            alt.Color("model:N", title="", legend=None, scale=_color_scale),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -424,7 +444,7 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
+def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     _p_data = alt.Chart(
         df.with_columns(
             f_color=pl.when(pl.col("foundation") == "All Foundations")
@@ -435,13 +455,17 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
         width=150,
     )
 
+    _color_domain = [model for model in MODELS_ORDER if model in MODEL_COLORS]
+    _color_range = [MODEL_COLORS[model] for model in _color_domain]
+    _color_scale = alt.Scale(domain=_color_domain, range=_color_range)
+
     _p_bars = (
         _p_data
         # .transform_filter(alt.datum.foundat)
         .mark_bar(size=15).encode(
             alt.X("r_zscore:Q", title="Robustness Z-Score"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title="", legend=None),
+            alt.Color("model:N", title="", legend=None, scale=_color_scale),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -489,16 +513,26 @@ def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
 
 
 @app.cell
-def _(RESULTS_DIR, alt, table):
+def _(MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, table):
     _moral_metrics = table["moral_metrics"]
     model_order = sorted(_moral_metrics.get_column("model").to_list())
+
+    _color_domain = [model for model in MODELS_ORDER if model in MODEL_COLORS]
+    _color_range = [MODEL_COLORS[model] for model in _color_domain]
+
+    _extra_models = [model for model in model_order if model not in _color_domain]
+    if _extra_models:
+        _color_domain.extend(_extra_models)
+        _color_range.extend("#7f7f7f" for _ in _extra_models)
+
+    _color_scale = alt.Scale(domain=_color_domain, range=_color_range)
 
     _p_data = alt.Chart(_moral_metrics, height=200, width=200)
 
     _p_bars_s = _p_data.mark_bar(size=15, opacity=0.6).encode(
         alt.Y("model:N", sort=model_order, title=None),
         alt.X("susceptibility:Q", title="Susceptibility"),
-        alt.Color("model:N", legend=None, sort=model_order),
+        alt.Color("model:N", legend=None, sort=model_order, scale=_color_scale),
     )
 
     _p_error_s = _p_data.mark_errorbar().encode(
@@ -520,7 +554,7 @@ def _(RESULTS_DIR, alt, table):
     _p_bars_r = _p_data.mark_bar(size=15, opacity=0.6).encode(
         alt.Y("model:N", sort=model_order, title=None),
         alt.X("robustness:Q", title="Robustness"),
-        alt.Color("model:N", legend=None, sort=model_order),
+        alt.Color("model:N", legend=None, sort=model_order, scale=_color_scale),
     )
 
     _p_error_r = _p_data.mark_errorbar().encode(

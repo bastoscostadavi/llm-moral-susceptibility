@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.26)  30 OCT 2025 15:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.26)  30 OCT 2025 15:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/mlsys2025.tex
-(/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/mlsys2025.tex
+**/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/mlsys2025submssion.tex
+(/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/mlsys2025submssion.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/base/article.cls
@@ -371,34 +371,34 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 )
 \Hy@SectionHShift=\skip72
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 54.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 48.
  (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 ) (/usr/local/texlive/2025basic/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count322
 \l__pdf_internal_box=\box62
-) (./mlsys2025.aux)
-\openout1 = `mlsys2025.aux'.
+) (./mlsys2025submssion.aux)
+\openout1 = `mlsys2025submssion.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
  (/usr/local/texlive/2025basic/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count323
@@ -423,33 +423,22 @@ Package caption Info: hyperref package is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count329
-Package hyperref Info: Link coloring OFF on input line 54.
- (./mlsys2025.out) (./mlsys2025.out)
+Package hyperref Info: Link coloring OFF on input line 48.
+ (./mlsys2025submssion.out) (./mlsys2025submssion.out)
 \@outlinefile=\write3
-\openout3 = `mlsys2025.out'.
+\openout3 = `mlsys2025submssion.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 57.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 51.
  (/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 57.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 51.
  (/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 57.
- (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 57.
- (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/omspcr.fd
-File: omspcr.fd 
-)
-LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 57.
 
 
-
-Underfull \hbox (badness 1776) in paragraph at lines 66--67
+Underfull \hbox (badness 1776) in paragraph at lines 60--61
 \OT1/ptm/m/n/10 sona role-play---prompting a LLM to as-sume a spe-
  []
 
@@ -463,25 +452,26 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 ]
+<../results/moral_foundations_relevance_profiles.png, id=169, 794.97pt x 520.344pt>
+File: ../results/moral_foundations_relevance_profiles.png Graphic file (type png)
+<use ../results/moral_foundations_relevance_profiles.png>
+Package pdftex.def Info: ../results/moral_foundations_relevance_profiles.png  used on input line 78.
+(pdftex.def)             Requested size: 234.8775pt x 153.73833pt.
+<../results/persona_moral_foundations_relevance_profiles.png, id=171, 794.97pt x 520.344pt>
+File: ../results/persona_moral_foundations_relevance_profiles.png Graphic file (type png)
+<use ../results/persona_moral_foundations_relevance_profiles.png>
+Package pdftex.def Info: ../results/persona_moral_foundations_relevance_profiles.png  used on input line 85.
+(pdftex.def)             Requested size: 234.8775pt x 153.73833pt.
+
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-<../results/moral_foundations_relevance_profiles.png, id=156, 794.97pt x 520.344pt>
-File: ../results/moral_foundations_relevance_profiles.png Graphic file (type png)
-<use ../results/moral_foundations_relevance_profiles.png>
-Package pdftex.def Info: ../results/moral_foundations_relevance_profiles.png  used on input line 84.
-(pdftex.def)             Requested size: 234.8775pt x 153.73833pt.
-<../results/persona_moral_foundations_relevance_profiles.png, id=158, 794.97pt x 520.344pt>
-File: ../results/persona_moral_foundations_relevance_profiles.png Graphic file (type png)
-<use ../results/persona_moral_foundations_relevance_profiles.png>
-Package pdftex.def Info: ../results/persona_moral_foundations_relevance_profiles.png  used on input line 91.
-(pdftex.def)             Requested size: 234.8775pt x 153.73833pt.
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 102.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 96.
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-Underfull \hbox (badness 2865) in paragraph at lines 102--103
+Underfull \hbox (badness 2865) in paragraph at lines 96--97
 \OT1/ptm/m/n/10 Full per-sona de-scrip-tions and the cor-re-spond-ing
  []
 
@@ -493,6 +483,9 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [2 <../results/moral_foundations_relevance_profiles.png> <../results/persona_moral_foundations_relevance_profiles.png>]
+Underfull \vbox (badness 3019) has occurred while \output is active []
+
+
 
 
 
@@ -503,22 +496,30 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 
 [3]
 
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 184.
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 184.
+ (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/omspcr.fd
+File: omspcr.fd 
+)
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 190.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 184.
 
-Underfull \hbox (badness 1132) in paragraph at lines 190--191
+Underfull \hbox (badness 1132) in paragraph at lines 184--185
 []\OT1/ptm/m/n/10 In our ex-per-i-ment, the fol-low-ing $\OT1/cmr/m/n/10 9$ \OT1/ptm/m/n/10 per-sonas met the
  []
 
 
-Overfull \hbox (5.89978pt too wide) in paragraph at lines 198--215
+Overfull \hbox (5.89978pt too wide) in paragraph at lines 192--209
  [][] 
  []
 
-<../results/moral_metrics_overall_bars.pdf, id=239, 709.65125pt x 242.9075pt>
+<../results/moral_metrics_overall_bars.pdf, id=232, 709.65125pt x 242.9075pt>
 File: ../results/moral_metrics_overall_bars.pdf Graphic file (type pdf)
 <use ../results/moral_metrics_overall_bars.pdf>
-Package pdftex.def Info: ../results/moral_metrics_overall_bars.pdf  used on input line 227.
+Package pdftex.def Info: ../results/moral_metrics_overall_bars.pdf  used on input line 221.
 (pdftex.def)             Requested size: 439.03726pt x 150.28232pt.
 (./table_summary_by_model_with_z.tex
 Overfull \hbox (12.04637pt too wide) in paragraph at lines 6--22
@@ -536,22 +537,22 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
 [4]
-<../results/robustness_bars.pdf, id=256, 1094.0875pt x 358.33875pt>
+<../results/robustness_bars.pdf, id=250, 1094.0875pt x 358.33875pt>
 File: ../results/robustness_bars.pdf Graphic file (type pdf)
 <use ../results/robustness_bars.pdf>
-Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 241.
+Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 235.
 (pdftex.def)             Requested size: 439.03726pt x 143.79225pt.
-<../results/susceptibility_bars.pdf, id=267, 1117.17375pt x 356.33125pt>
+<../results/susceptibility_bars.pdf, id=261, 1117.17375pt x 356.33125pt>
 File: ../results/susceptibility_bars.pdf Graphic file (type pdf)
 <use ../results/susceptibility_bars.pdf>
-Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 253.
+Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 247.
 (pdftex.def)             Requested size: 439.03726pt x 140.0343pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-(./mlsys2025.bbl
+(./mlsys2025submssion.bbl
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
@@ -629,27 +630,27 @@ Package fancyhdr Warning: \footskip is too small (0.0pt):
 (fancyhdr)                Make it at least 3.30003pt, for example:
 (fancyhdr)                \setlength{\footskip}{3.30003pt}.
 
-[10] (./mlsys2025.aux)
+[10] (./mlsys2025submssion.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-Package rerunfilecheck Info: File `mlsys2025.out' has not changed.
+Package rerunfilecheck Info: File `mlsys2025submssion.out' has not changed.
 (rerunfilecheck)             Checksum: 338081EC9F0B74EAEB2A04A45BE8B7D7;2185.
  ) 
 Here is how much of TeX's memory you used:
- 14562 strings out of 473190
- 228548 string characters out of 5713195
- 739934 words of memory out of 5000000
- 37398 multiletter control sequences out of 15000+600000
- 585304 words of font info for 96 fonts, out of 8000000 for 9000
+ 14555 strings out of 473190
+ 228643 string characters out of 5713195
+ 715596 words of memory out of 5000000
+ 37393 multiletter control sequences out of 15000+600000
+ 584789 words of font info for 94 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,82p,1288b,2005s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,82p,1297b,2006s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on mlsys2025.pdf (10 pages, 1138443 bytes).
+Output written on mlsys2025submssion.pdf (10 pages, 1137166 bytes).
 PDF statistics:
- 903 PDF objects out of 1000 (max. 8388607)
- 687 compressed objects within 7 object streams
- 198 named destinations out of 1000 (max. 500000)
+ 893 PDF objects out of 1000 (max. 8388607)
+ 677 compressed objects within 7 object streams
+ 196 named destinations out of 1000 (max. 500000)
  138 words of extra memory for PDF output out of 10000 (max. 10000000)
 

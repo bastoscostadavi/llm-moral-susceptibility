@@ -43,20 +43,14 @@
 
 
 % For double‑blind submission, leave author info empty under the MLSys style.
-\author{Davi Bastos Costa, Felippe Alves \& Renato Vicente \\
-TELUS Digital Research Hub\\ 
-Center for Artificial Intelligence and Machine Learning\\
-Institute of Mathematics, Statistics and Computer Science\\
-University of São Paulo \\
-\texttt{\{davi.costa,felippe.pereira,rvicente\}@usp.br} \\
-}
+\author{}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-  Large language models (LLMs) increasingly operate in social contexts, motivating analysis of how they form, maintain, and shift moral judgments. In this work, we investigate how persona role-play---prompting an LLM to assume a specific character---affects its moral profile. Using the Moral Foundations Questionnaire (MFQ), we introduce a benchmark that quantifies two properties: (i) moral susceptibility, their sensitivity to persona changes, and (ii) moral robustness, the consistency of model judgments under repeated sampling. For moral robustness, model family explains most of the variance, and model size shows no systematic effect. In contrast, moral susceptibility exhibits a mild family effect but a clear within-family size effect, with larger variants being more susceptible. We also observe an inverse correlation between robustness and susceptibility, with more robust models tending to be less susceptible. Additionally, we present moral foundation profiles for models without persona role-play and for averaged persona characterizations. Together, these analyses provide a systematic view of how persona conditioning shapes moral reasoning in LLMs.
+  Large language models (LLMs) increasingly operate in social contexts, motivating analysis of how they form, maintain, and shift moral judgments. In this work, we investigate how persona role-play---prompting an LLM to assume a specific character---affects its moral profile. Using the Moral Foundations Questionnaire (MFQ), we introduce a benchmark that quantifies two properties: (i) moral susceptibility, their sensitivity to persona changes, and (ii) moral robustness, the consistency of model judgments under repeated sampling. For moral robustness, model family explains most of the variance, and model size shows no systematic effect. In contrast, moral susceptibility exhibits a mild family effect but a clear within-family size effect, with larger variants being more susceptible. We also observe an inverse correlation between robustness and susceptibility among families, with more robust models tending to be less susceptible. Additionally, we present moral foundation profiles for models without persona role-play and for averaged persona characterizations. Together, these analyses provide a systematic view of how persona conditioning shapes moral reasoning in LLMs.
 \end{abstract}
 
 
@@ -65,7 +59,7 @@ As large language models (LLMs) move into interactive, multi-agent settings, rel
 
 This paper introduces a benchmark that combines persona role-play---prompting a LLM to assume a specific character---with the Moral Foundations Questionnaire \citep{moralfoundations2017questionnaires}, a widely used instrument in moral psychology that measures five moral foundations: Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, and Purity/Sanctity \citep{graham2009liberals,haidt2007when,moralfoundations2017questionnaires}. We elicit LLMs to respond to the MFQ while role-playing personas drawn from \citet{ge2025scalingsyntheticdatacreation}. From these responses, we define two complementary quantities: moral robustness, the stability of MFQ scores over personas under repeated sampling, and moral susceptibility, the sensitivity of MFQ scores to persona variation. These metrics are defined in Eq.~\eqref{eq:robustness} and Eq.~\eqref{eq:overall-susceptibility}, each with foundation-level decompositions and uncertainty estimates.
 
-Applying this framework across contemporary model families and sizes, we find that model family accounts for most of the variance in moral robustness, with no systematic effect of model size. In contrast, moral susceptibility shows a mild family effect but a clear within-family size trend, with larger variants being more susceptible. Among individual models, Claude 4.5 Sonnet is the most robust and Grok 4 Fast the least. Conversely, Grok 4 Fast is the most susceptible, while GPT-4o Mini is the least. Overall, we qualitatively observe an inverse correlation between robustness and susceptibility, suggesting that models with more stable moral profiles tend to be less influenced by persona changes.
+Applying this framework across contemporary model families and sizes, we find that model family accounts for most of the variance in moral robustness, with no systematic effect of model size. In contrast, moral susceptibility shows a mild family effect but a clear within-family size trend, with larger variants being more susceptible. Among individual models, Claude 4.5 Sonnet is the most robust and Grok 4 Fast the least. Conversely, Grok 4 Fast is the most susceptible, while GPT-4o Mini is the least. Overall, we qualitatively observe an inverse correlation between robustness and susceptibility among families, suggesting that models with more stable moral profiles tend to be less influenced by persona changes.
 
 Recent research has examined the moral and social behavior of LLMs through the lens of the MFQ, exploring their value orientations, cultural variability, and alignment with human moral judgments \citep{abdulhai-etal-2024-moral,nunes2024hypocrites,aksoy2024whose,bajpai2024insights,ji2025moralbenchmoralevaluationllms}. Parallel efforts study persona role-playing as a mechanism for conditioning model behavior, including benchmarks, interactive environments, and diagnostic analyses \citep{tseng2024two,wang2023rolellm,samuel2025personagym,yu2025rpgbench,xu2024character,elboudouri2025rpeval,bai2025concept}. Our MFQ persona framework bridges these directions by systematically quantifying how persona conditioning alters moral judgments, separating the effects of repeated sampling (moral robustness) from those of persona variation (moral susceptibility). In addition, we report MFQ profiles for both unconditioned and persona-conditioned settings, providing a comparative view of baseline moral tendencies and persona-driven moral shifts across models.
 
@@ -89,11 +83,11 @@ Figure~\ref{fig:mfq-profiles} illustrates the resulting foundation-level MFQ sco
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{../results/persona_moral_foundations_relevance_profiles.png}
-  \caption{Moral foundation profiles for ten randomly selected personas, averaged across models. See Appendix~\ref{app:personas} for the mapping between persona IDs and their corresponding descriptions.}
+  \caption{Moral foundation profiles for ten randomly selected personas, averaged across models. See the Appendix~\ref{app:personas} for the mapping between persona IDs and their corresponding descriptions.}
   \label{fig:persona-mfq-profiles}
 \end{figure}
 
-Figure~\ref{fig:persona-mfq-profiles} illustrates the resulting foundation-level MFQ scores average over all models for different personas. It gives an average characterization of the moral persona role-play on models. The full per-persona, per-model and per-question MFQ ratings are available in our GitHub repository \cite{costa2025llmms}.
+Figure~\ref{fig:persona-mfq-profiles} illustrates the resulting foundation-level MFQ scores average over all models for different personas. It gives an average characterization of the moral persona role-play on models. The full per-persona, per-model and per-question MFQ ratings will be made publicly available after the review period.
 
 \subsection{Experimental Methodology}
 For each model, we iterate through all MFQ questions for every persona, repeating each question multiple times. Concretely we have:
@@ -104,7 +98,7 @@ For each model, we iterate through all MFQ questions for every persona, repeatin
   \item \textbf{Repetition:} Each persona--question pair is queried \(n=10\) times to estimate within-persona mean score and variance, which are then used to compute the moral robustness and susceptibility, defined in Eq.~\eqref{eq:robustness} and Eq.~\eqref{eq:overall-susceptibility}. See Section~\ref{sec:rating_estimation} for a discussion of the underlying problem and an outline of a more principled approach.
   \item \textbf{Decoding:} In the first run, we constrain outputs to begin with a single integer rating from 0 to 5, and parse this leading integer. Parsing failures are recorded and we repeat each attempt at most 4 times, allowing responses that do not begin with the rating (see Section~\ref{sec:failures} for more details). This approach minimizes costs and unexpectedly revealed that some personas more likely elicit models to not follow instructions (see Section~\ref{sec:uninstructed_personas}).
   \item \textbf{Models:} We included: Claude Haiku 4.5, Claude Sonnet 4.5, Gemini 2.5 Flash Lite, GPT-4.1, GPT-4.1 Mini, GPT-4.1 Nano, GPT-4o, GPT-4o Mini, Grok 4 and Grok 4 Fast.
-  \item \textbf{Logging}: For each model we did a total of $|\mathcal{Q}|\times|\mathcal{P}|\times n =30\times 100\times 10=30,000$ requests. The resulting tables are available in our GitHub repository \cite{costa2025llmms}.
+  \item \textbf{Logging}: For each model we did a total of $|\mathcal{Q}|\times|\mathcal{P}|\times n =30\times 100\times 10=30,000$ requests. The resulting tables will be made publicly available after the review period.
 \end{itemize}
 We next formalize how these repeated ratings are aggregated into moral robustness and susceptibility scores.
 
@@ -282,10 +276,6 @@ Some model's responses systematically ignore the leading integer prompt instruct
 \section{Conclusion}
 We present a benchmark for evaluating how persona role-play shapes moral reasoning in large language models using the Moral Foundations Questionnaire. By distinguishing moral robustness (stability across samples) from moral susceptibility (sensitivity to persona variation), our results reveal consistent family-level patterns and a size-dependent susceptibility trend. Together, these results offer a systematic framework for comparing moral profiles across model families and sizes, providing a quantitative basis for future studies of moral behavior in language models.
 
-
-\section*{Acknowledgments}
-
-We gratefully acknowledge the financial support of the TELUS Digital Research Hub. 
 
 
 % Use the official MLSys 2025 bibliography style when available
