@@ -162,6 +162,26 @@ def _(pl, table):
 
 @app.cell
 def _():
+    _foo = [
+        "gpt-4.1-nano",
+        "gemini-2.5-flash-lite",
+        "gpt-4.1",
+        "grok-4-fast",
+        "gpt-4.1-mini",
+        "claude-sonnet-4-5",
+        "gpt-4o-mini",
+        "gpt-4o",
+        "claude-haiku-4-5",
+    ]
+
+    _foo.sort()
+
+    _foo
+    return
+
+
+@app.cell
+def _():
     MODEL_COLORS = [
         "#1f77b4",
         "#ff7f0e",
@@ -183,11 +203,24 @@ def _():
         "Authority/Respect",
         "Purity/Sanctity",
     ]
-    return (FOUNDATIONS_ORDER,)
+
+    MODELS_ORDER = [
+        "claude-haiku-4-5",
+        "gpt-4.1-nano",
+        "gpt-4o-mini",
+        "gpt-4.1",
+        "grok-4",
+        "claude-sonnet-4-5",
+        "gpt-4o",
+        "gpt-4.1-mini",
+        "gemini-2.5-flash-lite",
+        "grok-4-fast",
+    ]
+    return FOUNDATIONS_ORDER, MODELS_ORDER
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
+def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     _p_data = alt.Chart(
         df.with_columns(
             f_color=pl.when(pl.col("foundation") == "All Foundations")
@@ -204,7 +237,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
         .mark_bar(size=15).encode(
             alt.X("susceptibility:Q", title="Susceptibility"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title="", legend=None),
+            alt.Color("model:N", title="", sort=MODELS_ORDER, legend=None),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -235,7 +268,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
 
     _p = (
         (_p_bars + _p_error + _p_label)
-        .facet("model:N", columns=5, title="")
+        .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
         # .properties(
@@ -252,7 +285,13 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
+def _(alt):
+    alt.Facet
+    return
+
+
+@app.cell
+def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     _p_data = alt.Chart(
         df.with_columns(
             f_color=pl.when(pl.col("foundation") == "All Foundations")
@@ -269,7 +308,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
         .mark_bar(size=15).encode(
             alt.X("s_zscore:Q", title="Susceptibility Z-Score"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title="",legend=None),
+            alt.Color("model:N", title="", legend=None),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -300,7 +339,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
 
     _p = (
         (_p_bars + _p_error + _p_label)
-        .facet("model:N", columns=5, title="")
+        .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
         # .properties(
@@ -317,7 +356,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
+def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     _p_data = alt.Chart(
         df.with_columns(
             f_color=pl.when(pl.col("foundation") == "All Foundations")
@@ -365,7 +404,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
 
     _p = (
         (_p_bars + _p_error + _p_label)
-        .facet("model:N", columns=5, title="")
+        .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
         # .properties(
@@ -382,7 +421,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
+def _(FOUNDATIONS_ORDER, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
     _p_data = alt.Chart(
         df.with_columns(
             f_color=pl.when(pl.col("foundation") == "All Foundations")
@@ -399,7 +438,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
         .mark_bar(size=15).encode(
             alt.X("r_zscore:Q", title="Robustness Z-Score"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
-            alt.Color("model:N", title="",legend=None),
+            alt.Color("model:N", title="", legend=None),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
             .otherwise(alt.value(0.3)),
@@ -430,7 +469,7 @@ def _(FOUNDATIONS_ORDER, RESULTS_DIR, alt, df, pl):
 
     _p = (
         (_p_bars + _p_error + _p_label)
-        .facet("model:N", columns=5, title="")
+        .facet(facet=alt.Facet("model:N",title="Model",sort=MODELS_ORDER), columns=5, title="")
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
         # .properties(
@@ -451,11 +490,17 @@ def _(RESULTS_DIR, alt, table):
     _p_data = alt.Chart(table["moral_metrics"], height=200, width=200)
 
     _p_bars_s = _p_data.mark_bar(size=15, opacity=0.6).encode(
-        alt.Y("model:N"), alt.X("susceptibility:Q"), alt.Color("model:N",legend=None)
+        alt.Y(
+            "model:O", sort="-x"#alt.SortField("suscepitibility:Q", order="descending")
+        ),
+        alt.X("susceptibility:Q"),
+        alt.Color("model:N", legend=None,sort="-x")#alt.SortField("suscepitibility:Q", order="descending")),
     )
 
     _p_error_s = _p_data.mark_errorbar().encode(
-        alt.Y("model:N"),
+        alt.Y(
+            "model:N", sort=alt.SortField("susceptibility:Q", order="descending")
+        ),
         alt.X("susceptibility:Q"),
         alt.XError("susceptibility_uncertainty:Q"),
     )
@@ -471,11 +516,19 @@ def _(RESULTS_DIR, alt, table):
     ).encode(alt.Text("s_label"), color=alt.value("black"), opacity=alt.value(1.0))
 
     _p_bars_r = _p_data.mark_bar(size=15, opacity=0.6).encode(
-        alt.Y("model:N", title=None), alt.X("robustness:Q"), alt.Color("model:N")
+        alt.Y(
+            "model:N",
+            sort=alt.SortField("robustness:Q", order="descending"),
+            title=None,
+        ),
+        alt.X("robustness:Q"),
+        alt.Color("model:N",sort=alt.SortField("suscepitibility:Q", order="descending")),
     )
 
     _p_error_r = _p_data.mark_errorbar().encode(
-        alt.Y("model:N"),
+        alt.Y(
+            "model:N", sort=alt.SortField("susceptibility:Q", order="descending")
+        ),
         alt.X("robustness:Q"),
         alt.XError("robustness_uncertainty:Q"),
     )
@@ -497,6 +550,7 @@ def _(RESULTS_DIR, alt, table):
         )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
+        .resolve_scale(y='independent', x='independent')
     )
 
     _p.save(RESULTS_DIR / "moral_metrics_overall_bars.png")
