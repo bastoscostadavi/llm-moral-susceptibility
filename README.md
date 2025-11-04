@@ -40,6 +40,18 @@ This repository explores how persona conditioning alters large language model re
    echo "XAI_API_KEY=your-xai-key" >> .env
    ```
 
+   To reach OpenRouter-hosted models (e.g., GPT-5), provide your key via
+
+   ```bash
+   echo "OPENROUTER_API_KEY=your-openrouter-key" >> .env
+   echo "OPENROUTER_APP_NAME=Your App Name" >> .env        # optional but recommended
+   echo "OPENROUTER_APP_URL=https://your-app.example" >> .env  # optional but recommended
+   ```
+
+   OpenRouter honours the `HTTP-Referer` and `X-Title` headers for rate
+   bumping; populate the optional variables above (or set
+   `OPENROUTER_HTTP_REFERER`) so the client can forward them automatically.
+
 3. **MFQ personas** (already provided as `personas.json`). Use `generate_persona_samples.py` if you need alternative subsets.
 
 3. **Local GGUF model**
@@ -84,6 +96,12 @@ python run_mfq_experiment.py \
 ```
 
 To use xAI Grok-4-Fast, set `XAI_API_KEY` and select “xAI Grok-4-Fast” from the interactive menu (works in both persona and self runners). The preset uses `max_tokens=2` to keep outputs short.
+
+To run GPT-5 through OpenRouter, configure the API variables above and select
+“OpenRouter GPT-5” when prompted (or pass
+`--model-type openrouter --model-name openai/gpt-5` on the CLI). The preset uses
+`max_tokens=8` with a conservative temperature; adjust `model_kwargs` in
+`run_mfq_experiment.py` if you need different decoding parameters.
 
 For GPT‑5 family with minimal reasoning, select either “OpenAI GPT‑5 (minimal reasoning)” or “OpenAI GPT‑5 Mini (minimal reasoning)”. These use the Responses API and `reasoning: {effort: "minimal"}`.
 

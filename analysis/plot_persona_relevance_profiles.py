@@ -54,14 +54,16 @@ ALLOWED_MODELS = {
 }
 
 SERIES_COLORS = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
+    "#5E81B5",  # blue
+    "#E19C24",  # orange
+    "#8FB031",  # green
+    "#EB6235",  # red
+    "#8678B3",  # purple
+    "#C46E1A",  # brown
+    "#5D9DC7",  # light blue
+    "#FFBF00",  # gold
+    "#AD5F90",  # magenta
+    "#6C7D47",  # olive
 ]
 
 SERIES_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*"]

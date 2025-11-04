@@ -44,8 +44,8 @@ AVAILABLE_MODELS = [
     {
         "key": '4',
         "label": 'Gemini 2.5 Flash (Google)',
-        "model_type": 'google',
-        "model_name": 'gemini-2.5-flash',
+        "model_type": 'openrouter',
+        "model_name": 'google/gemini-2.5-flash',
         "model_kwargs": {},
     },
     {
@@ -111,6 +111,27 @@ AVAILABLE_MODELS = [
         "model_name": 'grok-4-fast',
         "model_kwargs": {},
     },
+    {
+        "key": '14',
+        "label": 'gpt-5-nano',
+        "model_type": 'openrouter',
+        "model_name": 'openai/gpt-5-nano',
+        "model_kwargs": {'max_tokens': 128, 'temperature': 0.1, 'reasoning_effort': 'minimal'},
+    },
+    {
+        "key": '15',
+        "label": 'gpt-5-mini',
+        "model_type": 'openrouter',
+        "model_name": 'openai/gpt-5-mini',
+        "model_kwargs": {'max_tokens': 20, 'temperature': 0.1, 'reasoning_effort': 'minimal'},
+    },
+    {
+        "key": '16',
+        "label": 'gpt-5',
+        "model_type": 'openrouter',
+        "model_name": 'openai/gpt-5',
+        "model_kwargs": {'max_tokens': 20, 'temperature': 0.1, 'reasoning_effort': 'minimal'},
+    },
 ]
 
 # Map model names to custom CSV filenames (without path). Update this dictionary
@@ -122,6 +143,7 @@ CUSTOM_MODEL_FILENAMES: Dict[str, str] = {
     "claude-haiku-4-5-20251001": "claude-haiku-4-5.csv",
     "gemini-2.5-flash-lite": "gemini-2.5-flash-lite.csv",
     "gemini-2.5-flash": "gemini-2.5-flash.csv",
+    "google/gemini-2.5-flash": "gemini-2.5-flash.csv",
     "gpt-4.1": "gpt-4.1.csv",
     "gpt-4o": "gpt-4o.csv",
     "gpt-4o-mini": "gpt-4o-mini.csv",
@@ -129,6 +151,9 @@ CUSTOM_MODEL_FILENAMES: Dict[str, str] = {
     "grok-3-mini": "grok-3-mini.csv",
     "grok-4": "grok-4.csv",
     "grok-4-fast": "grok-4-fast.csv",
+    "openai/gpt-5": "openrouter-gpt-5.csv",
+    "openai/gpt-5-nano": "openrouter-gpt-5-nano.csv",
+    "openai/gpt-5-mini": "openrouter-gpt-5-mini.csv",
 }
 from mfq_questions import iter_questions
 from llm_interface import get_llm_response

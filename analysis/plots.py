@@ -573,20 +573,29 @@ def _(MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, table):
         color="#000000",
     ).encode(alt.Text("r_label"), color=alt.value("black"), opacity=alt.value(1.0))
 
-    _p = (
-        (
-            (_p_bars_r + _p_error_r + _p_label_r)
-            | (_p_bars_s + _p_error_s + _p_label_s)
-        )
+    _robust_base = _p_bars_r + _p_error_r + _p_label_r
+    _suscept_base = _p_bars_s + _p_error_s + _p_label_s
+
+    _robust_chart = _robust_base.configure_axis(grid=False).configure_view(strokeWidth=0)
+    _suscept_chart = _suscept_base.configure_axis(grid=False).configure_view(strokeWidth=0)
+
+    _combined_chart = (
+        (_robust_base | _suscept_base)
+        .resolve_scale(y="independent", x="independent")
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
-        .resolve_scale(y="independent", x="independent")
     )
 
-    _p.save(RESULTS_DIR / "moral_metrics_overall_bars.png")
-    _p.save(RESULTS_DIR / "moral_metrics_overall_bars.pdf")
+    _robust_chart.save(RESULTS_DIR / "moral_metrics_robustness_bars.png")
+    _robust_chart.save(RESULTS_DIR / "moral_metrics_robustness_bars.pdf")
 
-    _p
+    _suscept_chart.save(RESULTS_DIR / "moral_metrics_susceptibility_bars.png")
+    _suscept_chart.save(RESULTS_DIR / "moral_metrics_susceptibility_bars.pdf")
+
+    _combined_chart.save(RESULTS_DIR / "moral_metrics_overall_bars.png")
+    _combined_chart.save(RESULTS_DIR / "moral_metrics_overall_bars.pdf")
+
+    _combined_chart
     return
 
 

@@ -11,13 +11,147 @@ from typing import Optional, Dict, Any
 
 DEFAULT_MODELS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
 _MODEL_CACHE: Dict[str, Any] = {}
+_GOOGLE_THINKING_WARNING_EMITTED = False
+
+
+def _snake_to_camel(name: str) -> str:
+    """Convert snake_case keys to camelCase for Google REST payloads."""
+
+    parts = name.split('_')
+    if not parts:
+        return name
+    return parts[0] + ''.join(part.title() for part in parts[1:])
+
+
+def _camelize_keys(value: Any) -> Any:
+    """Recursively convert dict keys to camelCase."""
+
+    if isinstance(value, dict):
+        converted = {}
+        for key, val in value.items():
+            if val is None:
+                continue
+            converted[_snake_to_camel(key)] = _camelize_keys(val)
+        return converted
+    if isinstance(value, list):
+        return [_camelize_keys(item) for item in value]
+    return value
+
+
+def _normalise_thinking_config(value: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Normalize thinking config keys to snake_case variants."""
+
+    if not value:
+        return None
+
+    normalised: Dict[str, Any] = {}
+    for key, val in value.items():
+        if val is None:
+            continue
+
+        lower = key.lower()
+        if lower in {"thinkingbudget", "max_thinking_tokens", "maxthinkingtokens"}:
+            try:
+                normalised["thinking_budget"] = int(val)
+            except (TypeError, ValueError):
+                normalised["thinking_budget"] = val
+        elif lower in {"includethoughts", "include_thoughts"}:
+            normalised["include_thoughts"] = bool(val)
+        else:
+            normalised[key] = val
+
+    return normalised or None
+
+
+def _collect_response_text(value: Any) -> list[str]:
+    """Recursively gather text fragments from OpenAI-style payloads."""
+
+    if value is None:
+        return []
+
+    if isinstance(value, str):
+        text = value.strip()
+        return [text] if text else []
+
+    if isinstance(value, (int, float)):
+        return [str(value)]
+
+    if isinstance(value, list):
+        parts: list[str] = []
+        for item in value:
+            parts.extend(_collect_response_text(item))
+        return parts
+
+    if isinstance(value, dict):
+        parts: list[str] = []
+        for key in ("text", "output_text", "content", "value"):
+            if key in value:
+                parts.extend(_collect_response_text(value[key]))
+        for key in ("parts", "messages", "choices", "data", "output"):
+            if key in value:
+                parts.extend(_collect_response_text(value[key]))
+        return parts
+
+    # Handle SDK response objects with attributes (e.g., ChatCompletionMessage)
+    parts: list[str] = []
+    for attr in ("text", "output_text", "content", "value"):
+        if hasattr(value, attr):
+            parts.extend(_collect_response_text(getattr(value, attr)))
+
+    return parts
+
+
+def _coerce_response_text(value: Any) -> str:
+    """Flatten the collected text fragments into a single string."""
+
+    parts = [part for part in _collect_response_text(value) if part]
+    if not parts:
+        return ""
+    return "\n".join(parts).strip()
+
+
+def _extract_chat_completion_text(response: Any) -> str:
+    """Extract assistant text from a Chat Completions payload."""
+
+    try:
+        choices = getattr(response, "choices", None)
+        if not choices:
+            return ""
+
+        first_choice = choices[0]
+        message = None
+        if isinstance(first_choice, dict):
+            message = first_choice.get("message")
+        else:
+            message = getattr(first_choice, "message", None)
+
+        return _coerce_response_text(message)
+    except Exception:
+        return ""
+
+
+def _extract_responses_api_text(response: Any) -> str:
+    """Extract assistant text from a Responses API payload."""
+
+    text = _coerce_response_text(getattr(response, "output_text", None))
+    if text:
+        return text
+
+    text = _coerce_response_text(getattr(response, "output", None))
+    if text:
+        return text
+
+    try:
+        return response.model_dump_json()
+    except Exception:
+        return ""
 
 def get_llm_response(model_type: str, model_name: str, prompt: str, **kwargs) -> str:
     """
     Get response from different LLM models
 
     Args:
-        model_type: Type of model ('openai', 'anthropic', 'ollama')
+        model_type: Type of model ('openai', 'anthropic', 'ollama', 'openrouter', ...)
         model_name: Specific model name
         prompt: Input prompt
         **kwargs: Additional parameters
@@ -34,6 +168,8 @@ def get_llm_response(model_type: str, model_name: str, prompt: str, **kwargs) ->
         return _ollama_response(model_name, prompt, **kwargs)
     elif model_type == "local":
         return _local_response(model_name, prompt, **kwargs)
+    elif model_type == "openrouter":
+        return _openrouter_response(model_name, prompt, **kwargs)
     elif model_type == "xai":
         return _xai_response(model_name, prompt, **kwargs)
     elif model_type == "google":
@@ -92,34 +228,6 @@ def _openai_response(model_name: str, prompt: str, **kwargs) -> str:
                 }
             )
             return messages
-
-        def _extract_response_text(response: Any) -> str:
-            text = getattr(response, "output_text", None)
-            if isinstance(text, str) and text.strip():
-                return text.strip()
-
-            try:
-                parts = []
-                for item in getattr(response, "output", []) or []:
-                    content = item.get("content") if isinstance(item, dict) else None
-                    if isinstance(content, list):
-                        for piece in content:
-                            if isinstance(piece, dict) and piece.get("type") in {"output_text", "message"}:
-                                candidate = piece.get("text") or piece.get("content")
-                                if isinstance(candidate, str):
-                                    parts.append(candidate)
-            except Exception:
-                parts = []
-
-            if parts:
-                combined = "\n".join(part for part in parts if part)
-                if combined.strip():
-                    return combined.strip()
-
-            try:
-                return response.model_dump_json()
-            except Exception:
-                return ""
 
         if use_responses_api:
             if is_gpt5:
@@ -195,7 +303,9 @@ def _openai_response(model_name: str, prompt: str, **kwargs) -> str:
                     backoff *= 2
 
             if response is not None:
-                return _extract_response_text(response)
+                text = _extract_responses_api_text(response)
+                if text:
+                    return text
 
             if last_exc is not None:
                 print(f"OpenAI Responses API error: {last_exc}")
@@ -230,7 +340,10 @@ def _openai_response(model_name: str, prompt: str, **kwargs) -> str:
 
             try:
                 response = client.chat.completions.create(**chat_kwargs)
-                return response.choices[0].message.content.strip()
+                text = _extract_chat_completion_text(response)
+                if text:
+                    return text
+                return ""
             except Exception as exc:
                 last_chat_error = exc
                 details = str(exc)
@@ -244,6 +357,127 @@ def _openai_response(model_name: str, prompt: str, **kwargs) -> str:
         raise ImportError("Please install openai: pip install openai")
     except Exception as e:
         print(f"OpenAI API error: {e}")
+        return "ERROR"
+
+
+def _openrouter_response(model_name: str, prompt: str, **kwargs) -> str:
+    """Get response from OpenRouter's OpenAI-compatible API."""
+
+    try:
+        import openai
+    except ImportError as exc:
+        raise ImportError("Please install openai: pip install openai") from exc
+
+    api_key = kwargs.get("api_key") or os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        raise ValueError("Missing OPENROUTER_API_KEY for OpenRouter API")
+
+    base_url = kwargs.get("base_url") or os.getenv("OPENROUTER_BASE_URL") or "https://openrouter.ai/api/v1"
+
+    base_headers = dict(kwargs.get("extra_headers", {}) or {})
+    referer = (
+        kwargs.get("http_referer")
+        or os.getenv("OPENROUTER_HTTP_REFERER")
+        or os.getenv("OPENROUTER_APP_URL")
+    )
+    title = kwargs.get("app_title") or os.getenv("OPENROUTER_APP_NAME")
+    if referer and "HTTP-Referer" not in base_headers:
+        base_headers["HTTP-Referer"] = referer
+    if title and "X-Title" not in base_headers:
+        base_headers["X-Title"] = title
+
+    client_kwargs: Dict[str, Any] = {"api_key": api_key, "base_url": base_url}
+    if base_headers:
+        client_kwargs["default_headers"] = base_headers
+
+    client = openai.OpenAI(**client_kwargs)
+
+    reasoning_effort = kwargs.get("reasoning_effort")
+    if reasoning_effort in {"minimal", "low", "medium", "high"}:
+        pass
+    elif reasoning_effort is not None:
+        reasoning_effort = "minimal"
+
+    messages = []
+    system_prompt = kwargs.get("system_prompt") or kwargs.get("system")
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
+
+    max_tokens = kwargs.get("max_tokens")
+    temperature = kwargs.get("temperature", 0.1)
+    top_p = kwargs.get("top_p")
+    instructions = kwargs.get("instructions")
+
+    is_gpt5 = "gpt-5" in model_name
+    use_responses_api = bool(kwargs.get("use_responses_api") or reasoning_effort or is_gpt5)
+
+    if use_responses_api:
+        req: Dict[str, Any] = {
+            "model": model_name,
+            "input": messages,
+        }
+
+        if max_tokens is not None:
+            req["max_output_tokens"] = max_tokens
+        if temperature is not None:
+            req["temperature"] = temperature
+        if top_p is not None:
+            req["top_p"] = top_p
+        if instructions:
+            req["instructions"] = instructions
+        if reasoning_effort:
+            req["reasoning"] = {"effort": reasoning_effort}
+
+        call_headers = dict(base_headers)
+        if is_gpt5 and "Idempotency-Key" not in call_headers:
+            call_headers["Idempotency-Key"] = kwargs.get("idempotency_key") or str(uuid.uuid4())
+
+        create_kwargs = dict(req)
+        if call_headers and call_headers != base_headers:
+            create_kwargs["extra_headers"] = call_headers
+
+        last_exc: Optional[Exception] = None
+        max_attempts = kwargs.get("max_retries") or (5 if is_gpt5 else 2)
+        backoff = kwargs.get("initial_backoff") or 1.0
+
+        for attempt in range(max_attempts):
+            try:
+                response = client.responses.create(**create_kwargs)
+                text = _extract_responses_api_text(response)
+                if text:
+                    return text
+                break
+            except Exception as exc:
+                last_exc = exc
+                status = getattr(exc, "status_code", None)
+                should_retry = is_gpt5 and status in {429, 500, 502, 503, 504}
+                if not should_retry or attempt + 1 >= max_attempts:
+                    break
+                sleep_time = backoff + random.uniform(0, 0.25)
+                time.sleep(sleep_time)
+                backoff *= 2
+
+        if last_exc is not None:
+            print(f"OpenRouter Responses API error: {last_exc}")
+
+    # Fallback to Chat Completions when available
+    try:
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=messages,
+            max_tokens=max_tokens if max_tokens is not None else 8,
+            temperature=temperature,
+            top_p=top_p,
+            presence_penalty=kwargs.get("presence_penalty"),
+            frequency_penalty=kwargs.get("frequency_penalty"),
+        )
+        text = _extract_chat_completion_text(response)
+        if text:
+            return text
+        return ""
+    except Exception as e:
+        print(f"OpenRouter API error: {e}")
         return "ERROR"
 
 def _anthropic_response(model_name: str, prompt: str, **kwargs) -> str:
@@ -421,17 +655,99 @@ def _google_response(model_name: str, prompt: str, **kwargs) -> str:
         if "max_tokens" in kwargs:
             gen_cfg["max_output_tokens"] = kwargs.get("max_tokens")
 
-        thinking_cfg = kwargs.get("thinking_config") or None
+        thinking_cfg = _normalise_thinking_config(kwargs.get("thinking_config"))
         if "thinkingBudget" in kwargs:
             thinking_cfg = dict(thinking_cfg or {})
-            thinking_cfg["max_thinking_tokens"] = kwargs.get("thinkingBudget")
+            thinking_cfg["thinking_budget"] = kwargs.get("thinkingBudget")
 
         call_kwargs = {"generation_config": gen_cfg or None}
-        # For thinking-enabled models, allow passing explicit thinking_config.
+
         if thinking_cfg is not None:
+            try:
+                import requests
+            except ImportError:
+                print(
+                    "Warning: requests is required for Gemini thinkingBudget support; "
+                    "falling back without thinkingConfig."
+                )
+            else:
+                payload = {
+                    "contents": [
+                        {
+                            "role": "user",
+                            "parts": [{"text": prompt}],
+                        }
+                    ]
+                }
+                system_prompt = kwargs.get("system_prompt") or kwargs.get("system")
+                if system_prompt:
+                    payload["systemInstruction"] = {
+                        "parts": [{"text": system_prompt}],
+                    }
+                gen_payload = {k: v for k, v in gen_cfg.items() if v is not None}
+                gen_payload["thinking_config"] = thinking_cfg
+                if gen_payload:
+                    payload["generationConfig"] = _camelize_keys(gen_payload)
+
+                safety_settings = kwargs.get("safety_settings")
+                if safety_settings:
+                    payload["safetySettings"] = safety_settings
+
+                try:
+                    resp = requests.post(
+                        f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent",
+                        params={"key": api_key},
+                        json=payload,
+                        timeout=kwargs.get("timeout", 120),
+                    )
+                    resp.raise_for_status()
+                    data = resp.json()
+                    for cand in data.get("candidates", []) or []:
+                        content = cand.get("content") or {}
+                        parts = content.get("parts") or []
+                        texts = []
+                        for part in parts:
+                            if isinstance(part, dict):
+                                text_val = part.get("text")
+                                if text_val:
+                                    texts.append(str(text_val))
+                        if texts:
+                            return "\n".join(texts).strip()
+                    print(
+                        "Warning: Gemini thinking response missing text; continuing without thinkingConfig."
+                    )
+                except Exception as exc:
+                    error_detail = ""
+                    response_obj = getattr(exc, "response", None)
+                    if response_obj is not None:
+                        try:
+                            error_detail = f" Response: {response_obj.text}"
+                        except Exception:
+                            pass
+                    print(
+                        f"Google Gemini thinking API error: {exc}{error_detail}; continuing without thinkingConfig."
+                    )
+
+            # Preserve behaviour for future SDKs that may accept thinking_config.
             call_kwargs["thinking_config"] = thinking_cfg
 
-        response = model.generate_content(prompt, **call_kwargs)
+        try:
+            response = model.generate_content(prompt, **call_kwargs)
+        except TypeError as exc:
+            if "thinking_config" in str(exc):
+                global _GOOGLE_THINKING_WARNING_EMITTED
+                if not _GOOGLE_THINKING_WARNING_EMITTED and thinking_cfg is not None:
+                    print(
+                        "Warning: google-generativeai SDK does not support thinking_config; "
+                        "ignoring thinkingBudget."
+                    )
+                    _GOOGLE_THINKING_WARNING_EMITTED = True
+                response = model.generate_content(
+                    prompt,
+                    generation_config=call_kwargs.get("generation_config"),
+                )
+            else:
+                raise
         text = getattr(response, "text", None)
         if isinstance(text, str) and text.strip():
             return text.strip()
@@ -476,6 +792,10 @@ def check_model_availability(model_type: str, model_name: str, **kwargs) -> bool
 
     elif model_type == "openai":
         api_key = kwargs.get("api_key") or os.getenv("OPENAI_API_KEY")
+        return api_key is not None
+
+    elif model_type == "openrouter":
+        api_key = kwargs.get("api_key") or os.getenv("OPENROUTER_API_KEY")
         return api_key is not None
 
     elif model_type == "anthropic":

@@ -1,0 +1,108 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{zhou2024sotopia,pan2023machiavelli,bianchi2024negotiationarena,chen-etal-2024-tombench,costa2025deceivedetectdiscloselarge}
+\citation{sap-etal-2019-social,hendrycks2021ethics,bai2025knowthyselfincapabilityimplications}
+\citation{moralfoundations2017questionnaires}
+\citation{graham2009liberals,haidt2007when,moralfoundations2017questionnaires}
+\citation{ge2025scalingsyntheticdatacreation}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{abdulhai-etal-2024-moral,nunes2024hypocrites,aksoy2024whose,bajpai2024insights,ji2025moralbenchmoralevaluationllms}
+\citation{tseng2024two,wang2023rolellm,samuel2025personagym,yu2025rpgbench,xu2024character,elboudouri2025rpeval,bai2025concept}
+\citation{moralfoundations2017questionnaires}
+\citation{graham2009liberals,haidt2007when,moralfoundations2017questionnaires}
+\citation{graham2011mfq,moralfoundations2017questionnaires}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The left panel summarizes our data collection pipeline: we elicit models to respond to the MFQ conditioned to a persona. The right panel summarizes our benchmark pipeline: susceptibility is computed from across-persona variability, and robustness is computed from within-persona variability.}}{2}{figure.1}\protected@file@percent }
+\newlabel{fig:mfq-susceptibility-robustness}{{1}{2}{The left panel summarizes our data collection pipeline: we elicit models to respond to the MFQ conditioned to a persona. The right panel summarizes our benchmark pipeline: susceptibility is computed from across-persona variability, and robustness is computed from within-persona variability}{figure.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Moral Robustness and Susceptibility Benchmark}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Moral Foundation Questionnaire}{2}{subsection.2.1}\protected@file@percent }
+\citation{costa2025llmms}
+\citation{ge2025scalingsyntheticdatacreation}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Moral foundation profile across models with no-persona role-play (self). Points show mean rating per foundation; error bars denote standard errors across questions within each foundation.}}{3}{figure.2}\protected@file@percent }
+\newlabel{fig:mfq-profiles}{{2}{3}{Moral foundation profile across models with no-persona role-play (self). Points show mean rating per foundation; error bars denote standard errors across questions within each foundation}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Experimental Methodology}{3}{subsection.2.2}\protected@file@percent }
+\citation{costa2025llmms}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Moral foundation profiles for ten randomly selected personas, averaged across models. See Appendix~\ref {app:personas} for the mapping between persona IDs and their corresponding descriptions.}}{4}{figure.3}\protected@file@percent }
+\newlabel{fig:persona-mfq-profiles}{{3}{4}{Moral foundation profiles for ten randomly selected personas, averaged across models. See Appendix~\ref {app:personas} for the mapping between persona IDs and their corresponding descriptions}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Statistical Analysis}{4}{subsection.2.3}\protected@file@percent }
+\newlabel{eq:persona-question-mean}{{1}{5}{Statistical Analysis}{equation.1}{}}
+\newlabel{eq:persona-question-se}{{2}{5}{Statistical Analysis}{equation.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Moral robustness}{5}{section*.1}\protected@file@percent }
+\newlabel{eq:mean-uncertainty}{{3}{5}{Moral robustness}{equation.3}{}}
+\newlabel{eq:robustness}{{4}{5}{Moral robustness}{equation.4}{}}
+\newlabel{eq:uncertainty-sd}{{5}{5}{Moral robustness}{equation.5}{}}
+\newlabel{eq:robustness-se}{{6}{5}{Moral robustness}{equation.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Moral susceptibility}{5}{section*.2}\protected@file@percent }
+\newlabel{eq:question-dispersion}{{7}{5}{Moral susceptibility}{equation.7}{}}
+\newlabel{eq:group-susceptibility}{{8}{5}{Moral susceptibility}{equation.8}{}}
+\newlabel{eq:overall-susceptibility}{{9}{5}{Moral susceptibility}{equation.9}{}}
+\newlabel{eq:susceptibility-se}{{10}{5}{Moral susceptibility}{equation.10}{}}
+\@writefile{toc}{\contentsline {paragraph}{Cross-model normalization}{6}{section*.3}\protected@file@percent }
+\newlabel{eq:zscore}{{11}{6}{Cross-model normalization}{equation.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Correlation Metrics}{6}{subsection.2.4}\protected@file@percent }
+\newlabel{sec:correlation_metrics}{{2.4}{6}{Correlation Metrics}{subsection.2.4}{}}
+\newlabel{eq:pearson}{{12}{6}{Correlation Metrics}{equation.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Average Score and Variance Estimation}{6}{subsection.2.5}\protected@file@percent }
+\newlabel{sec:rating_estimation}{{2.5}{6}{Average Score and Variance Estimation}{subsection.2.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Failures to Respond}{6}{subsection.2.6}\protected@file@percent }
+\newlabel{sec:failures}{{2.6}{6}{Failures to Respond}{subsection.2.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Total parsing failure counts per model.}}{7}{table.1}\protected@file@percent }
+\newlabel{tab:failures_by_model}{{1}{7}{Total parsing failure counts per model}{table.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Moral robustness across models, Eq.~\eqref  {eq:robustness}. Error bars show propagated standard error, Eq.~\eqref  {eq:robustness-se}; higher values indicate greater rating stability.}}{7}{figure.4}\protected@file@percent }
+\newlabel{fig:robustness}{{4}{7}{Moral robustness across models, Eq.~\eqref {eq:robustness}. Error bars show propagated standard error, Eq.~\eqref {eq:robustness-se}; higher values indicate greater rating stability}{figure.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Moral susceptibility across models, Eq.~\eqref  {eq:overall-susceptibility}. Error bars show propagated standard error, Eq.~\eqref  {eq:susceptibility-se}; higher values indicate larger persona-driven shifts in MFQ scores.}}{7}{figure.5}\protected@file@percent }
+\newlabel{fig:susceptibility}{{5}{7}{Moral susceptibility across models, Eq.~\eqref {eq:overall-susceptibility}. Error bars show propagated standard error, Eq.~\eqref {eq:susceptibility-se}; higher values indicate larger persona-driven shifts in MFQ scores}{figure.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Results}{7}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Moral Robustness}{7}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Moral Susceptibility}{7}{subsection.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Overall robustness and susceptibility with corresponding $z$-scores.}}{8}{table.2}\protected@file@percent }
+\newlabel{tab:summary_with_metrics}{{2}{8}{Overall robustness and susceptibility with corresponding $z$-scores}{table.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Moral robustness foundation profile across models, Eq.~\eqref  {eq:robustness}. Error bars show propagated standard error, Eq.~\eqref  {eq:robustness-se}; higher values indicate greater rating stability. The highlighted bars indicate the overall robustness aggregated over all foundations.}}{8}{figure.6}\protected@file@percent }
+\newlabel{fig:robustness-foundations}{{6}{8}{Moral robustness foundation profile across models, Eq.~\eqref {eq:robustness}. Error bars show propagated standard error, Eq.~\eqref {eq:robustness-se}; higher values indicate greater rating stability. The highlighted bars indicate the overall robustness aggregated over all foundations}{figure.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Moral susceptibility foundation profile across models, Eq.~\eqref  {eq:overall-susceptibility}. Error bars show propagated standard error, Eq.~\eqref  {eq:susceptibility-se}; higher values indicate larger persona-driven shifts in MFQ scores. The highlighted bars indicate the overall susceptibility aggregated over all foundations.}}{8}{figure.7}\protected@file@percent }
+\newlabel{fig:susceptibility-foundations}{{7}{8}{Moral susceptibility foundation profile across models, Eq.~\eqref {eq:overall-susceptibility}. Error bars show propagated standard error, Eq.~\eqref {eq:susceptibility-se}; higher values indicate larger persona-driven shifts in MFQ scores. The highlighted bars indicate the overall susceptibility aggregated over all foundations}{figure.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Correlation Between Robustness and Susceptibility}{8}{subsection.3.3}\protected@file@percent }
+\newlabel{sec:robustness-susceptibility-correlation}{{3.3}{8}{Correlation Between Robustness and Susceptibility}{subsection.3.3}{}}
+\bibstyle{plainnat}
+\bibdata{references}
+\bibcite{abdulhai-etal-2024-moral}{{1}{2024}{{Abdulhai et~al.}}{{Abdulhai, Serapio-Garc{\'\i }a, Crepy, Valter, Canny, and Jaques}}}
+\bibcite{aksoy2024whose}{{2}{2024}{{Aksoy}}{{}}}
+\bibcite{bai2025concept}{{3}{2025{}}{{Bai et~al.}}{{Bai, Peng, Singh, and Tan}}}
+\bibcite{bai2025knowthyselfincapabilityimplications}{{4}{2025{}}{{Bai et~al.}}{{Bai, Shrivastava, Holtzman, and Tan}}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Pearson correlation between robustness and susceptibility overall and by foundation.}}{9}{table.3}\protected@file@percent }
+\newlabel{tab:correlation_foundations}{{3}{9}{Pearson correlation between robustness and susceptibility overall and by foundation}{table.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Personas with the highest parsing failure counts.}}{9}{table.4}\protected@file@percent }
+\newlabel{tab:uninstructed-personas}{{4}{9}{Personas with the highest parsing failure counts}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Uninstructed Personas}{9}{subsection.3.4}\protected@file@percent }
+\newlabel{sec:uninstructed_personas}{{3.4}{9}{Uninstructed Personas}{subsection.3.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusion}{9}{section.4}\protected@file@percent }
+\bibcite{bajpai2024insights}{{5}{2024}{{Bajpai et~al.}}{{Bajpai, Sameer, and Fatima}}}
+\bibcite{bianchi2024negotiationarena}{{6}{2024}{{Bianchi et~al.}}{{}}}
+\bibcite{elboudouri2025rpeval}{{7}{2025}{{Boudouri et~al.}}{{Boudouri, Nuninger, Alvarez, and Peter}}}
+\bibcite{chen-etal-2024-tombench}{{8}{2024}{{Chen et~al.}}{{}}}
+\bibcite{costa2025deceivedetectdiscloselarge}{{9}{2025}{{Costa and Vicente}}{{}}}
+\bibcite{costa2025llmms}{{10}{2025}{{Costa et~al.}}{{Costa, Alves, and Vicente}}}
+\bibcite{ge2025scalingsyntheticdatacreation}{{11}{2025}{{Ge et~al.}}{{Ge, Chan, Wang, Yu, Mi, and Yu}}}
+\bibcite{graham2009liberals}{{12}{2009}{{Graham et~al.}}{{Graham, Haidt, and Nosek}}}
+\bibcite{graham2011mfq}{{13}{2011}{{Graham et~al.}}{{Graham, Nosek, Haidt, Iyer, Koleva, and Ditto}}}
+\bibcite{haidt2007when}{{14}{2007}{{Haidt and Graham}}{{}}}
+\bibcite{hendrycks2021ethics}{{15}{2021}{{Hendrycks et~al.}}{{}}}
+\bibcite{ji2025moralbenchmoralevaluationllms}{{16}{2025}{{Ji et~al.}}{{Ji, Chen, Jin, Xu, Hua, and Zhang}}}
+\bibcite{moralfoundations2017questionnaires}{{17}{2017}{{MFQ}}{{}}}
+\bibcite{nunes2024hypocrites}{{18}{2024}{{Nunes et~al.}}{{Nunes, Almeida, de~Araujo, and Barbosa}}}
+\bibcite{pan2023machiavelli}{{19}{2023}{{Pan et~al.}}{{}}}
+\bibcite{samuel2025personagym}{{20}{2025}{{Samuel et~al.}}{{Samuel, Zou, Zhou, Chaudhari, Kalyan, Rajpurohit, Deshpande, Narasimhan, and Murahari}}}
+\bibcite{sap-etal-2019-social}{{21}{2019}{{Sap et~al.}}{{}}}
+\bibcite{tseng2024two}{{22}{2024}{{Tseng et~al.}}{{Tseng, Huang, Hsiao, Chen, Huang, Meng, and Chen}}}
+\bibcite{wang2023rolellm}{{23}{2023}{{Wang et~al.}}{{Wang, Peng, Que, Liu, Zhou, Wu, Guo, Gan, Ni, Yang, Zhang, Zhang, Ouyang, Xu, Huang, Fu, and Peng}}}
+\bibcite{xu2024character}{{24}{2024}{{Xu et~al.}}{{Xu, Wang, Chen, Yuan, Yuan, Liang, Chen, Dong, and Xiao}}}
+\bibcite{yu2025rpgbench}{{25}{2025}{{Yu et~al.}}{{Yu, Shen, Meng, Lee, Yin, Cui, Xu, Zhu, Shi, Li, and Smola}}}
+\bibcite{zhou2024sotopia}{{26}{2024}{{Zhou et~al.}}{{}}}
+\citation{moralfoundations2017questionnaires}
+\citation{ge2025scalingsyntheticdatacreation}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Prompt Format}{11}{appendix.A}\protected@file@percent }
+\newlabel{app:prompts}{{A}{11}{Prompt Format}{appendix.A}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Personas}{12}{appendix.B}\protected@file@percent }
+\newlabel{app:personas}{{B}{12}{Personas}{appendix.B}{}}
+\gdef \@abspage@last{15}

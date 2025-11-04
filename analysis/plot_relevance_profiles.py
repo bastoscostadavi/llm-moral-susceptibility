@@ -52,19 +52,26 @@ ALLOWED_MODELS = {
     "gemini-2.5-flash-lite",
 }
 
-MODEL_COLORS = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
-]
+MODEL_COLORS = {
+    "claude-haiku-4-5": "#F9C784",
+    "claude-sonnet-4-5": "#E67E22",
+    "gpt-4.1-nano": "#D9F0D3",
+    "gpt-4o-mini": "#A6DBA0",
+    "gpt-4.1": "#52B788",
+    "grok-4": "#BDA0E3",
+    "gpt-4o": "#2F855A",
+    "gpt-4.1-mini": "#74C69D",
+    "gemini-2.5-flash-lite": "#4A90E2",
+    "grok-4-fast": "#7E57C2",
+}
 
 MODEL_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*"]
 MODEL_LINESTYLES = ["-", "--", "-.", ":"]
+DEFAULT_COLOR_CYCLE = plt.rcParams.get('axes.prop_cycle', None)
+if DEFAULT_COLOR_CYCLE is not None:
+    DEFAULT_COLOR_CYCLE = DEFAULT_COLOR_CYCLE.by_key().get('color', ["#1f77b4"])
+else:
+    DEFAULT_COLOR_CYCLE = ["#1f77b4"]
 
 
 def _foundation_questions() -> Dict[int, str]:
@@ -188,7 +195,10 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
     sorted_models = sorted(model_summaries)
     style_map = {}
     for idx, model in enumerate(sorted_models):
-        color = MODEL_COLORS[idx % len(MODEL_COLORS)]
+        color = MODEL_COLORS.get(model)
+        if color is None:
+            fallback_palette = DEFAULT_COLOR_CYCLE or ["#1f77b4"]
+            color = fallback_palette[idx % len(fallback_palette)]
         marker = MODEL_MARKERS[idx % len(MODEL_MARKERS)]
         linestyle = MODEL_LINESTYLES[idx % len(MODEL_LINESTYLES)]
         style_map[model] = (color, marker, linestyle)
