@@ -1,20 +1,20 @@
 # Fdb version 4
-["bibtex neurips_2025submission"] 1762458961.12366 "neurips_2025submission.aux" "neurips_2025submission.bbl" "neurips_2025submission" 1762458962.08003 0
+["bibtex neurips_2025submission"] 1762459502.89118 "neurips_2025submission.aux" "neurips_2025submission.bbl" "neurips_2025submission" 1762459503.83479 0
   "./references.bib" 1761843196.68796 10768 1ac8f620bb7a5336c9f7e2678ace7981 ""
   "/usr/local/texlive/2025basic/texmf-dist/bibtex/bst/natbib/plainnat.bst" 1233624470 26816 ffe5423d2019860bad9f54bc402fac15 ""
-  "neurips_2025submission.aux" 1762458961.9031 13243 701e3641ff7d09c2a7f6d2bfaebcd38d "pdflatex"
+  "neurips_2025submission.aux" 1762459503.66363 13102 1b506c798a0f1ace6fd52c58038e08a3 "pdflatex"
   (generated)
   "neurips_2025submission.bbl"
   "neurips_2025submission.blg"
   (rewritten before read)
-["pdflatex"] 1762458961.17623 "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/neurips_2025submission.tex" "neurips_2025submission.pdf" "neurips_2025submission" 1762458962.08016 0
+["pdflatex"] 1762459502.94316 "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/neurips_2025submission.tex" "neurips_2025submission.pdf" "neurips_2025submission" 1762459503.83492 0
   "../results/moral_foundations_relevance_profiles.pdf" 1762445541.64094 25976 2bf643ce1e226b8895d02a78298c801d ""
   "../results/moral_metrics_robustness_bars.pdf" 1762445081.86946 42315 8d8f2abd3c47e751fec2ed704ab507b7 ""
   "../results/moral_metrics_susceptibility_bars.pdf" 1762445081.94169 42775 0f12ecba2ca5443a9d56ba76629ec4f0 ""
   "../results/persona_moral_foundations_relevance_profiles.pdf" 1762379984.24766 26256 9b4569e99cec8c5409fa924fcbfadfbb ""
   "../results/robustness_bars.pdf" 1762445081.77494 109667 12be0e72813e347ed857a2071f38914c ""
   "../results/susceptibility_bars.pdf" 1762445081.43609 109294 49f803a81b7d33e89607dc7176c5db0e ""
-  "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/neurips_2025submission.tex" 1762458959.06169 35850 3de7e8d034a64356866470867bec0342 ""
+  "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/neurips_2025submission.tex" 1762459501.888 35781 e4262386bbe3aa81f08fa005eb4223a2 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/enc/dvips/fontawesome5/fa5free1.enc" 1622837620 3042 0e2b14b9be7d01075a4c4591d5d1781b ""
@@ -235,10 +235,10 @@
   "appendix_personas.tex" 1761414419.82015 10252 5f63b1dfb9f89d49c45a2cbb6c3c57ad ""
   "failures_by_model.tex" 1762457916.44626 699 3b0c3043f3c892d50d4416b808aa4dc6 ""
   "neurips_2025.sty" 1747049216 13023 2817c1b954c70ec3156371423da6545c ""
-  "neurips_2025submission.aux" 1762458961.9031 13243 701e3641ff7d09c2a7f6d2bfaebcd38d "pdflatex"
-  "neurips_2025submission.bbl" 1762458961.17354 8706 c999e4a8c53ef3d309dd0f6303f1fbcb "bibtex neurips_2025submission"
-  "neurips_2025submission.out" 1762458961.9041 3083 89e5ef49289884c1954d9a071c2c62dc "pdflatex"
-  "neurips_2025submission.tex" 1762458959.06169 35850 3de7e8d034a64356866470867bec0342 ""
+  "neurips_2025submission.aux" 1762459503.66363 13102 1b506c798a0f1ace6fd52c58038e08a3 "pdflatex"
+  "neurips_2025submission.bbl" 1762459502.94019 8706 c999e4a8c53ef3d309dd0f6303f1fbcb "bibtex neurips_2025submission"
+  "neurips_2025submission.out" 1762459503.66458 3083 89e5ef49289884c1954d9a071c2c62dc "pdflatex"
+  "neurips_2025submission.tex" 1762459501.888 35781 e4262386bbe3aa81f08fa005eb4223a2 ""
   "table_moral_foundations_profiles.tex" 1762457724.68496 2024 9d7604686dd19aea80dc5839b3e20b8d ""
   "table_persona_moral_foundations_profiles.tex" 1762457795.83797 1565 ea2b4bc8cb93043cfd1271b8c07caf23 ""
   (generated)
