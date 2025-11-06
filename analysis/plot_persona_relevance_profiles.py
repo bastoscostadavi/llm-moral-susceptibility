@@ -11,7 +11,7 @@ from math import ceil, sqrt
 from pathlib import Path
 from random import Random
 from statistics import mean, stdev
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
@@ -25,6 +25,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from mfq_questions import iter_questions
+from plot_relevance_profiles import load_relevance_scores, summarise_scores
 
 FOUNDATION_ORDER: List[str] = [
     "Harm/Care",
@@ -36,8 +37,8 @@ FOUNDATION_ORDER: List[str] = [
 
 DATA_DIR = PROJECT_ROOT / "data"
 RESULTS_DIR = PROJECT_ROOT / "results"
-DEFAULT_OUTPUT_PATH = RESULTS_DIR / "persona_moral_foundations_relevance_profiles.png"
-DEFAULT_SAMPLE_SIZE = 10
+DEFAULT_OUTPUT_PATH = RESULTS_DIR / "persona_moral_foundations_relevance_profiles.pdf"
+DEFAULT_SAMPLE_SIZE = 14
 
 # Reuse the same model allowlist as the self-assessment plots to keep figures aligned.
 ALLOWED_MODELS = {
@@ -48,9 +49,16 @@ ALLOWED_MODELS = {
     "gpt-4.1-mini",
     "gpt-4o",
     "gpt-4o-mini",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
+    "deepseek-chat-v3.1",
+    "llama-4-maverick",
+    "llama-4-scout",
+    "gpt-5",
+    "gpt-5-mini",
+    "gpt-5-nano",
     "grok-4",
     "grok-4-fast",
-    "gemini-2.5-flash-lite",
 }
 
 SERIES_COLORS = [
@@ -64,6 +72,9 @@ SERIES_COLORS = [
     "#FFBF00",  # gold
     "#AD5F90",  # magenta
     "#6C7D47",  # olive
+    "#E36B6B",  # GPT-5
+    "#F29B9B",  # GPT-5-mini
+    "#F8C8C8",  # GPT-5-nano
 ]
 
 SERIES_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*"]
@@ -239,7 +250,9 @@ def summarise_persona_scores(
 def plot_persona_profiles(
     persona_summaries: Dict[int, Dict[str, Tuple[float, float]]],
     output_path: Path,
-) -> None:
+    *,
+    self_summary: Optional[Dict[str, Tuple[float, float]]] = None,
+) -> Path:
     """Generate a line plot for averaged persona foundation profiles."""
 
     if not persona_summaries:
@@ -248,14 +261,32 @@ def plot_persona_profiles(
     sorted_personas = sorted(persona_summaries)
     x_positions = list(range(len(FOUNDATION_ORDER)))
 
-    legend_cols = min(5, max(1, len(sorted_personas)))
-    legend_rows = ceil(len(sorted_personas) / legend_cols)
+    total_series = len(sorted_personas) + (1 if self_summary else 0)
+    legend_cols = min(5, max(1, total_series))
+    legend_rows = ceil(total_series / legend_cols)
 
     fig = plt.figure(figsize=(11, 7.2))
     gs = fig.add_gridspec(nrows=2, ncols=1, height_ratios=[14, max(legend_rows, 1)], hspace=0.3)
     ax = fig.add_subplot(gs[0])
     legend_ax = fig.add_subplot(gs[1])
     legend_ax.axis('off')
+
+    if self_summary:
+        means = [self_summary[foundation][0] for foundation in FOUNDATION_ORDER]
+        errors = [self_summary[foundation][1] for foundation in FOUNDATION_ORDER]
+
+        ax.errorbar(
+            x_positions,
+            means,
+            yerr=errors,
+            label="Self",
+            color="#000000",
+            linestyle="-",
+            linewidth=3.0,
+            marker="o",
+            markersize=6,
+            capsize=5,
+        )
 
     for idx, persona in enumerate(sorted_personas):
         color = SERIES_COLORS[idx % len(SERIES_COLORS)]
@@ -308,8 +339,10 @@ def plot_persona_profiles(
     legend._legend_box.align = "left"
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=300)
+    pdf_path = output_path if output_path.suffix.lower() == ".pdf" else output_path.with_suffix(".pdf")
+    fig.savefig(pdf_path, dpi=300)
     plt.close(fig)
+    return pdf_path
 
 
 def parse_args() -> argparse.Namespace:
@@ -366,9 +399,32 @@ def main() -> None:
             file=sys.stderr,
         )
 
-    plot_persona_profiles(summaries, args.output)
+    self_scores = load_relevance_scores()
+    self_model_summaries = summarise_scores(self_scores)
+    self_summary: Optional[Dict[str, Tuple[float, float]]]
+    if not self_model_summaries:
+        self_summary = None
+    else:
+        aggregated: Dict[str, Tuple[float, float]] = {}
+        for foundation in FOUNDATION_ORDER:
+            means: List[float] = []
+            ses: List[float] = []
+            for model_summary in self_model_summaries.values():
+                if foundation not in model_summary:
+                    continue
+                mean_val, se_val = model_summary[foundation]
+                means.append(mean_val)
+                ses.append(se_val)
+            if not means:
+                continue
+            mean_avg = sum(means) / len(means)
+            se_combined = sqrt(sum(se ** 2 for se in ses)) / len(ses)
+            aggregated[foundation] = (mean_avg, se_combined)
+        self_summary = aggregated if aggregated else None
+
+    pdf_path = plot_persona_profiles(summaries, args.output, self_summary=self_summary)
     print(f"Sampled personas: {sampled_personas}")
-    print(f"Saved plot to {args.output}")
+    print(f"Saved plot to {pdf_path}")
 
 
 if __name__ == "__main__":

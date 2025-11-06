@@ -115,7 +115,7 @@ def main() -> None:
     lines.append("  \\label{tab:summary_with_metrics}")
     lines.append("  \\begin{tabular}{lcccc}")
     lines.append("    \\toprule")
-    lines.append("    Model & $R$ ($\\pm$) & $Z_R$ ($\\pm$) & $S$ ($\\pm$) & $Z_S$ ($\\pm$) \\")
+    lines.append("    Model & $R$ ($\\pm$) & $z$-Robustness & $S$ ($\\pm$) & $z$-Susceptibility \\")
     lines.append("    \\midrule")
 
     for _, row in df.iterrows():

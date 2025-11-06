@@ -19,6 +19,29 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
+MODEL_COLORS = {
+    "claude-haiku-4-5": "#F9C784",
+    "claude-sonnet-4-5": "#E67E22",
+    "deepseek-chat-v3.1": "#5B4B8A",
+    "gemini-2.5-flash": "#F2D16B",
+    "gemini-2.5-flash-lite": "#F9E69F",
+    "gpt-4.1": "#52B788",
+    "gpt-4.1-mini": "#74C69D",
+    "gpt-4.1-nano": "#D9F0D3",
+    "gpt-4o": "#2F855A",
+    "gpt-4o-mini": "#A6DBA0",
+    "gpt-5": "#E36B6B",
+    "gpt-5-mini": "#F29B9B",
+    "gpt-5-nano": "#F8C8C8",
+    "grok-4": "#BDA0E3",
+    "grok-4-fast": "#7E57C2",
+    "llama-4-maverick": "#4A90E2",
+    "llama-4-scout": "#4A90E2",
+}
+DEFAULT_BAR_COLOR = "#4B8BBE"
+DEFAULT_EDGE_COLOR = "#1F3056"
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -121,7 +144,15 @@ def plot_metric(
     errors = frame[err_col].astype(float).to_numpy()
 
     fig, ax = plt.subplots(figsize=(8, 4.5))
-    bars = ax.bar(models, values, yerr=errors, capsize=5, color="#4B8BBE", edgecolor="#1F3056")
+    colors = [MODEL_COLORS.get(model, DEFAULT_BAR_COLOR) for model in models]
+    bars = ax.bar(
+        models,
+        values,
+        yerr=errors,
+        capsize=5,
+        color=colors,
+        edgecolor=DEFAULT_EDGE_COLOR,
+    )
     format_axes(ax, title=title, ylabel=ylabel)
 
     # Expand y-limits to leave room for annotations
@@ -184,7 +215,7 @@ def main() -> None:
         err_col="robustness_uncertainty",
         title=f"Moral Robustness {overall_title_suffix}",
         ylabel="Robustness",
-        output_path=args.output_dir / "robustness_overall.png",
+        output_path=args.output_dir / "robustness_overall.pdf",
         dpi=args.dpi,
     )
     plot_metric(
@@ -193,7 +224,7 @@ def main() -> None:
         err_col="susceptibility_uncertainty",
         title=f"Moral Susceptibility {overall_title_suffix}",
         ylabel="Susceptibility",
-        output_path=args.output_dir / "susceptibility_overall.png",
+        output_path=args.output_dir / "susceptibility_overall.pdf",
         dpi=args.dpi,
     )
 
@@ -211,7 +242,7 @@ def main() -> None:
             err_col="robustness_uncertainty",
             title=f"Moral Robustness ({foundation})",
             ylabel="Robustness",
-            output_path=args.output_dir / f"robustness_{slug}.png",
+            output_path=args.output_dir / f"robustness_{slug}.pdf",
             dpi=args.dpi,
         )
         plot_metric(
@@ -220,7 +251,7 @@ def main() -> None:
             err_col="susceptibility_uncertainty",
             title=f"Moral Susceptibility ({foundation})",
             ylabel="Susceptibility",
-            output_path=args.output_dir / f"susceptibility_{slug}.png",
+            output_path=args.output_dir / f"susceptibility_{slug}.pdf",
             dpi=args.dpi,
         )
 

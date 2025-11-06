@@ -17,7 +17,7 @@ import math
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Sequence, Tuple
+from typing import Iterable, List, Sequence
 
 import numpy as np
 import pandas as pd
@@ -91,14 +91,26 @@ def iter_summary_files(directory: Path) -> Iterable[Path]:
             yield path
 
 
-def load_summaries(directory: Path) -> List[SummaryData]:
+def load_summaries(directory: Path, verbose: bool = False) -> List[SummaryData]:
     summaries: List[SummaryData] = []
+    skipped: List[tuple[Path, set[str]]] = []
     for csv_path in iter_summary_files(directory):
         df = pd.read_csv(csv_path)
         required = {"persona_id", "question_id", "average_score", "standard_deviation"}
         missing = required.difference(df.columns)
         if missing:
-            raise ValueError(f"{csv_path} missing required columns: {', '.join(sorted(missing))}")
+            base_cols = {"persona_id", "question_id"}
+            if base_cols.issubset(df.columns):
+                raise ValueError(
+                    f"{csv_path} missing required columns: {', '.join(sorted(missing))}"
+                )
+            skipped.append((csv_path, missing))
+            if verbose:
+                print(
+                    f"Skipping {csv_path} missing required columns: {', '.join(sorted(missing))}",
+                    file=sys.stderr,
+                )
+            continue
         df = df.copy()
         df["persona_id"] = df["persona_id"].astype(int)
         df["question_id"] = df["question_id"].astype(int)
@@ -113,6 +125,14 @@ def load_summaries(directory: Path) -> List[SummaryData]:
         )
     if not summaries:
         raise RuntimeError("No summary CSVs found in the specified directory.")
+    if skipped and not verbose:
+        skipped_str = ", ".join(
+            f"{path.name} ({', '.join(sorted(missing))})" for path, missing in skipped
+        )
+        print(
+            f"Skipping non-summary CSVs missing required columns: {skipped_str}",
+            file=sys.stderr,
+        )
     return summaries
 
 
@@ -247,7 +267,7 @@ def compute_susceptibility(pivot: pd.DataFrame, groups: Sequence[Sequence[int]])
 def main() -> None:
     args = parse_args()
 
-    summaries = load_summaries(args.summaries_dir)
+    summaries = load_summaries(args.summaries_dir, verbose=args.verbose)
     common_questions = intersect_questions(summaries)
     foundation_map = {
         q.id: q.foundation

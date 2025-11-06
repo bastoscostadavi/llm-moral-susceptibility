@@ -35,7 +35,7 @@ FOUNDATION_ORDER: List[str] = [
 
 DATA_DIR = PROJECT_ROOT / "data"
 RESULTS_DIR = PROJECT_ROOT / "results"
-OUTPUT_PATH = RESULTS_DIR / "moral_foundations_relevance_profiles.png"
+OUTPUT_PATH = RESULTS_DIR / "moral_foundations_relevance_profiles.pdf"
 
 # Restrict plot to a fixed subset of models. Keep both possible Gemini slugs
 # to accommodate dataset naming; only existing ones will be included.
@@ -47,9 +47,17 @@ ALLOWED_MODELS = {
     "gpt-4.1-mini",
     "gpt-4o",
     "gpt-4o-mini",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
+    "deepseek-chat-v3.1",
+    "llama-4-maverick",
+    "llama-4-scout",
+    "gpt-5",
+    "gpt-5-mini",
+    "gpt-5-nano",
+    "openrouter-gpt-5",
     "grok-4",
     "grok-4-fast",
-    "gemini-2.5-flash-lite",
 }
 
 MODEL_COLORS = {
@@ -61,8 +69,16 @@ MODEL_COLORS = {
     "grok-4": "#BDA0E3",
     "gpt-4o": "#2F855A",
     "gpt-4.1-mini": "#74C69D",
-    "gemini-2.5-flash-lite": "#4A90E2",
+    "gemini-2.5-flash": "#F2D16B",
+    "gemini-2.5-flash-lite": "#F9E69F",
     "grok-4-fast": "#7E57C2",
+    "gpt-5": "#E36B6B",
+    "gpt-5-mini": "#F29B9B",
+    "gpt-5-nano": "#F8C8C8",
+    "openrouter-gpt-5": "#E36B6B",
+    "deepseek-chat-v3.1": "#5B4B8A",
+    "llama-4-maverick": "#4A90E2",
+    "llama-4-scout": "#4A90E2",
 }
 
 MODEL_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*"]
@@ -186,7 +202,7 @@ def _pairwise(points: Iterable[Tuple[float, float]]) -> Iterable[Tuple[Tuple[flo
         yield point_list[idx], point_list[idx + 1]
 
 
-def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) -> None:
+def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) -> Path:
     """Generate a Haidt-style line plot with error bars using Matplotlib."""
 
     if not model_summaries:
@@ -195,13 +211,14 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
     sorted_models = sorted(model_summaries)
     style_map = {}
     for idx, model in enumerate(sorted_models):
+        display_name = model.replace("openrouter-", "")
         color = MODEL_COLORS.get(model)
         if color is None:
             fallback_palette = DEFAULT_COLOR_CYCLE or ["#1f77b4"]
             color = fallback_palette[idx % len(fallback_palette)]
         marker = MODEL_MARKERS[idx % len(MODEL_MARKERS)]
         linestyle = MODEL_LINESTYLES[idx % len(MODEL_LINESTYLES)]
-        style_map[model] = (color, marker, linestyle)
+        style_map[model] = (color, marker, linestyle, display_name)
 
     x_positions = list(range(len(FOUNDATION_ORDER)))
 
@@ -215,7 +232,7 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
     legend_ax.axis('off')
 
     for model in sorted_models:
-        color, marker, linestyle = style_map[model]
+        color, marker, linestyle, display_name = style_map[model]
         foundation_summary = model_summaries[model]
         means = [foundation_summary[foundation][0] for foundation in FOUNDATION_ORDER]
         errors = [foundation_summary[foundation][1] for foundation in FOUNDATION_ORDER]
@@ -224,7 +241,7 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
             x_positions,
             means,
             yerr=errors,
-            label=model,
+            label=display_name,
             color=color,
             linestyle=linestyle,
             linewidth=2.5,
@@ -260,15 +277,17 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
     legend._legend_box.align = "left"
 
     fig.tight_layout()
-    fig.savefig(OUTPUT_PATH, dpi=300)
+    pdf_path = OUTPUT_PATH if OUTPUT_PATH.suffix.lower() == ".pdf" else OUTPUT_PATH.with_suffix(".pdf")
+    fig.savefig(pdf_path, dpi=300)
     plt.close(fig)
+    return pdf_path
 
 
 def main() -> None:
     scores = load_relevance_scores()
     summaries = summarise_scores(scores)
-    plot_profiles(summaries)
-    print(f"Saved plot to {OUTPUT_PATH}")
+    pdf_path = plot_profiles(summaries)
+    print(f"Saved plot to {pdf_path}")
 
 
 if __name__ == "__main__":

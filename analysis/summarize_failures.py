@@ -85,12 +85,12 @@ def main() -> None:
     lines.append("\\begin{table}[t]")
     lines.append("  \\centering")
     lines.append(
-        "  \\caption{Total failure counts per dataset (raw reruns under \\texttt{data/}).}"
+        "  \\caption{Parsing failures per dataset (raw reruns under \\texttt{data/}).}"
     )
     lines.append("  \\label{tab:failures_by_model}")
-    lines.append("  \\begin{tabular}{lr}")
+    lines.append("  \\begin{tabular}{lrr}")
     lines.append("    \\toprule")
-    lines.append("    Dataset & Total failures \\\\")
+    lines.append("    Dataset & Failed rows & Total failures \\\\")
     lines.append("    \\midrule")
 
     def _escape(text: str) -> str:
@@ -98,8 +98,9 @@ def main() -> None:
 
     for _, row in nonzero.iterrows():
         dataset = _escape(row["model"])  # stem of CSV filename
+        failed_rows = int(row["failed_rows"]) if pd.notna(row["failed_rows"]) else 0
         total = int(row["total_failures"]) if pd.notna(row["total_failures"]) else 0
-        lines.append(f"    {dataset} & {total} \\\\")
+        lines.append(f"    {dataset} & {failed_rows} & {total} \\\\")
 
     lines.append("    \\bottomrule")
     lines.append("  \\end{tabular}")

@@ -1,0 +1,144 @@
+\begin{thebibliography}{24}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Abdulhai et~al.(2024)Abdulhai, Serapio-Garc{\'\i}a, Crepy, Valter, Canny, and Jaques]{abdulhai-etal-2024-moral}
+Marwa Abdulhai, Gregory Serapio-Garc{\'\i}a, Clement Crepy, Daria Valter, John Canny, and Natasha Jaques.
+\newblock Moral foundations of large language models.
+\newblock In Yaser Al{-}Onaizan, Mohit Bansal, and Yun{-}Nung Chen, editors, \emph{Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing}, pages 17737--17752, Miami, Florida, USA, November 2024. Association for Computational Linguistics.
+\newblock \doi{10.18653/v1/2024.emnlp-main.982}.
+\newblock URL \url{https://aclanthology.org/2024.emnlp-main.982/}.
+
+\bibitem[Aksoy(2024)]{aksoy2024whose}
+Meltem Aksoy.
+\newblock Whose morality do they speak? unraveling cultural bias in multilingual language models, 2024.
+
+\bibitem[Bai et~al.(2025{\natexlab{a}})Bai, Peng, Singh, and Tan]{bai2025concept}
+Xiaoyan Bai, Ike Peng, Aditya Singh, and Chenhao Tan.
+\newblock Concept incongruence: An exploration of time and death in role playing, 2025{\natexlab{a}}.
+\newblock URL \url{https://arxiv.org/abs/2505.14905}.
+
+\bibitem[Bai et~al.(2025{\natexlab{b}})Bai, Shrivastava, Holtzman, and Tan]{bai2025knowthyselfincapabilityimplications}
+Xiaoyan Bai, Aryan Shrivastava, Ari Holtzman, and Chenhao Tan.
+\newblock Know thyself? on the incapability and implications of ai self-recognition, 2025{\natexlab{b}}.
+\newblock URL \url{https://arxiv.org/abs/2510.03399}.
+
+\bibitem[Bajpai et~al.(2024)Bajpai, Sameer, and Fatima]{bajpai2024insights}
+Srajal Bajpai, Ahmed Sameer, and Rabiya Fatima.
+\newblock Insights into moral reasoning capabilities of ai: A comparative study between humans and large language models.
+\newblock Research Square preprint, 2024.
+\newblock URL \url{https://doi.org/10.21203/rs.3.rs-5336157/v1}.
+
+\bibitem[Bianchi et~al.(2024)]{bianchi2024negotiationarena}
+Federico Bianchi et~al.
+\newblock How well can llms negotiate? negotiationarena platform and analysis.
+\newblock \emph{arXiv preprint arXiv:2402.05863}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2402.05863}.
+
+\bibitem[Boudouri et~al.(2025)Boudouri, Nuninger, Alvarez, and Peter]{elboudouri2025rpeval}
+Yassine~El Boudouri, Walter Nuninger, Julian Alvarez, and Yvan Peter.
+\newblock Role-playing evaluation for large language models, 2025.
+\newblock URL \url{https://arxiv.org/abs/2505.13157}.
+
+\bibitem[Chen et~al.(2024)]{chen-etal-2024-tombench}
+Zhuang Chen et~al.
+\newblock Tombench: Benchmarking theory of mind in large language models.
+\newblock In \emph{Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics}, 2024.
+\newblock \doi{10.18653/v1/2024.acl-long.847}.
+\newblock URL \url{https://aclanthology.org/2024.acl-long.847/}.
+
+\bibitem[Costa and Vicente(2025)]{costa2025deceivedetectdiscloselarge}
+Davi~Bastos Costa and Renato Vicente.
+\newblock Deceive, detect, and disclose: Large language models play mini-mafia, 2025.
+\newblock URL \url{https://arxiv.org/abs/2509.23023}.
+
+\bibitem[Ge et~al.(2025)Ge, Chan, Wang, Yu, Mi, and Yu]{ge2025scalingsyntheticdatacreation}
+Tao Ge, Xin Chan, Xiaoyang Wang, Dian Yu, Haitao Mi, and Dong Yu.
+\newblock Scaling synthetic data creation with 1,000,000,000 personas, 2025.
+\newblock URL \url{https://arxiv.org/abs/2406.20094}.
+
+\bibitem[Graham et~al.(2009)Graham, Haidt, and Nosek]{graham2009liberals}
+Jesse Graham, Jonathan Haidt, and Brian~A. Nosek.
+\newblock Liberals and conservatives rely on different sets of moral foundations.
+\newblock \emph{Journal of Personality and Social Psychology}, 96\penalty0 (5):\penalty0 1029--1046, 2009.
+\newblock \doi{10.1037/a0015141}.
+
+\bibitem[Haidt and Graham(2007)]{haidt2007when}
+Jonathan Haidt and Jesse Graham.
+\newblock When morality opposes justice: Conservatives have moral intuitions that liberals may not recognize.
+\newblock \emph{Social Justice Research}, 20\penalty0 (1):\penalty0 98--116, 2007.
+\newblock \doi{10.1007/s11211-007-0034-z}.
+
+\bibitem[Hendrycks et~al.(2021)]{hendrycks2021ethics}
+Dan Hendrycks et~al.
+\newblock Aligning ai with shared human values.
+\newblock In \emph{Proceedings of the International Conference on Learning Representations (ICLR)}, 2021.
+\newblock URL \url{https://arxiv.org/abs/2008.02275}.
+
+\bibitem[Ji et~al.(2025)Ji, Chen, Jin, Xu, Hua, and Zhang]{ji2025moralbenchmoralevaluationllms}
+Jianchao Ji, Yutong Chen, Mingyu Jin, Wujiang Xu, Wenyue Hua, and Yongfeng Zhang.
+\newblock Moralbench: Moral evaluation of llms, 2025.
+\newblock URL \url{https://arxiv.org/abs/2406.04428}.
+
+\bibitem[{MFQ}(2017)]{moralfoundations2017questionnaires}
+{MFQ}.
+\newblock Moral foundation questionnaires.
+\newblock \url{https://moralfoundations.org/questionnaires/}, August 2017.
+\newblock Accessed: 2025-10-28.
+
+\bibitem[Nunes et~al.(2024)Nunes, Almeida, de~Araujo, and Barbosa]{nunes2024hypocrites}
+Jos{\'e}~Luiz Nunes, Guilherme F. C.~F. Almeida, Marcelo de~Araujo, and Simone D.~J. Barbosa.
+\newblock Are large language models moral hypocrites? a study based on moral foundations, 2024.
+\newblock Final version appears in the AAAI/ACM Conference on AI, Ethics, and Society (AIES 2024).
+
+\bibitem[Pan et~al.(2023)]{pan2023machiavelli}
+Alexander Pan et~al.
+\newblock Do the rewards justify the means? measuring trade-offs between rewards and ethical behavior in the {MACHIAVELLI} benchmark.
+\newblock \emph{arXiv preprint arXiv:2304.03279}, 2023.
+\newblock URL \url{https://arxiv.org/abs/2304.03279}.
+
+\bibitem[Samuel et~al.(2025)Samuel, Zou, Zhou, Chaudhari, Kalyan, Rajpurohit, Deshpande, Narasimhan, and Murahari]{samuel2025personagym}
+Vinay Samuel, Henry~Peng Zou, Yue Zhou, Shreyas Chaudhari, Ashwin Kalyan, Tanmay Rajpurohit, Ameet Deshpande, Karthik Narasimhan, and Vishvak Murahari.
+\newblock Personagym: Evaluating persona agents and llms, 2025.
+\newblock URL \url{https://arxiv.org/abs/2407.18416}.
+\newblock Findings of EMNLP 2025.
+
+\bibitem[Sap et~al.(2019)]{sap-etal-2019-social}
+Maarten Sap et~al.
+\newblock Social {IQ}a: Commonsense reasoning about social interactions.
+\newblock In \emph{Proceedings of EMNLP-IJCNLP}, 2019.
+\newblock \doi{10.18653/v1/D19-1454}.
+\newblock URL \url{https://aclanthology.org/D19-1454/}.
+
+\bibitem[Tseng et~al.(2024)Tseng, Huang, Hsiao, Chen, Huang, Meng, and Chen]{tseng2024two}
+Yu-Min Tseng, Yu-Chao Huang, Teng-Yun Hsiao, Wei-Lin Chen, Chao-Wei Huang, Yu~Meng, and Yun-Nung Chen.
+\newblock Two tales of persona in {LLM}s: A survey of role-playing and personalization.
+\newblock In Yaser Al-Onaizan, Mohit Bansal, and Yun-Nung Chen, editors, \emph{Findings of the Association for Computational Linguistics: EMNLP 2024}, pages 16612--16631, Miami, Florida, USA, November 2024. Association for Computational Linguistics.
+\newblock \doi{10.18653/v1/2024.findings-emnlp.969}.
+\newblock URL \url{https://aclanthology.org/2024.findings-emnlp.969/}.
+
+\bibitem[Wang et~al.(2023)Wang, Peng, Que, Liu, Zhou, Wu, Guo, Gan, Ni, Yang, Zhang, Zhang, Ouyang, Xu, Huang, Fu, and Peng]{wang2023rolellm}
+Zekun~Moore Wang, Zhongyuan Peng, Haoran Que, Jiaheng Liu, Wangchunshu Zhou, Yuhan Wu, Hongcheng Guo, Ruitong Gan, Zehao Ni, Jian Yang, Man Zhang, Zhaoxiang Zhang, Wanli Ouyang, Ke~Xu, Stephen~W. Huang, Jie Fu, and Junran Peng.
+\newblock Rolellm: Benchmarking, eliciting, and enhancing role-playing abilities of large language models, 2023.
+\newblock URL \url{https://arxiv.org/abs/2310.00746}.
+
+\bibitem[Xu et~al.(2024)Xu, Wang, Chen, Yuan, Yuan, Liang, Chen, Dong, and Xiao]{xu2024character}
+Rui Xu, Xintao Wang, Jiangjie Chen, Siyu Yuan, Xinfeng Yuan, Jiaqing Liang, Zulong Chen, Xiaoqing Dong, and Yanghua Xiao.
+\newblock Character is destiny: Can role-playing language agents make persona-driven decisions?, 2024.
+\newblock URL \url{https://arxiv.org/abs/2404.12138}.
+
+\bibitem[Yu et~al.(2025)Yu, Shen, Meng, Lee, Yin, Cui, Xu, Zhu, Shi, Li, and Smola]{yu2025rpgbench}
+Pengfei Yu, Dongming Shen, Silin Meng, Jaewon Lee, Weisu Yin, Andrea~Yaoyun Cui, Zhenlin Xu, Yi~Zhu, Xingjian Shi, Mu~Li, and Alex Smola.
+\newblock Rpgbench: Evaluating large language models as role-playing game engines, 2025.
+\newblock URL \url{https://arxiv.org/abs/2502.00595}.
+
+\bibitem[Zhou et~al.(2024)]{zhou2024sotopia}
+Xuhui Zhou et~al.
+\newblock Sotopia: Interactive evaluation for social intelligence in language agents.
+\newblock In \emph{Proceedings of the International Conference on Learning Representations (ICLR)}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2312.15880}.
+
+\end{thebibliography}
