@@ -216,11 +216,20 @@ def _():
     ]
 
     MODELS_ORDER = sorted(MODEL_COLORS)
-    return FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER
+    return FOUNDATIONS_ORDER, MODELS_ORDER, MODEL_COLORS
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extracolumns, pl):
+def _(
+    FOUNDATIONS_ORDER,
+    MODELS_ORDER,
+    MODEL_COLORS,
+    RESULTS_DIR,
+    alt,
+    df,
+    extracolumns,
+    pl,
+):
     _average_label = "Average across models"
 
     _average_df = (
@@ -236,7 +245,9 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
             pl.mean("robustness").alias("robustness"),
             pl.mean("robustness_uncertainty").alias("robustness_uncertainty"),
             pl.mean("susceptibility").alias("susceptibility"),
-            pl.mean("susceptibility_uncertainty").alias("susceptibility_uncertainty"),
+            pl.mean("susceptibility_uncertainty").alias(
+                "susceptibility_uncertainty"
+            ),
         )
         .with_columns(pl.lit(_average_label).alias("model"))
         .select(
@@ -329,7 +340,16 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extracolumns, pl):
+def _(
+    FOUNDATIONS_ORDER,
+    MODELS_ORDER,
+    MODEL_COLORS,
+    RESULTS_DIR,
+    alt,
+    df,
+    extracolumns,
+    pl,
+):
     _average_label = "Average across models"
 
     _average_df = (
@@ -345,7 +365,9 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
             pl.mean("robustness").alias("robustness"),
             pl.mean("robustness_uncertainty").alias("robustness_uncertainty"),
             pl.mean("susceptibility").alias("susceptibility"),
-            pl.mean("susceptibility_uncertainty").alias("susceptibility_uncertainty"),
+            pl.mean("susceptibility_uncertainty").alias(
+                "susceptibility_uncertainty"
+            ),
         )
         .with_columns(pl.lit(_average_label).alias("model"))
         .select(
@@ -381,7 +403,11 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
             alt.X("robustness:Q", title="Robustness"),
             alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
             alt.Color(
-                "model:N", title="", legend=None, sort=MODELS_ORDER, scale=_color_scale
+                "model:N",
+                title="",
+                legend=None,
+                sort=MODELS_ORDER,
+                scale=_color_scale,
             ),
             opacity=alt.when(alt.datum.foundation == "All Foundations")
             .then(alt.value(0.6))
@@ -434,7 +460,7 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
 
 
 @app.cell
-def _(MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, table):
+def _(MODELS_ORDER, MODEL_COLORS, RESULTS_DIR, alt, table):
     _moral_metrics = table["moral_metrics"]
     model_order = sorted(_moral_metrics.get_column("model").to_list())
 
@@ -450,7 +476,7 @@ def _(MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, table):
 
     _p_data = alt.Chart(_moral_metrics, height=200, width=200)
 
-    _p_bars_s = _p_data.mark_bar(size=15, opacity=0.6).encode(
+    _p_bars_s = _p_data.mark_bar(size=10, opacity=0.6).encode(
         alt.Y("model:N", sort=model_order, title=None),
         alt.X("susceptibility:Q", title="Susceptibility"),
         alt.Color("model:N", legend=None, sort=model_order, scale=_color_scale),
@@ -472,7 +498,7 @@ def _(MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, table):
         color="#000000",
     ).encode(alt.Text("s_label"), color=alt.value("black"), opacity=alt.value(1.0))
 
-    _p_bars_r = _p_data.mark_bar(size=15, opacity=0.6).encode(
+    _p_bars_r = _p_data.mark_bar(size=10, opacity=0.6).encode(
         alt.Y("model:N", sort=model_order, title=None),
         alt.X("robustness:Q", title="Robustness"),
         alt.Color("model:N", legend=None, sort=model_order, scale=_color_scale),
@@ -497,8 +523,12 @@ def _(MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, table):
     _robust_base = _p_bars_r + _p_error_r + _p_label_r
     _suscept_base = _p_bars_s + _p_error_s + _p_label_s
 
-    _robust_chart = _robust_base.configure_axis(grid=False).configure_view(strokeWidth=0)
-    _suscept_chart = _suscept_base.configure_axis(grid=False).configure_view(strokeWidth=0)
+    _robust_chart = _robust_base.configure_axis(grid=False).configure_view(
+        strokeWidth=0
+    )
+    _suscept_chart = _suscept_base.configure_axis(grid=False).configure_view(
+        strokeWidth=0
+    )
 
     _combined_chart = (
         (_robust_base | _suscept_base)
