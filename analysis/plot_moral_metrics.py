@@ -22,7 +22,8 @@ import pandas as pd
 MODEL_COLORS = {
     "claude-haiku-4-5": "#F9C784",
     "claude-sonnet-4-5": "#E67E22",
-    "deepseek-chat-v3.1": "#5B4B8A",
+    "deepseek-v3.1": "#5B4B8A",
+    "deepseek-v3": "#A48DEB",
     "gemini-2.5-flash": "#F2D16B",
     "gemini-2.5-flash-lite": "#F9E69F",
     "gpt-4.1": "#52B788",
@@ -33,8 +34,8 @@ MODEL_COLORS = {
     "gpt-5": "#E36B6B",
     "gpt-5-mini": "#F29B9B",
     "gpt-5-nano": "#F8C8C8",
-    "grok-4": "#BDA0E3",
-    "grok-4-fast": "#7E57C2",
+    "grok-4": "#E07BB6",
+    "grok-4-fast": "#C24796",
     "llama-4-maverick": "#4A90E2",
     "llama-4-scout": "#4A90E2",
 }

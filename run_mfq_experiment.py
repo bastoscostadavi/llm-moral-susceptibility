@@ -42,6 +42,13 @@ AVAILABLE_MODELS = [
         "model_kwargs": {"max_tokens": 1},
     },
     {
+        "key": "21",
+        "label": "DeepSeek Chat (OpenRouter)",
+        "model_type": "openrouter",
+        "model_name": "deepseek/deepseek-chat",
+        "model_kwargs": {"max_tokens": 1},
+    },
+    {
         "key": "04",
         "label": "Gemini 2.5 Flash (Google API)",
         "model_type": "google",
@@ -75,6 +82,13 @@ AVAILABLE_MODELS = [
         "model_type": "openrouter",
         "model_name": "google/gemini-2.5-pro",
         "model_kwargs": {"max_tokens": 16, "thinkingBudget": 0},
+    },
+    {
+        "key": "22",
+        "label": "Gemini 2.5 Pro (Google API)",
+        "model_type": "google",
+        "model_name": "gemini-2.5-pro",
+        "model_kwargs": {"max_tokens": 128},
     },
     {
         "key": "09",
@@ -170,8 +184,10 @@ CUSTOM_MODEL_FILENAMES: Dict[str, str] = {
     "claude-sonnet-4-5-20250929": "claude-sonnet-4-5.csv",
     "claude-haiku-4-5-20251001": "claude-haiku-4-5.csv",
     "deepseek/deepseek-chat-v3.1": "deepseek-chat-v3.1.csv",
+    "deepseek/deepseek-chat": "deepseek-chat.csv",
     "gemini-2.5-flash-lite": "gemini-2.5-flash-lite.csv",
     "gemini-2.5-flash": "gemini-2.5-flash.csv",
+    "gemini-2.5-pro": "gemini-2.5-pro.csv",
     "google/gemini-2.5-flash-lite": "gemini-2.5-flash-lite.csv",
     "google/gemini-2.5-flash": "gemini-2.5-flash.csv",
     "google/gemini-2.5-pro": "gemini-2.5-pro.csv",

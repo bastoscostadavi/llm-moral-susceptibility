@@ -14,6 +14,69 @@ _MODEL_CACHE: Dict[str, Any] = {}
 _GOOGLE_THINKING_WARNING_EMITTED = False
 
 
+def _google_generate_via_rest(
+    model_name: str,
+    api_key: str,
+    prompt: str,
+    generation_config: Optional[Dict[str, Any]] = None,
+    system_prompt: Optional[str] = None,
+    safety_settings: Optional[Any] = None,
+    thinking_cfg: Optional[Dict[str, Any]] = None,
+    timeout: int = 120,
+) -> tuple[str, Optional[str]]:
+    """Issue a direct REST call to Gemini and return (text, finish_reason)."""
+
+    import requests
+
+    payload: Dict[str, Any] = {
+        "contents": [
+            {
+                "role": "user",
+                "parts": [{"text": prompt}],
+            }
+        ]
+    }
+
+    if system_prompt:
+        payload["systemInstruction"] = {"parts": [{"text": system_prompt}]}
+
+    gen_payload = {k: v for k, v in (generation_config or {}).items() if v is not None}
+    if thinking_cfg:
+        gen_payload["thinking_config"] = thinking_cfg
+    if gen_payload:
+        payload["generationConfig"] = _camelize_keys(gen_payload)
+
+    if safety_settings:
+        payload["safetySettings"] = safety_settings
+
+    resp = requests.post(
+        f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent",
+        params={"key": api_key},
+        json=payload,
+        timeout=timeout,
+    )
+    resp.raise_for_status()
+
+    data = resp.json()
+    texts: list[str] = []
+    finish_reason: Optional[str] = None
+
+    for cand in data.get("candidates", []) or []:
+        finish_reason = finish_reason or cand.get("finishReason")
+        content = cand.get("content") or {}
+        for part in content.get("parts", []) or []:
+            if isinstance(part, dict):
+                text_val = part.get("text")
+                if text_val:
+                    texts.append(str(text_val))
+    if texts:
+        return "\n".join(texts).strip(), finish_reason
+
+    prompt_feedback = data.get("promptFeedback") or {}
+    finish_reason = finish_reason or prompt_feedback.get("blockReason")
+    return "", finish_reason
+
+
 def _snake_to_camel(name: str) -> str:
     """Convert snake_case keys to camelCase for Google REST payloads."""
 
@@ -649,11 +712,15 @@ def _google_response(model_name: str, prompt: str, **kwargs) -> str:
     try:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(model_name)
-        gen_cfg = {}
+        gen_cfg: Dict[str, Any] = {}
         if "temperature" in kwargs:
             gen_cfg["temperature"] = kwargs.get("temperature")
         if "max_tokens" in kwargs:
             gen_cfg["max_output_tokens"] = kwargs.get("max_tokens")
+
+        system_prompt = kwargs.get("system_prompt") or kwargs.get("system")
+        safety_settings = kwargs.get("safety_settings")
+        timeout = kwargs.get("timeout", 120)
 
         thinking_cfg = _normalise_thinking_config(kwargs.get("thinking_config"))
         if "thinkingBudget" in kwargs:
@@ -661,71 +728,39 @@ def _google_response(model_name: str, prompt: str, **kwargs) -> str:
             thinking_cfg["thinking_budget"] = kwargs.get("thinkingBudget")
 
         call_kwargs = {"generation_config": gen_cfg or None}
+        rest_attempted = False
 
         if thinking_cfg is not None:
             try:
-                import requests
-            except ImportError:
+                text, finish_reason = _google_generate_via_rest(
+                    model_name,
+                    api_key,
+                    prompt,
+                    generation_config=gen_cfg,
+                    system_prompt=system_prompt,
+                    safety_settings=safety_settings,
+                    thinking_cfg=thinking_cfg,
+                    timeout=timeout,
+                )
+            except Exception as exc:  # pragma: no cover - network failure
+                error_detail = ""
+                response_obj = getattr(exc, "response", None)
+                if response_obj is not None:
+                    try:
+                        error_detail = f" Response: {response_obj.text}"
+                    except Exception:
+                        pass
                 print(
-                    "Warning: requests is required for Gemini thinkingBudget support; "
-                    "falling back without thinkingConfig."
+                    f"Google Gemini thinking API error: {exc}{error_detail}; continuing without thinkingConfig."
                 )
             else:
-                payload = {
-                    "contents": [
-                        {
-                            "role": "user",
-                            "parts": [{"text": prompt}],
-                        }
-                    ]
-                }
-                system_prompt = kwargs.get("system_prompt") or kwargs.get("system")
-                if system_prompt:
-                    payload["systemInstruction"] = {
-                        "parts": [{"text": system_prompt}],
-                    }
-                gen_payload = {k: v for k, v in gen_cfg.items() if v is not None}
-                gen_payload["thinking_config"] = thinking_cfg
-                if gen_payload:
-                    payload["generationConfig"] = _camelize_keys(gen_payload)
-
-                safety_settings = kwargs.get("safety_settings")
-                if safety_settings:
-                    payload["safetySettings"] = safety_settings
-
-                try:
-                    resp = requests.post(
-                        f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent",
-                        params={"key": api_key},
-                        json=payload,
-                        timeout=kwargs.get("timeout", 120),
-                    )
-                    resp.raise_for_status()
-                    data = resp.json()
-                    for cand in data.get("candidates", []) or []:
-                        content = cand.get("content") or {}
-                        parts = content.get("parts") or []
-                        texts = []
-                        for part in parts:
-                            if isinstance(part, dict):
-                                text_val = part.get("text")
-                                if text_val:
-                                    texts.append(str(text_val))
-                        if texts:
-                            return "\n".join(texts).strip()
+                rest_attempted = True
+                if text:
+                    return text
+                if finish_reason:
                     print(
-                        "Warning: Gemini thinking response missing text; continuing without thinkingConfig."
-                    )
-                except Exception as exc:
-                    error_detail = ""
-                    response_obj = getattr(exc, "response", None)
-                    if response_obj is not None:
-                        try:
-                            error_detail = f" Response: {response_obj.text}"
-                        except Exception:
-                            pass
-                    print(
-                        f"Google Gemini thinking API error: {exc}{error_detail}; continuing without thinkingConfig."
+                        "Google Gemini thinking response missing text"
+                        f" (finish_reason={finish_reason}); retrying without thinkingBudget."
                     )
 
             # Preserve behaviour for future SDKs that may accept thinking_config.
@@ -748,9 +783,27 @@ def _google_response(model_name: str, prompt: str, **kwargs) -> str:
                 )
             else:
                 raise
-        text = getattr(response, "text", None)
-        if isinstance(text, str) and text.strip():
-            return text.strip()
+        finish_reason = None
+        try:
+            candidates = getattr(response, "candidates", None)
+            if candidates:
+                first_candidate = candidates[0]
+                finish_reason = getattr(first_candidate, "finish_reason", None)
+                if finish_reason is not None and not isinstance(finish_reason, str):
+                    finish_reason = str(finish_reason)
+        except Exception:
+            finish_reason = None
+
+        text = None
+        try:
+            text_attr = getattr(response, "text", None)
+            if isinstance(text_attr, str):
+                text = text_attr.strip()
+        except Exception:
+            text = None
+
+        if text:
+            return text
         # Fallback: try candidates
         try:
             for cand in getattr(response, "candidates", []) or []:
@@ -764,6 +817,30 @@ def _google_response(model_name: str, prompt: str, **kwargs) -> str:
                     return "\n".join(parts).strip()
         except Exception:
             pass
+
+        if not rest_attempted:
+            try:
+                text, fallback_finish = _google_generate_via_rest(
+                    model_name,
+                    api_key,
+                    prompt,
+                    generation_config=gen_cfg,
+                    system_prompt=system_prompt,
+                    safety_settings=safety_settings,
+                    timeout=timeout,
+                )
+            except Exception as exc:  # pragma: no cover - network failure
+                print(f"Google Gemini REST fallback failed: {exc}")
+            else:
+                finish_reason = finish_reason or fallback_finish
+                if text:
+                    return text
+
+        if finish_reason:
+            print(
+                "Google Gemini returned no text"
+                f" (finish_reason={finish_reason}). Increase max_tokens if this persists."
+            )
         return ""
     except Exception as e:
         print(f"Google Gemini API error: {e}")

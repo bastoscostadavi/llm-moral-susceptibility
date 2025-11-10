@@ -183,25 +183,25 @@ def _():
 @app.cell
 def _():
     MODEL_COLORS = {
-        "Average across models": "#4D4D4D",
         "claude-haiku-4-5": "#F9C784",
         "claude-sonnet-4-5": "#E67E22",
         "gpt-4.1-nano": "#D9F0D3",
         "gpt-4o-mini": "#A6DBA0",
         "gpt-4.1": "#52B788",
-        "grok-4": "#BDA0E3",
+        "grok-4": "#E07BB6",
         "gpt-4o": "#2F855A",
         "gpt-4.1-mini": "#74C69D",
         "gemini-2.5-flash": "#F2D16B",
         "gemini-2.5-flash-lite": "#F9E69F",
-        "grok-4-fast": "#7E57C2",
+        "grok-4-fast": "#C24796",
         # Pale red gradient reserved for GPT-5 family (lightest to darkest)
         "gpt-5-nano": "#F8C8C8",
         "gpt-5-mini": "#F29B9B",
         "gpt-5": "#E36B6B",
-        "deepseek-chat-v3.1": "#5B4B8A",
+        "deepseek-v3": "#A48DEB",
+        "deepseek-v3.1": "#5B4B8A",
         "llama-4-maverick": "#4A90E2",
-        "llama-4-scout": "#4A90E2",
+        "llama-4-scout": "#63B3FF",
     }
 
     FOUNDATION_COLORS = ["blue", "green", "yellow", "red", "lime"]
@@ -220,36 +220,8 @@ def _():
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extracolumns, pl):
-    _average_label = "Average across models"
-
-    _average_df = (
-        df.select(
-            "foundation",
-            "robustness",
-            "robustness_uncertainty",
-            "susceptibility",
-            "susceptibility_uncertainty",
-        )
-        .group_by("foundation")
-        .agg(
-            pl.mean("robustness").alias("robustness"),
-            pl.mean("robustness_uncertainty").alias("robustness_uncertainty"),
-            pl.mean("susceptibility").alias("susceptibility"),
-            pl.mean("susceptibility_uncertainty").alias("susceptibility_uncertainty"),
-        )
-        .with_columns(pl.lit(_average_label).alias("model"))
-        .select(
-            "model",
-            "foundation",
-            "robustness",
-            "robustness_uncertainty",
-            "susceptibility",
-            "susceptibility_uncertainty",
-        )
-    )
-
-    _chart_df = pl.concat([extracolumns(_average_df), df])
+def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
+    _chart_df = df
 
     _p_data = alt.Chart(
         _chart_df.with_columns(
@@ -265,12 +237,23 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
     _color_range = [MODEL_COLORS[model] for model in _color_domain]
     _color_scale = alt.Scale(domain=_color_domain, range=_color_range)
 
+    _foundation_y = alt.Y(
+        "foundation:N",
+        title=None,
+        sort=FOUNDATIONS_ORDER,
+        scale=alt.Scale(paddingInner=0.0, paddingOuter=0.05),
+    )
+
     _p_bars = (
         _p_data
         # .transform_filter(alt.datum.foundat)
-        .mark_bar(size=15).encode(
-            alt.X("susceptibility:Q", title="Susceptibility"),
-            alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
+        .mark_bar(size=10).encode(
+            alt.X(
+                "susceptibility:Q",
+                title="Susceptibility",
+                scale=alt.Scale(domain=[0, 1]),
+            ),
+            _foundation_y,
             alt.Color(
                 "model:N",
                 title="",
@@ -285,9 +268,13 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
     )
 
     _p_error = _p_data.mark_errorbar().encode(
-        alt.X("susceptibility:Q", title="Susceptibility"),
+        alt.X(
+            "susceptibility:Q",
+            title="Susceptibility",
+            scale=alt.Scale(domain=[0, 1]),
+        ),
         alt.XError("susceptibility_uncertainty:Q"),
-        alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
+        _foundation_y,
     )
 
     _p_label = _p_bars.mark_text(
@@ -299,8 +286,12 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
         opacity=1.0,
         color="#000000",
     ).encode(
-        alt.Y("foundation:N"),
-        alt.X("susceptibility:Q", title="Susceptibility"),
+        _foundation_y,
+        alt.X(
+            "susceptibility:Q",
+            title="Susceptibility",
+            scale=alt.Scale(domain=[0, 1]),
+        ),
         alt.Text("s_label:N"),
         color=alt.value("black"),
         opacity=alt.value(1.0),
@@ -315,7 +306,7 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
         )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
-        .resolve_scale(x="independent")
+        .resolve_scale(x="shared")
         # .properties(
         #     width=100,
         #     height=50,
@@ -329,36 +320,8 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
 
 
 @app.cell
-def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extracolumns, pl):
-    _average_label = "Average across models"
-
-    _average_df = (
-        df.select(
-            "foundation",
-            "robustness",
-            "robustness_uncertainty",
-            "susceptibility",
-            "susceptibility_uncertainty",
-        )
-        .group_by("foundation")
-        .agg(
-            pl.mean("robustness").alias("robustness"),
-            pl.mean("robustness_uncertainty").alias("robustness_uncertainty"),
-            pl.mean("susceptibility").alias("susceptibility"),
-            pl.mean("susceptibility_uncertainty").alias("susceptibility_uncertainty"),
-        )
-        .with_columns(pl.lit(_average_label).alias("model"))
-        .select(
-            "model",
-            "foundation",
-            "robustness",
-            "robustness_uncertainty",
-            "susceptibility",
-            "susceptibility_uncertainty",
-        )
-    )
-
-    _chart_df = pl.concat([extracolumns(_average_df), df])
+def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, pl):
+    _chart_df = df
 
     _p_data = alt.Chart(
         _chart_df.with_columns(
@@ -374,12 +337,23 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
     _color_range = [MODEL_COLORS[model] for model in _color_domain]
     _color_scale = alt.Scale(domain=_color_domain, range=_color_range)
 
+    _foundation_y = alt.Y(
+        "foundation:N",
+        title=None,
+        sort=FOUNDATIONS_ORDER,
+        scale=alt.Scale(paddingInner=0.0, paddingOuter=0.05),
+    )
+
     _p_bars = (
         _p_data
         # .transform_filter(alt.datum.foundat)
-        .mark_bar(size=15).encode(
-            alt.X("robustness:Q", title="Robustness"),
-            alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
+        .mark_bar(size=10).encode(
+            alt.X(
+                "robustness:Q",
+                title="Robustness",
+                scale=alt.Scale(domain=[0, 1]),
+            ),
+            _foundation_y,
             alt.Color(
                 "model:N", title="", legend=None, sort=MODELS_ORDER, scale=_color_scale
             ),
@@ -390,9 +364,13 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
     )
 
     _p_error = _p_data.mark_errorbar().encode(
-        alt.X("robustness:Q", title="Robustness"),
+        alt.X(
+            "robustness:Q",
+            title="Robustness",
+            scale=alt.Scale(domain=[0, 1]),
+        ),
         alt.XError("robustness_uncertainty:Q"),
-        alt.Y("foundation:N", title=None, sort=FOUNDATIONS_ORDER),
+        _foundation_y,
     )
 
     _p_label = _p_bars.mark_text(
@@ -404,8 +382,12 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
         opacity=1.0,
         color="#000000",
     ).encode(
-        alt.Y("foundation:N"),
-        alt.X("robustness:Q", title="Robustness"),
+        _foundation_y,
+        alt.X(
+            "robustness:Q",
+            title="Robustness",
+            scale=alt.Scale(domain=[0, 1]),
+        ),
         alt.Text("r_label:N"),
         color=alt.value("black"),
         opacity=alt.value(1.0),
@@ -420,7 +402,7 @@ def _(FOUNDATIONS_ORDER, MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, df, extra
         )
         .configure_axis(grid=False)
         .configure_view(strokeWidth=0)
-        .resolve_scale(x="independent")
+        .resolve_scale(x="shared")
         # .properties(
         #     width=100,
         #     height=50,
@@ -450,15 +432,23 @@ def _(MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, table):
 
     _p_data = alt.Chart(_moral_metrics, height=200, width=200)
 
-    _p_bars_s = _p_data.mark_bar(size=15, opacity=0.6).encode(
+    _p_bars_s = _p_data.mark_bar(size=10, opacity=0.6).encode(
         alt.Y("model:N", sort=model_order, title=None),
-        alt.X("susceptibility:Q", title="Susceptibility"),
+        alt.X(
+            "susceptibility:Q",
+            title="Susceptibility",
+            scale=alt.Scale(domain=[0, 1]),
+        ),
         alt.Color("model:N", legend=None, sort=model_order, scale=_color_scale),
     )
 
     _p_error_s = _p_data.mark_errorbar().encode(
         alt.Y("model:N", sort=model_order),
-        alt.X("susceptibility:Q", title="Susceptibility"),
+        alt.X(
+            "susceptibility:Q",
+            title="Susceptibility",
+            scale=alt.Scale(domain=[0, 1]),
+        ),
         alt.XError("susceptibility_uncertainty:Q"),
     )
 
@@ -472,15 +462,23 @@ def _(MODEL_COLORS, MODELS_ORDER, RESULTS_DIR, alt, table):
         color="#000000",
     ).encode(alt.Text("s_label"), color=alt.value("black"), opacity=alt.value(1.0))
 
-    _p_bars_r = _p_data.mark_bar(size=15, opacity=0.6).encode(
+    _p_bars_r = _p_data.mark_bar(size=10, opacity=0.6).encode(
         alt.Y("model:N", sort=model_order, title=None),
-        alt.X("robustness:Q", title="Robustness"),
+        alt.X(
+            "robustness:Q",
+            title="Robustness",
+            scale=alt.Scale(domain=[0, 1]),
+        ),
         alt.Color("model:N", legend=None, sort=model_order, scale=_color_scale),
     )
 
     _p_error_r = _p_data.mark_errorbar().encode(
         alt.Y("model:N", sort=model_order),
-        alt.X("robustness:Q", title="Robustness"),
+        alt.X(
+            "robustness:Q",
+            title="Robustness",
+            scale=alt.Scale(domain=[0, 1]),
+        ),
         alt.XError("robustness_uncertainty:Q"),
     )
 

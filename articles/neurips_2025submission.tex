@@ -279,12 +279,17 @@ For each persona--question pair we compute the sample mean and the standard devi
 \begin{equation}
   \bar{u} = \frac{1}{|\mathcal{P}|\,|\mathcal{Q}|} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} u_{pq},\qquad \sigma_{\overline{u}}^2 = \frac{1}{|\mathcal{P}||\mathcal{Q}|(|\mathcal{P}|\,|\mathcal{Q}|-1)} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} (u_{pq} - \bar{u})^2.\label{eq:mean-uncertainty}
 \end{equation}
-Our robustness index is the reciprocal of that average:
+Let $\mathcal{M}$ denote the set of evaluated models and define
 \begin{equation}
-  R = \frac{1}{\bar{u}},\qquad \sigma_R = \frac{\sigma_{\bar{u}}}{\bar{u}^2},
+  c = \frac{1}{|\mathcal{M}|} \sum_{m \in \mathcal{M}} \bar{u}_m,
+  \label{eq:robustness-baseline}
+\end{equation}
+the across-model mean of the averaged standard deviations. Our bounded robustness index uses $c$ as a reference point:
+\begin{equation}
+  R = \frac{c}{\bar{u} + c},
   \label{eq:robustness}
 \end{equation}
-with uncertainty propagated from the $\sigma_{\overline{u}}$.
+which keeps $R \in[0, 1]$ and makes $R = 1/2$ the threshold for being more robust (smaller within-persona variability) than the overall average.
 
 Foundation-specific robustness reuse Eqs.~\eqref{eq:mean-uncertainty}--\eqref{eq:robustness} after restricting \(\mathcal{Q}\) to the question subset \(\mathcal{Q}_f\) for foundation \(f\). Having defined the within-persona variability, we now turn to between-persona dispersion.
 
@@ -293,18 +298,30 @@ Foundation-specific robustness reuse Eqs.~\eqref{eq:mean-uncertainty}--\eqref{eq
   & s_{qg}^2 = \frac{1}{|\mathcal{P}_g|-1} \sum_{p \in \mathcal{P}_g}(\bar{y}_{pq} - \bar{y}_{gq})^2,\qquad \bar{y}_{gq} = \frac{1}{|\mathcal{P}_g|} \sum_{p \in \mathcal{P}_g} \bar{y}_{pq}.
   \label{eq:question-dispersion}
 \end{align}
-From $s_{qg}$ we obtain a group-level susceptibility samples
+From $s_{qg}$ we obtain group-level susceptibility samples
 \begin{equation}
   S_g = \frac{1}{|\mathcal{Q}|} \sum_{q \in \mathcal{Q}} s_{qg}.\label{eq:group-susceptibility}
 \end{equation}
-Then, the reported susceptibility is the mean over groups
+Then, the unbounded susceptibility is the mean over groups
 \begin{equation}
-  S = \frac{1}{G} \sum_{g=1}^{G} S_g,\qquad \sigma_S = \sqrt{\frac{1}{G(G-1)} \sum_{g=1}^{G} (S_g - S)^2}
+  \widetilde{S} = \frac{1}{G} \sum_{g=1}^{G} S_g,\qquad \sigma_{\widetilde{S}} = \sqrt{\frac{1}{G(G-1)} \sum_{g=1}^{G} (S_g - \widetilde{S})^2}
   \label{eq:overall-susceptibility}
 \end{equation}
-with its standard error estimated from the between-group variability.
+with its standard error estimated from the between-group variability. Analogously to robustness we define a shared baseline
+\begin{equation}
+  c_S = \frac{1}{|\mathcal{M}|} \sum_{m \in \mathcal{M}} \widetilde{S}_m,
+  \label{eq:susceptibility-baseline}
+\end{equation}
+and report the bounded susceptibility
+\begin{equation}
+  S = \frac{\widetilde{S}}{\widetilde{S} + c_S},
+  \label{eq:bounded-susceptibility}
+\end{equation}
+which lies in \((0,1)\) with \(S=1/2\) marking the benchmark mean. Foundation-specific susceptibilities reuse Eqs.~\eqref{eq:question-dispersion}--\eqref{eq:bounded-susceptibility} after restricting \(\mathcal{Q}\) to the question subset \(\mathcal{Q}_f\) for foundation \(f\). Our results are displayed in Fig~\ref{fig:susceptibility-foundations}.
 
-Foundation-specific susceptibilities reuse Eqs.~\eqref{eq:question-dispersion}--\eqref{eq:overall-susceptibility} after restricting \(\mathcal{Q}\) to the question subset \(\mathcal{Q}_f\) for foundation \(f\). Our results are displayed in Fig~\ref{fig:susceptibility-foundations}.
+To propagate uncertainty in both robustness and susceptibility we draw Gaussian Monte Carlo replicas for every model: \(\bar{u}_i' \sim \mathcal{N}(\bar{u}_i, \sigma_{\bar{u}_i})\) and \(\widetilde{S}_i' \sim \mathcal{N}(\widetilde{S}_i, \sigma_{\widetilde{S}_i})\), clipping negative draws to a small positive constant. For each replica we recompute the baselines \(c'\) and \(c_S'\), evaluate Eqs.~\eqref{eq:robustness} and \eqref{eq:bounded-susceptibility} using the perturbed values, and report the Monte Carlo mean and standard deviation (over $5\times10^4$ draws) as the point estimate and standard error. This sampling scheme captures the coupled randomness between every model and the shared baselines.
+
+To propagate uncertainty in both robustness and susceptibility we draw Gaussian Monte Carlo replicas for every model: \(\bar{u}_i' \sim \mathcal{N}(\bar{u}_i, \sigma_{\bar{u}_i})\) and \(\widetilde{S}_i' \sim \mathcal{N}(\widetilde{S}_i, \sigma_{\widetilde{S}_i})\) with negative draws clipped to a small positive constant. For each replica we recompute the baselines \(c'\) and \(c_S'\), evaluate Eqs.~\eqref{eq:robustness} and \eqref{eq:bounded-susceptibility} using the perturbed values, and report the Monte Carlo mean and standard deviation (across $5\times10^4$ draws) as the point estimate and standard error. This sampling scheme captures the coupled randomness between every model and the shared baselines.
 
 
 \subsection{Correlation Metric}
@@ -395,7 +412,7 @@ Table~\ref{tab:correlation_foundations} lists the Pearson correlation coefficien
 
 
 \section{Conclusion}
-We present a benchmark for evaluating large language models's moral-response to persona role-play using the Moral Foundations Questionnaire. By distinguishing moral robustness (inverse of within-persona variability) from moral susceptibility (across-persona variability), our results reveal consistent family-level patterns and a size-dependent susceptibility trend. Together, these results offer a systematic framework for comparing moral profiles across model families and sizes, providing a quantitative basis for future studies of moral behavior in language models.
+We present a benchmark for evaluating large language models's moral response to persona role-play using the Moral Foundations Questionnaire. By distinguishing moral robustness (inverse of within-persona variability) from moral susceptibility (across-persona variability), our results reveal consistent family-level patterns and a size-dependent susceptibility trend. Together, these results offer a systematic framework for comparing moral profiles across model families and sizes, providing a quantitative basis for future studies of moral behavior in language models.
 
 
 

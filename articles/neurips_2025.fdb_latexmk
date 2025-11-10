@@ -1,20 +1,19 @@
 # Fdb version 4
-["bibtex neurips_2025"] 1762459462.00126 "neurips_2025.aux" "neurips_2025.bbl" "neurips_2025" 1762459462.94374 0
+["bibtex neurips_2025"] 1762796537.73905 "neurips_2025.aux" "neurips_2025.bbl" "neurips_2025" 1762796569.75749 0
   "./references.bib" 1761843196.68796 10768 1ac8f620bb7a5336c9f7e2678ace7981 ""
   "/usr/local/texlive/2025basic/texmf-dist/bibtex/bst/natbib/plainnat.bst" 1233624470 26816 ffe5423d2019860bad9f54bc402fac15 ""
-  "neurips_2025.aux" 1762459462.77048 13468 ff704d321804564462bb166a82179020 "pdflatex"
+  "neurips_2025.aux" 1762796569.60556 13025 f3891e177727cebf922c85eb34f11bca "pdflatex"
   (generated)
   "neurips_2025.bbl"
   "neurips_2025.blg"
   (rewritten before read)
-["pdflatex"] 1762459462.05263 "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/neurips_2025.tex" "neurips_2025.pdf" "neurips_2025" 1762459462.94387 0
-  "../results/moral_foundations_relevance_profiles.pdf" 1762445541.64094 25976 2bf643ce1e226b8895d02a78298c801d ""
-  "../results/moral_metrics_robustness_bars.pdf" 1762445081.86946 42315 8d8f2abd3c47e751fec2ed704ab507b7 ""
-  "../results/moral_metrics_susceptibility_bars.pdf" 1762445081.94169 42775 0f12ecba2ca5443a9d56ba76629ec4f0 ""
-  "../results/persona_moral_foundations_relevance_profiles.pdf" 1762379984.24766 26256 9b4569e99cec8c5409fa924fcbfadfbb ""
-  "../results/robustness_bars.pdf" 1762445081.77494 109667 12be0e72813e347ed857a2071f38914c ""
-  "../results/susceptibility_bars.pdf" 1762445081.43609 109294 49f803a81b7d33e89607dc7176c5db0e ""
-  "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/neurips_2025.tex" 1762459460.96625 36078 5bf89df41d8e12252d5002d0d861f6e3 ""
+["pdflatex"] 1762796568.97422 "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/neurips_2025.tex" "neurips_2025.pdf" "neurips_2025" 1762796569.75761 0
+  "../results/moral_foundations_relevance_profiles.pdf" 1762795262.4748 26460 b0a856f5c372f4d65a2978ddede2c358 ""
+  "../results/moral_metrics_overall_bars.pdf" 1762790251.10147 57483 e84ff8ab701689158b63e76352267800 ""
+  "../results/persona_moral_foundations_relevance_profiles.pdf" 1762796568.58798 26256 0cf11fca8affa3587c857895c770f82e ""
+  "../results/robustness_bars.pdf" 1762790250.82619 107529 54279c6d7f7a883c0af2d542a2207c7d ""
+  "../results/susceptibility_bars.pdf" 1762790250.57707 108229 86e1c1c44910f3474f5c237ece4f3a69 ""
+  "/Users/davicosta/Desktop/projects/llm-moral-susceptibility/articles/neurips_2025.tex" 1762796536.81877 36787 d7e953b1ef9d8589fecb87c5311c6070 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/enc/dvips/fontawesome5/fa5free1.enc" 1622837620 3042 0e2b14b9be7d01075a4c4591d5d1781b ""
@@ -60,6 +59,7 @@
   "/usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb" 1248133631 32442 c975af247b6702f7ca0c299af3616b80 ""
+  "/usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb" 1248133631 30457 bc0868ebece724ed7c3d37e3d9bff7bd ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1248133631 34694 ad62b13721ee8eda1dcc8993c8bd7041 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/cm-super/sftt0800.pfb" 1215737283 175641 e30a691dc1402b08fd6535cf8a31e5b7 ""
   "/usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb" 1215737283 169201 9ebf99020dde51a5086e186761a34e8f ""
@@ -234,13 +234,13 @@
   "/usr/local/texlive/2025basic/texmf.cnf" 1741448314 628 81d1ada0f601fb1ffa62f1323192d946 ""
   "appendix_personas.tex" 1761414419.82015 10252 5f63b1dfb9f89d49c45a2cbb6c3c57ad ""
   "failures_by_model.tex" 1762457916.44626 699 3b0c3043f3c892d50d4416b808aa4dc6 ""
-  "neurips_2025.aux" 1762459462.77048 13468 ff704d321804564462bb166a82179020 "pdflatex"
-  "neurips_2025.bbl" 1762459462.04976 9320 6cba8905161b44fdc6e88f7275196180 "bibtex neurips_2025"
-  "neurips_2025.out" 1762459462.77153 3083 89e5ef49289884c1954d9a071c2c62dc "pdflatex"
+  "neurips_2025.aux" 1762796569.60556 13025 f3891e177727cebf922c85eb34f11bca "pdflatex"
+  "neurips_2025.bbl" 1762796537.78166 9320 6cba8905161b44fdc6e88f7275196180 "bibtex neurips_2025"
+  "neurips_2025.out" 1762796569.60647 2620 fe01c486bdcc5160f8e1bbd5bf94c9a2 "pdflatex"
   "neurips_2025.sty" 1747049216 13023 2817c1b954c70ec3156371423da6545c ""
-  "neurips_2025.tex" 1762459460.96625 36078 5bf89df41d8e12252d5002d0d861f6e3 ""
-  "table_moral_foundations_profiles.tex" 1762457724.68496 2024 9d7604686dd19aea80dc5839b3e20b8d ""
-  "table_persona_moral_foundations_profiles.tex" 1762457795.83797 1565 ea2b4bc8cb93043cfd1271b8c07caf23 ""
+  "neurips_2025.tex" 1762796536.81877 36787 d7e953b1ef9d8589fecb87c5311c6070 ""
+  "table_moral_foundations_profiles.tex" 1762795540.95768 2115 be5318c7787159486c0bdca695164079 ""
+  "table_persona_moral_foundations_profiles.tex" 1762795651.05321 1475 7089fdbc0dd1913787d4369ce40154af ""
   (generated)
   "neurips_2025.aux"
   "neurips_2025.log"

@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
-"""Compute moral robustness and susceptibility using shared valid personas.
+"""Bootstrap moral robustness and susceptibility metrics via resampling.
 
-The script scans summary CSVs (default: results/*.csv) produced by
-build_persona_question_summary, determines the personas that have valid
-(`average_score`, `standard_deviation`) entries for every model, optionally
-removing one persona to avoid a prime count, and then computes the moral
-robustness and susceptibility metrics described in articles/neurips_2025.tex.
+This script mirrors the filtering/grouping logic in compute_moral_metrics but
+estimates the uncertainty of the bounded robustness/susceptibility indices with
+non-parametric bootstraps over the underlying persona/question statistics. The
+procedure is:
 
-Outputs a CSV with four metric columns (value + uncertainty for each
-capability) and one row per model ordered alphabetically."""
+1. Load per-model summary CSVs and determine the shared persona/question set.
+2. For each model, collect the set of within-persona standard deviations
+   (``u_{pq}``) and group-level susceptibility samples (``S_g``).
+3. Draw ``B`` bootstrap replicates of the mean ``u_{pq}`` and ``S_g`` by
+   resampling those base quantities with replacement.
+4. For every replicate, recompute the shared baselines ``c`` and ``c_S`` and
+   apply the bounded transform to obtain replicated robustness/susceptibility
+   values.
+5. Report the Monte Carlo mean and sample standard deviation across replicates
+   as the point estimate and uncertainty for each model (overall and per
+   foundation).
+"""
 
 from __future__ import annotations
 
@@ -17,11 +26,10 @@ import math
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Sequence, Literal
+from typing import Dict, Iterable, List, Sequence
 
 import numpy as np
 import pandas as pd
-
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -39,28 +47,20 @@ class SummaryData:
 
 
 @dataclass
-class FoundationMetrics:
-    mean_unc: float
-    se_unc: float
-    raw_susceptibility: float
-    raw_susceptibility_se: float
+class FoundationBootstrapData:
+    u_values: np.ndarray
+    s_samples: np.ndarray
 
 
 @dataclass
-class ModelMetrics:
+class ModelBootstrapData:
     model: str
-    mean_unc: float
-    se_unc: float
-    raw_susceptibility: float
-    raw_susceptibility_se: float
-    foundation_stats: dict[str, FoundationMetrics]
+    u_values: np.ndarray
+    s_samples: np.ndarray
+    foundation_stats: Dict[str, FoundationBootstrapData]
 
 
 TARGET_GROUP_SIZE = 10
-MODEL_RENAMES = {
-    "deepseek-chat": "deepseek-v3",
-    "deepseek-chat-v3.1": "deepseek-v3.1",
-}
 
 
 def parse_args() -> argparse.Namespace:
@@ -74,24 +74,34 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("results") / "moral_metrics.csv",
-        help="Destination CSV for model-level metrics (default: results/moral_metrics.csv).",
+        default=Path("results") / "moral_metrics_bootstrap.csv",
+        help="Destination CSV for model-level metrics (default: results/moral_metrics_bootstrap.csv).",
     )
     parser.add_argument(
         "--foundation-output",
         type=Path,
-        default=Path("results") / "moral_metrics_per_foundation.csv",
+        default=Path("results") / "moral_metrics_per_foundation_bootstrap.csv",
         help=(
-            "Destination CSV for foundation-level metrics (default: results/moral_metrics_per_foundation.csv)."
+            "Destination CSV for foundation-level metrics (default: results/moral_metrics_per_foundation_bootstrap.csv)."
         ),
     )
     parser.add_argument(
-        "--groups-output",
-        type=Path,
-        default=Path("results") / "persona_groups.csv",
-        help=(
-            "Destination CSV describing persona group assignments (default: results/persona_groups.csv)."
-        ),
+        "--bootstrap-samples",
+        type=int,
+        default=5000,
+        help="Number of bootstrap replicates for each model (default: 5000).",
+    )
+    parser.add_argument(
+        "--chunk-size",
+        type=int,
+        default=512,
+        help="Bootstrap batch size to control memory usage (default: 512).",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=1337,
+        help="Random seed for bootstrap resampling (default: 1337).",
     )
     parser.add_argument(
         "--verbose",
@@ -137,11 +147,9 @@ def load_summaries(directory: Path, verbose: bool = False) -> List[SummaryData]:
         df["persona_id"] = df["persona_id"].astype(int)
         df["question_id"] = df["question_id"].astype(int)
         questions = set(df["question_id"].unique())
-        model_slug = MODEL_RENAMES.get(csv_path.stem, csv_path.stem)
-
         summaries.append(
             SummaryData(
-                model=model_slug,
+                model=csv_path.stem,
                 path=csv_path,
                 frame=df,
                 questions=questions,
@@ -237,7 +245,6 @@ def build_groups(personas: Sequence[int], verbose: bool = False) -> tuple[List[L
             )
         if attempt >= 1:
             raise RuntimeError("Dropping one persona did not resolve prime-size grouping.")
-        # Remove the highest-index persona to break primality
         removed_persona = ordered.pop()
         removed.append(removed_persona)
         attempt += 1
@@ -253,53 +260,7 @@ def build_groups(personas: Sequence[int], verbose: bool = False) -> tuple[List[L
     return groups_list, removed
 
 
-def summarize_std_values(std_values: np.ndarray) -> tuple[float, float]:
-    if std_values.size == 0:
-        raise RuntimeError("No standard deviation values available for robustness computation.")
-    mean_unc = float(np.mean(std_values))
-    if std_values.size > 1:
-        sd_unc = float(np.std(std_values, ddof=1))
-        se_unc = sd_unc / math.sqrt(std_values.size)
-    else:
-        se_unc = 0.0
-    return mean_unc, se_unc
-
-
-def bounded_metric_with_linearized_uncertainty(
-    values: Sequence[float],
-    errors: Sequence[float],
-    *,
-    numerator: Literal["baseline", "value"],
-    clip_min: float = 1e-9,
-) -> tuple[np.ndarray, np.ndarray, float]:
-    """Apply bounded metric transform and propagate uncertainty analytically."""
-
-    arr = np.asarray(list(values), dtype=float)
-    errs = np.asarray(list(errors), dtype=float)
-
-    if arr.size == 0:
-        return np.array([], dtype=float), np.array([], dtype=float), float("nan")
-
-    arr = np.where(arr <= clip_min, clip_min, arr)
-    errs = np.clip(errs, a_min=0.0, a_max=None)
-    baseline = float(np.clip(arr.mean(), a_min=clip_min, a_max=None))
-
-    denom = arr + baseline
-    slope = baseline / np.square(denom)
-
-    if numerator == "baseline":
-        bounded = baseline / denom
-    elif numerator == "value":
-        bounded = arr / denom
-    else:
-        raise ValueError(f"Unsupported numerator option: {numerator}")
-
-    bounded_se = slope * errs
-    return bounded.astype(float), bounded_se.astype(float), baseline
-
-
-
-def compute_susceptibility(pivot: pd.DataFrame, groups: Sequence[Sequence[int]]) -> tuple[float, float]:
+def compute_group_s_samples(pivot: pd.DataFrame, groups: Sequence[Sequence[int]]) -> np.ndarray:
     samples: List[float] = []
     for group in groups:
         block = pivot.loc[list(group)]
@@ -307,16 +268,41 @@ def compute_susceptibility(pivot: pd.DataFrame, groups: Sequence[Sequence[int]])
         if per_question_std.isna().any():
             raise RuntimeError("Encountered NaN susceptibility standard deviation for a group.")
         samples.append(float(per_question_std.mean()))
-    susceptibility = float(np.mean(samples))
-    if len(samples) > 1:
-        susceptibility_se = float(np.std(samples, ddof=1) / math.sqrt(len(samples)))
-    else:
-        susceptibility_se = 0.0
-    return susceptibility, susceptibility_se
+    return np.asarray(samples, dtype=float)
+
+
+def bootstrap_means(
+    values: np.ndarray,
+    draws: int,
+    rng: np.random.Generator,
+    *,
+    chunk_size: int,
+) -> np.ndarray:
+    if draws <= 0:
+        raise ValueError("Number of bootstrap samples must be positive.")
+    values = np.asarray(values, dtype=float)
+    if values.size == 0:
+        raise RuntimeError("Cannot bootstrap an empty set of values.")
+    result = np.empty(draws, dtype=float)
+    remaining = draws
+    start = 0
+    while remaining > 0:
+        batch = min(remaining, chunk_size)
+        idx = rng.integers(0, values.size, size=(batch, values.size))
+        sampled = values[idx]
+        result[start : start + batch] = sampled.mean(axis=1)
+        start += batch
+        remaining -= batch
+    return result
 
 
 def main() -> None:
     args = parse_args()
+
+    if args.bootstrap_samples <= 0:
+        raise ValueError("--bootstrap-samples must be positive.")
+    if args.chunk_size <= 0:
+        raise ValueError("--chunk-size must be positive.")
 
     summaries = load_summaries(args.summaries_dir, verbose=args.verbose)
     common_questions = intersect_questions(summaries)
@@ -330,8 +316,8 @@ def main() -> None:
     missing_foundations = sorted(set(common_questions).difference(set(foundation_map)))
     if missing_foundations:
         raise RuntimeError(
-            "Missing foundation labels for questions: " + 
-            ", ".join(map(str, missing_foundations))
+            "Missing foundation labels for questions: "
+            + ", ".join(map(str, missing_foundations))
         )
     foundations = sorted(set(foundation_map.values()))
 
@@ -357,18 +343,7 @@ def main() -> None:
     if removed_personas:
         print("Personas removed to balance groups:", ", ".join(map(str, removed_personas)))
 
-    # Persist persona grouping assignments for downstream use
-    group_rows: list[dict[str, int]] = []
-    for group_id, group in enumerate(groups):
-        for persona_id in group:
-            group_rows.append({"group_id": group_id, "persona_id": persona_id})
-    group_df = pd.DataFrame(group_rows).sort_values(["group_id", "persona_id"])
-    args.groups_output.parent.mkdir(parents=True, exist_ok=True)
-    group_df.to_csv(args.groups_output, index=False)
-    if args.verbose:
-        print(f"Wrote persona grouping to {args.groups_output}")
-
-    model_metrics: List[ModelMetrics] = []
+    model_data: List[ModelBootstrapData] = []
     for summary in summaries:
         df = summary.frame
         filtered = df[
@@ -380,7 +355,8 @@ def main() -> None:
                 f"No data remaining for model {summary.model} after filtering personas/questions."
             )
         std_values = filtered["standard_deviation"].to_numpy(dtype=float)
-        mean_unc, se_unc = summarize_std_values(std_values)
+        if std_values.size == 0:
+            raise RuntimeError(f"Model {summary.model} has no standard deviation values.")
 
         pivot = (
             filtered.pivot(index="persona_id", columns="question_id", values="average_score")
@@ -391,9 +367,9 @@ def main() -> None:
             raise RuntimeError(
                 f"Model {summary.model} has {missing} missing average scores after filtering."
             )
-        susceptibility, susceptibility_se = compute_susceptibility(pivot, groups)
+        s_samples = compute_group_s_samples(pivot, groups)
 
-        foundation_stats: dict[str, FoundationMetrics] = {}
+        foundation_stats: Dict[str, FoundationBootstrapData] = {}
         for foundation in foundations:
             foundation_questions = [
                 qid for qid, name in foundation_map.items() if name == foundation
@@ -402,7 +378,6 @@ def main() -> None:
             if subset_f.empty:
                 continue
             std_values_f = subset_f["standard_deviation"].to_numpy(dtype=float)
-            mean_unc_f, se_unc_f = summarize_std_values(std_values_f)
             pivot_f = (
                 subset_f.pivot(index="persona_id", columns="question_id", values="average_score")
                 .loc[retained_personas]
@@ -412,115 +387,98 @@ def main() -> None:
                 raise RuntimeError(
                     f"Model {summary.model} has {missing} missing averages for foundation {foundation}."
                 )
-            susceptibility_f, susceptibility_se_f = compute_susceptibility(pivot_f, groups)
-            foundation_stats[foundation] = FoundationMetrics(
-                mean_unc=mean_unc_f,
-                se_unc=se_unc_f,
-                raw_susceptibility=susceptibility_f,
-                raw_susceptibility_se=susceptibility_se_f,
+            s_samples_f = compute_group_s_samples(pivot_f, groups)
+            foundation_stats[foundation] = FoundationBootstrapData(
+                u_values=std_values_f,
+                s_samples=s_samples_f,
             )
 
-        model_metrics.append(
-            ModelMetrics(
+        model_data.append(
+            ModelBootstrapData(
                 model=summary.model,
-                mean_unc=mean_unc,
-                se_unc=se_unc,
-                raw_susceptibility=susceptibility,
-                raw_susceptibility_se=susceptibility_se,
+                u_values=std_values,
+                s_samples=s_samples,
                 foundation_stats=foundation_stats,
             )
         )
 
-    if not model_metrics:
-        raise RuntimeError("No models available for robustness computation.")
+    rng = np.random.default_rng(args.seed)
+    draws = args.bootstrap_samples
 
-    mean_unc_array = [m.mean_unc for m in model_metrics]
-    mean_unc_se_array = [m.se_unc for m in model_metrics]
-    raw_susc_array = [m.raw_susceptibility for m in model_metrics]
-    raw_susc_se_array = [m.raw_susceptibility_se for m in model_metrics]
+    overall_rob_boot = []
+    overall_susc_boot = []
+    for data in model_data:
+        overall_rob_boot.append(
+            bootstrap_means(data.u_values, draws, rng, chunk_size=args.chunk_size)
+        )
+        overall_susc_boot.append(
+            bootstrap_means(data.s_samples, draws, rng, chunk_size=args.chunk_size)
+        )
 
-    overall_robust_vals, overall_robust_ses, _ = (
-        bounded_metric_with_linearized_uncertainty(
-            mean_unc_array,
-            mean_unc_se_array,
-            numerator="baseline",
-        )
-    )
-    overall_susc_vals, overall_susc_ses, _ = (
-        bounded_metric_with_linearized_uncertainty(
-            raw_susc_array,
-            raw_susc_se_array,
-            numerator="value",
-        )
-    )
+    overall_rob_boot = np.asarray(overall_rob_boot, dtype=float)
+    overall_susc_boot = np.asarray(overall_susc_boot, dtype=float)
+
+    rob_baseline = overall_rob_boot.mean(axis=0)
+    susc_baseline = overall_susc_boot.mean(axis=0)
+
+    bounded_robust = rob_baseline[None, :] / (overall_rob_boot + rob_baseline[None, :])
+    bounded_susc = overall_susc_boot / (overall_susc_boot + susc_baseline[None, :])
 
     metrics_rows = []
-    for model_metric, rob_val, rob_se, susc_val, susc_se in zip(
-        model_metrics,
-        overall_robust_vals,
-        overall_robust_ses,
-        overall_susc_vals,
-        overall_susc_ses,
+    for data, rob_vals, susc_vals in zip(
+        model_data,
+        bounded_robust,
+        bounded_susc,
         strict=True,
     ):
         metrics_rows.append(
             {
-                "model": model_metric.model,
-                "robustness": float(rob_val),
-                "robustness_uncertainty": float(rob_se),
-                "susceptibility": float(susc_val),
-                "susceptibility_uncertainty": float(susc_se),
+                "model": data.model,
+                "robustness": float(rob_vals.mean()),
+                "robustness_uncertainty": float(rob_vals.std(ddof=1)),
+                "susceptibility": float(susc_vals.mean()),
+                "susceptibility_uncertainty": float(susc_vals.std(ddof=1)),
             }
         )
 
     foundation_metrics_rows = []
     for foundation in foundations:
         foundation_models: List[str] = []
-        foundation_mean_unc: List[float] = []
-        foundation_mean_unc_se: List[float] = []
-        foundation_susc: List[float] = []
-        foundation_susc_se: List[float] = []
-
-        for model_metric in model_metrics:
-            stats = model_metric.foundation_stats.get(foundation)
+        rob_matrix: List[np.ndarray] = []
+        susc_matrix: List[np.ndarray] = []
+        for data in model_data:
+            stats = data.foundation_stats.get(foundation)
             if stats is None:
                 continue
-            foundation_models.append(model_metric.model)
-            foundation_mean_unc.append(stats.mean_unc)
-            foundation_mean_unc_se.append(stats.se_unc)
-            foundation_susc.append(stats.raw_susceptibility)
-            foundation_susc_se.append(stats.raw_susceptibility_se)
-
+            foundation_models.append(data.model)
+            rob_matrix.append(
+                bootstrap_means(stats.u_values, draws, rng, chunk_size=args.chunk_size)
+            )
+            susc_matrix.append(
+                bootstrap_means(stats.s_samples, draws, rng, chunk_size=args.chunk_size)
+            )
         if not foundation_models:
             continue
-
-        f_robust_vals, f_robust_ses, _ = bounded_metric_with_linearized_uncertainty(
-            foundation_mean_unc,
-            foundation_mean_unc_se,
-            numerator="baseline",
-        )
-        f_susc_vals, f_susc_ses, _ = bounded_metric_with_linearized_uncertainty(
-            foundation_susc,
-            foundation_susc_se,
-            numerator="value",
-        )
-
-        for model_name, rob_val, rob_se, susc_val, susc_se in zip(
+        rob_matrix = np.asarray(rob_matrix, dtype=float)
+        susc_matrix = np.asarray(susc_matrix, dtype=float)
+        rob_baseline_f = rob_matrix.mean(axis=0)
+        susc_baseline_f = susc_matrix.mean(axis=0)
+        bounded_rob_f = rob_baseline_f[None, :] / (rob_matrix + rob_baseline_f[None, :])
+        bounded_susc_f = susc_matrix / (susc_matrix + susc_baseline_f[None, :])
+        for model_name, rob_vals, susc_vals in zip(
             foundation_models,
-            f_robust_vals,
-            f_robust_ses,
-            f_susc_vals,
-            f_susc_ses,
+            bounded_rob_f,
+            bounded_susc_f,
             strict=True,
         ):
             foundation_metrics_rows.append(
                 {
                     "model": model_name,
                     "foundation": foundation,
-                    "robustness": float(rob_val),
-                    "robustness_uncertainty": float(rob_se),
-                    "susceptibility": float(susc_val),
-                    "susceptibility_uncertainty": float(susc_se),
+                    "robustness": float(rob_vals.mean()),
+                    "robustness_uncertainty": float(rob_vals.std(ddof=1)),
+                    "susceptibility": float(susc_vals.mean()),
+                    "susceptibility_uncertainty": float(susc_vals.std(ddof=1)),
                 }
             )
 
@@ -536,12 +494,15 @@ def main() -> None:
         )
         args.foundation_output.parent.mkdir(parents=True, exist_ok=True)
         foundation_df.to_csv(args.foundation_output, index=False)
-        if args.verbose:
-            model_count = foundation_df["model"].nunique()
-            print(f"Wrote foundation metrics for {model_count} models to {args.foundation_output}")
 
     if args.verbose:
-        print(f"Wrote metrics for {len(metrics_df)} models to {args.output}")
+        print(
+            f"Wrote bootstrap metrics for {len(metrics_df)} models to {args.output}"
+        )
+        if foundation_metrics_rows:
+            print(
+                f"Wrote bootstrap foundation metrics to {args.foundation_output}"
+            )
 
 
 if __name__ == "__main__":

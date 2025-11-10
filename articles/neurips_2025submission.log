@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.26)  6 NOV 2025 17:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.26)  6 NOV 2025 18:37
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -779,11 +779,11 @@ File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 
 LaTeX Warning: Reference `sec:uninstructed_personas' on page 4 undefined on input line 239.
 
-<../results/moral_metrics_robustness_bars.pdf, id=257, 345.29pt x 244.915pt>
+<../results/moral_metrics_robustness_bars.pdf, id=257, 353.32pt x 244.915pt>
 File: ../results/moral_metrics_robustness_bars.pdf Graphic file (type pdf)
 <use ../results/moral_metrics_robustness_bars.pdf>
 Package pdftex.def Info: ../results/moral_metrics_robustness_bars.pdf  used on input line 254.
-(pdftex.def)             Requested size: 190.79109pt x 135.33148pt.
+(pdftex.def)             Requested size: 190.79109pt x 132.25212pt.
 <../results/moral_metrics_susceptibility_bars.pdf, id=260, 349.305pt x 244.915pt>
 File: ../results/moral_metrics_susceptibility_bars.pdf Graphic file (type pdf)
 <use ../results/moral_metrics_susceptibility_bars.pdf>
@@ -797,65 +797,59 @@ Package pdftex.def Info: ../results/moral_metrics_susceptibility_bars.pdf  used 
 
 pdfTeX warning: pdflatex (file ../results/moral_metrics_susceptibility_bars.pdf): PDF inclusion: multiple pdfs with page group included in a single page
 >]
-<../results/robustness_bars.pdf, id=454, 714.67pt x 1052.93375pt>
-File: ../results/robustness_bars.pdf Graphic file (type pdf)
-<use ../results/robustness_bars.pdf>
-Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 345.
-(pdftex.def)             Requested size: 357.73405pt x 527.06004pt.
-<../results/susceptibility_bars.pdf, id=457, 722.7pt x 1046.91125pt>
-File: ../results/susceptibility_bars.pdf Graphic file (type pdf)
-<use ../results/susceptibility_bars.pdf>
-Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 353.
-(pdftex.def)             Requested size: 357.73405pt x 518.21469pt.
-
 
 [6]
-Underfull \vbox (badness 6173) has occurred while \output is active []
-
+<../results/robustness_bars.pdf, id=464, 732.7375pt x 892.33376pt>
+File: ../results/robustness_bars.pdf Graphic file (type pdf)
+<use ../results/robustness_bars.pdf>
+Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 350.
+(pdftex.def)             Requested size: 357.73405pt x 435.65431pt.
+<../results/susceptibility_bars.pdf, id=467, 822.07124pt x 886.31125pt>
+File: ../results/susceptibility_bars.pdf Graphic file (type pdf)
+<use ../results/susceptibility_bars.pdf>
+Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 358.
+(pdftex.def)             Requested size: 357.73405pt x 385.69104pt.
 
 
 [7 <../results/robustness_bars.pdf>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 
 [8 <../results/susceptibility_bars.pdf>] (./neurips_2025submission.bbl
 
-[9]
+[9])
 
-[10])
-Underfull \hbox (badness 10000) in paragraph at lines 425--432
+[10]
+Underfull \hbox (badness 10000) in paragraph at lines 430--437
 []\T1/cmtt/m/n/7 When deciding whether something is right or wrong, how relevant is the following
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 425--432
+Underfull \hbox (badness 10000) in paragraph at lines 430--437
 \T1/cmtt/m/n/7 consideration to your thinking: <CONSIDERATION>. Please rate the consideration using
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 425--432
+Underfull \hbox (badness 10000) in paragraph at lines 430--437
 \T1/cmtt/m/n/7 this scale: 0 = not at all relevant, 1 = not very relevant, 2 = slightly relevant, 3 =
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 437--444
+Underfull \hbox (badness 10000) in paragraph at lines 442--449
 []\T1/cmtt/m/n/7 Please indicate your level of agreement with the following statement: <STATEMENT>.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 437--444
+Underfull \hbox (badness 10000) in paragraph at lines 442--449
 \T1/cmtt/m/n/7 Please rate the statement using this scale: 0 = strongly disagree, 1 = moderately
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 437--444
+Underfull \hbox (badness 10000) in paragraph at lines 442--449
 \T1/cmtt/m/n/7 disagree, 2 = slightly disagree, 3 = slightly agree, 4 = moderately agree, 5 = strongly
  []
 
-(./table_moral_foundations_profiles.tex) (./table_persona_moral_foundations_profiles.tex) (./failures_by_model.tex)
+(./table_moral_foundations_profiles.tex) (./table_persona_moral_foundations_profiles.tex)
 
-[11] (./appendix_personas.tex
+[11] (./failures_by_model.tex) (./appendix_personas.tex
 
 [12]
 
@@ -878,18 +872,18 @@ Package rerunfilecheck Info: File `neurips_2025submission.out' has not changed.
 (rerunfilecheck)             Checksum: 89E5EF49289884C1954D9A071C2C62DC;3083.
  ) 
 Here is how much of TeX's memory you used:
- 29988 strings out of 473190
- 562245 string characters out of 5713195
- 974666 words of memory out of 5000000
- 52340 multiletter control sequences out of 15000+600000
+ 29990 strings out of 473190
+ 562280 string characters out of 5713195
+ 968706 words of memory out of 5000000
+ 52341 multiletter control sequences out of 15000+600000
  605102 words of font info for 223 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,16n,87p,1377b,1317s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/fontawesome5/FontAwesome5Free-Solid.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/cm-super/sftt0800.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on neurips_2025submission.pdf (16 pages, 629890 bytes).
+Output written on neurips_2025submission.pdf (16 pages, 627668 bytes).
 PDF statistics:
- 1258 PDF objects out of 1440 (max. 8388607)
- 792 compressed objects within 8 object streams
- 183 named destinations out of 1000 (max. 500000)
+ 1259 PDF objects out of 1440 (max. 8388607)
+ 793 compressed objects within 8 object streams
+ 184 named destinations out of 1000 (max. 500000)
  48835 words of extra memory for PDF output out of 51595 (max. 10000000)
 
