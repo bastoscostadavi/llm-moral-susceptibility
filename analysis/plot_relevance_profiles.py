@@ -9,7 +9,7 @@ import sys
 from math import ceil, sqrt
 from pathlib import Path
 from statistics import mean, stdev
-from typing import Dict, Iterable, List, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
@@ -204,7 +204,40 @@ def _pairwise(points: Iterable[Tuple[float, float]]) -> Iterable[Tuple[Tuple[flo
         yield point_list[idx], point_list[idx + 1]
 
 
-def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) -> Path:
+def aggregate_self_summary(
+    model_summaries: Dict[str, Dict[str, Tuple[float, float]]]
+) -> Optional[Dict[str, Tuple[float, float]]]:
+    """Average the no-persona profiles across models for the Self line."""
+
+    if not model_summaries:
+        return None
+
+    summary: Dict[str, Tuple[float, float]] = {}
+    for foundation in FOUNDATION_ORDER:
+        means: List[float] = []
+        ses: List[float] = []
+        for model_summary in model_summaries.values():
+            if foundation not in model_summary:
+                continue
+            mean_val, se_val = model_summary[foundation]
+            means.append(mean_val)
+            ses.append(se_val)
+
+        if not means:
+            return None
+
+        mean_avg = sum(means) / len(means)
+        se_combined = sqrt(sum(se ** 2 for se in ses)) / len(ses) if ses else 0.0
+        summary[foundation] = (mean_avg, se_combined)
+
+    return summary
+
+
+def plot_profiles(
+    model_summaries: Dict[str, Dict[str, Tuple[float, float]]],
+    *,
+    self_summary: Optional[Dict[str, Tuple[float, float]]] = None,
+) -> Path:
     """Generate a Haidt-style line plot with error bars using Matplotlib."""
 
     if not model_summaries:
@@ -224,14 +257,32 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
 
     x_positions = list(range(len(FOUNDATION_ORDER)))
 
-    legend_cols = min(5, max(1, len(sorted_models)))
-    legend_rows = ceil(len(sorted_models) / legend_cols)
+    total_series = len(sorted_models) + (1 if self_summary else 0)
+    legend_cols = min(5, max(1, total_series))
+    legend_rows = ceil(total_series / legend_cols)
 
     fig = plt.figure(figsize=(11, 7.2))
     gs = fig.add_gridspec(nrows=2, ncols=1, height_ratios=[14, max(legend_rows, 1)], hspace=0.3)
     ax = fig.add_subplot(gs[0])
     legend_ax = fig.add_subplot(gs[1])
     legend_ax.axis('off')
+
+    if self_summary:
+        means = [self_summary[foundation][0] for foundation in FOUNDATION_ORDER]
+        errors = [self_summary[foundation][1] for foundation in FOUNDATION_ORDER]
+
+        ax.errorbar(
+            x_positions,
+            means,
+            yerr=errors,
+            label="Average",
+            color="#000000",
+            linestyle="-",
+            linewidth=3.0,
+            marker="o",
+            markersize=6,
+            capsize=5,
+        )
 
     for model in sorted_models:
         color, marker, linestyle, display_name = style_map[model]
@@ -288,7 +339,8 @@ def plot_profiles(model_summaries: Dict[str, Dict[str, Tuple[float, float]]]) ->
 def main() -> None:
     scores = load_relevance_scores()
     summaries = summarise_scores(scores)
-    pdf_path = plot_profiles(summaries)
+    self_summary = aggregate_self_summary(summaries)
+    pdf_path = plot_profiles(summaries, self_summary=self_summary)
     print(f"Saved plot to {pdf_path}")
 
 

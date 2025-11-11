@@ -51,7 +51,7 @@
   belowskip=0.5em,
 }
 
-\title{Moral Susceptibility and Robustness under Persona Role-Play in Large Language Models}
+\title{Moral Susceptibility and Robustness under Persona~Role-Play in Large Language Models}
 
 
 
@@ -70,7 +70,7 @@ University of São Paulo \\
 \maketitle
 
 \begin{abstract}
-  Large language models (LLMs) increasingly operate in social contexts, motivating analysis of how they express and shift moral judgments. In this work, we investigate the moral response of LLMs to persona role-play, prompting a LLM to assume a specific character. Using the Moral Foundations Questionnaire (MFQ), we introduce a benchmark that quantifies two properties: moral susceptibility and moral robustness, defined from the variability of MFQ scores across and within personas, respectively. We find that, for moral robustness, model family accounts for most of the variance, while model size shows no systematic effect. The Claude family is, by a significant margin, the most robust, whereas Grok models are the least. In contrast, moral susceptibility exhibits a mild family effect but a clear within-family size effect, with larger variants being more susceptible. Beyond that, we observe a positive correlation between robustness and susceptibility, that is more pronounced at the family level. Additionally, we present moral foundation profiles for models without persona role-play and for averaged persona characterizations. Together, these analyses provide a systematic view of how persona conditioning shapes moral reasoning in LLMs.
+  Large language models (LLMs) increasingly operate in social contexts, motivating analysis of how they express and shift moral judgments. In this work, we investigate the moral response of LLMs to persona role-play, prompting a LLM to assume a specific character. Using the Moral Foundations Questionnaire (MFQ), we introduce a benchmark that quantifies two properties: moral susceptibility and moral robustness, defined from the variability of MFQ scores across and within personas, respectively. We find that, for moral robustness, model family accounts for most of the variance, while model size shows no systematic effect. The Claude family is, by a significant margin, the most robust, followed by Gemini and GPT-4 models, with other families exhibiting lower robustness. In contrast, moral susceptibility exhibits a mild family effect but a clear within-family size effect, with larger variants being more susceptible. Moreover, robustness and susceptibility are positively correlated, an association that is more pronounced at the family level. Additionally, we present moral foundation profiles for models without persona role-play and for personas averaged across models. Together, these analyses provide a systematic view of how persona conditioning shapes moral behavior in large language models.
 \end{abstract}
 
 
@@ -197,7 +197,7 @@ This paper introduces a benchmark that combines persona role-play---prompting a 
   \end{figure}
   
 
-Applying this framework across contemporary model families and sizes, we find that model family accounts for most of the variance in moral robustness, with no systematic effect of model size. In contrast, moral susceptibility shows a mild family effect but a clear within-family size trend, with larger variants being more susceptible. Among individual models, Claude 4.5 Sonnet is the most robust and Grok 4 Fast the least. Conversely, Gemini 2.5 Flash is the most susceptible, while GPT-5 Nano is the least. Overall, we observe a non-zero correlation between robustness and susceptibility with sign depending on the speciric moral foundation. The relationships are usually more pronounced at the family level, as seen in Section~\ref{sec:robustness-susceptibility-correlation}.
+Applying this framework across contemporary model families and sizes, we find that model family accounts for most of the variance in moral robustness, with no systematic effect of model size. In contrast, moral susceptibility shows a mild family effect but a clear within-family size trend, with larger variants being more susceptible. Among individual models, Claude 4.5 Sonnet is the most robust and Grok 4 Fast the least. Conversely, Gemini 2.5 Flash is the most susceptible, while GPT-5 Nano is the least. Overall, we observe a a positive correlation between robustness and susceptibility, which is more pronounced at the family level, as seen in Section~\ref{sec:robustness-susceptibility-correlation}.
 
 Recent research has examined the moral and social behavior of LLMs through the lens of the MFQ, exploring their value orientations, cultural variability, and alignment with human moral judgments \citep{abdulhai-etal-2024-moral,nunes2024hypocrites,aksoy2024whose,bajpai2024insights,ji2025moralbenchmoralevaluationllms}. Parallel efforts study persona role-playing as a mechanism for conditioning model behavior, including benchmarks, interactive environments, and diagnostic analyses \citep{tseng2024two,wang2023rolellm,samuel2025personagym,yu2025rpgbench,xu2024character,elboudouri2025rpeval,bai2025concept}. Our MFQ persona framework bridges these directions by systematically quantifying how persona conditioning alters moral judgments, separating the effects of repeated sampling (moral robustness) from those of persona variation (moral susceptibility). In addition, we report MFQ profiles for both unconditioned and persona-conditioned settings, providing a comparative view of baseline moral tendencies and persona-driven moral shifts across models.
 
@@ -214,18 +214,18 @@ Figure~\ref{fig:mfq-profiles} illustrates the resulting foundation-level MFQ sco
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{../results/moral_foundations_relevance_profiles.pdf}
-  \caption{Moral foundation profile across models with no-persona role-play (self). Points show mean rating per foundation; error bars denote standard errors across questions within each foundation. See Table~\ref{tab:moral_foundations_profiles} for exact values.}
+  \caption{Moral foundation profile across models with no-persona role-play (self) together with the average over all models. Points show mean rating and error bars denote standard errors across questions within each foundation. See Table~\ref{tab:moral_foundations_profiles} for exact values.}
   \label{fig:mfq-profiles}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{../results/persona_moral_foundations_relevance_profiles.pdf}
-  \caption{Moral foundation profiles for fourteen randomly selected personas together with the self-assessment (no persona role-play) curve averaged across models. See Table~\ref{tab:persona_moral_foundations_profiles} for exact values.}
+  \caption{Moral foundation profiles for fourteen randomly selected personas  averaged across models together with the average over all personas and models. Points show mean rating and error bars denote standard errors across questions within each foundation. See Table~\ref{tab:persona_moral_foundations_profiles} for exact values.}
   \label{fig:persona-mfq-profiles}
 \end{figure}
 
-Figure~\ref{fig:persona-mfq-profiles} reports foundation-level MFQ scores averaged over all models for different personas. It gives an average characterization of the moral profile of models elicited by a given persona. Complementary, in Table~\ref{tab:persona_foundation_maxima}, we present the persona ID that attained the highest MFQ score averaged across models for each foundation. See Appendix~\ref{app:personas} for the persona descriptions. The full per-persona, per-model, and per-question MFQ ratings are available in our GitHub repository \cite{costa2025llmms}.
+Figure~\ref{fig:persona-mfq-profiles} reports foundation-level MFQ scores averaged over all models for different personas, and for the average persona. It gives an average characterization of the moral profile of models elicited by a given persona (see Appendix~\ref{app:personas} for the persona descriptions). It is intereting to compare the average score across models with no persona-conditioning with the average score across models over all personas, this gives a sense of the average moral response of models to persona role-play (see Appendix~\ref{app:moral-foundations-tables} for details). Complementary, in Table~\ref{tab:persona_foundation_maxima}, we present the persona ID that attained the highest MFQ score averaged across models for each foundation. The full per-persona, per-model, and per-question MFQ ratings are available in our GitHub repository \cite{costa2025llmms}.
 
 \begin{table}[t]
   \centering
@@ -250,7 +250,7 @@ For each model, we iterate through all MFQ questions for every persona, repeatin
   \item \textbf{Prompting:} For each persona and question, the model receives a role-playing instruction: ``You are roleplaying as the following persona:", followed by the persona description text and one of the $|\mathcal{Q}|=30$ MFQ questions.\footnote{We query one MFQ question at a time rather than the full questionnaire in a single prompt to avoid sequence- and order-dependent effects.} We instruct the models to start their response with the rating (an integer from 0 to 5), followed by their reasoning. Exact prompt templates are provided in Appendix~\ref{app:prompts}.
   \item \textbf{Repetition:} Each persona--question pair is queried \(n=10\) times to estimate within-persona mean score and variance, which are then used to compute the moral robustness and susceptibility, defined in Eq.~\eqref{eq:robustness} and Eq.~\eqref{eq:overall-susceptibility}. See Section~\ref{sec:rating_estimation} for a discussion of the underlying problem and an outline of a more principled approach.
   \item \textbf{Decoding:} In the first run, we constrain outputs to begin with a single integer rating from 0 to 5, and parse this leading integer. Parsing failures are recorded and we repeat each attempt at most 4 times, allowing responses that do not begin with the rating (see Section~\ref{sec:failures} for more details). This approach minimizes costs and unexpectedly revealed that some personas more likely elicit models to not follow instructions (see Section~\ref{sec:failures}).
-  \item \textbf{Models:} We included: Claude Haiku 4.5, Claude Sonnet 4.5, DeepSeek V3,DeepSeek V3.1, Gemini 2.5 Flash Lite, Gemini 2.5 Flash, GPT-4.1, GPT-4.1 Mini, GPT-4.1 Nano, GPT-4o, GPT-4o Mini, GPT-5, GPT-5 Mini, GPT-5 Nano, Grok 4 and Grok 4 Fast. \item \textbf{Families:} We groups the above models in the following families: Claude, DeepSeek, Gemini, GPT-4, GPT-5 and Grok.
+  \item \textbf{Models:} We included: Claude Haiku 4.5, Claude Sonnet 4.5, DeepSeek V3,DeepSeek V3.1, Gemini 2.5 Flash Lite, Gemini 2.5 Flash, GPT-4.1, GPT-4.1 Mini, GPT-4.1 Nano, GPT-4o, GPT-4o Mini, GPT-5, GPT-5 Mini, GPT-5 Nano, Grok 4 and Grok 4 Fast. \item \textbf{Families:} We group the above models in the following families: Claude, DeepSeek, Gemini, GPT-4, GPT-5 and Grok.
   \item \textbf{Logging}: For each model we did a total of $|\mathcal{Q}|\times|\mathcal{P}|\times n =30\times 100\times 10=30,000$ requests. The resulting tables are available in our GitHub repository \cite{costa2025llmms}.
 \end{itemize}
 We next formalize how these repeated ratings are aggregated into moral robustness and susceptibility scores.
@@ -276,7 +276,7 @@ We define the unbounded robustness index as the inverse:
   \widetilde{R} = \frac{1}{\bar{u}},\qquad \sigma_{\widetilde{R}} = \frac{\sigma_{\bar{u}}}{\bar{u}^2},
   \label{eq:unbounded-robustness}
 \end{equation}
-with uncertainty approximated propagated from $\bar{u}$.
+with uncertainty approximated by propagating $\sigma_{\bar{u}}$ from $\bar{u}$.
 Moral robustness is then defined as
 \begin{equation}
   R = \frac{\widetilde{R}}{\widetilde{R} + \mathbb{E}[\widetilde{R}]},\qquad
@@ -352,7 +352,7 @@ Our results for the overall moral robustness, Eq.~\eqref{eq:robustness}, and mor
   \label{fig:robustness-susceptibility}
 \end{figure}
 
-In addition to moral robustness and susceptibility, we also display in Table~\ref{tab:unbounded_means} the average value across models of the unbounded robustness Eq.~\eqref{eq:unbounded-robustness} and susceptibility Eq.~\eqref{eq:unbounded-susceptibility}. As one can see, Fairness/Reciprocity and Harm/Care yield the highest average unbounded robustness and the lowest unbounded susceptibility, compared with other foudnations. The remaining foundations cluster closer together.
+In addition to moral robustness and susceptibility, we also display in Table~\ref{tab:unbounded_means} the average value across models of the unbounded robustness Eq.~\eqref{eq:unbounded-robustness} and susceptibility Eq.~\eqref{eq:unbounded-susceptibility}. As one can see, Fairness/Reciprocity and Harm/Care yield the highest average unbounded robustness and the lowest unbounded susceptibility, compared with other foudnations.
 
 \subsection{Moral Robustness}
 
@@ -384,7 +384,7 @@ models have a more balanced susceptibility moral profile if compared with robust
 \subsection{Correlation Between Robustness and Susceptibility}
 \label{sec:robustness-susceptibility-correlation}
 
-Table~\ref{tab:correlation_foundations} summarises the Pearson correlations from Eq.~\eqref{eq:pearson} at the model and family levels. With all models included we see a positive association between robustness and susceptibility ($+0.27 \pm 0.07$ across models, $+0.29 \pm 0.09$ by family), with Fairness/Reciprocity and Harm/Care showing the strongest dependencies while Purity/Sanctity remains negative. The Grok family suppresses these values because of its low robustness and high susceptibility, particularly within Purity/Sanctity. Excluding Grok lifts every foundation, yielding an overall correlation of $+0.41 \pm 0.07$ ($+0.48 \pm 0.09$ by family) and reinforcing the positive trends without altering the qualitative ordering across foundations.
+Table~\ref{tab:correlation_foundations} summarises the Pearson correlations from Eq.~\eqref{eq:pearson} at the model and family levels. With all models included we see a positive association between robustness and susceptibility ($+0.27 \pm 0.07$ across models, $+0.29 \pm 0.09$ by family), with Fairness/Reciprocity and Harm/Care showing the strongest dependencies while Purity/Sanctity remains negative. The Grok family suppresses these values because of its low robustness and high susceptibility, particularly within Purity/Sanctity. Excluding Grok lifts every foundation, reinforcing the positive trends without altering the qualitative ordering across foundations.
 
 \begin{table}[t]
   \centering
@@ -408,16 +408,16 @@ Table~\ref{tab:correlation_foundations} summarises the Pearson correlations from
 
 
 \section{Conclusion}
-We present a benchmark for evaluating large language models's moral-response to persona role-play using the Moral Foundations Questionnaire. By distinguishing moral robustness (within-persona variability) from moral susceptibility (across-persona variability), our results reveal consistent family-level patterns for robutness and a size-dependent susceptibility trends. Together, these results offer a systematic framework for comparing moral profiles across model families and sizes, providing a quantitative basis for future studies of moral behavior in language models.
+We present a benchmark for evaluating large language models's moral response to persona role-play using the Moral Foundations Questionnaire. By distinguishing moral robustness (within-persona variability) from moral susceptibility (across-persona variability), our results reveal consistent family-level patterns for robutness and a size-dependent susceptibility trends. Together, these results offer a systematic framework for comparing moral profiles across model families and sizes, providing a quantitative basis for future studies of moral behavior in language models.
 
 
 \section*{Acknowledgments}
 
-We gratefully acknowledge the financial support of the TELUS Digital Research Hub. 
+We gratefully acknowledge the financial support of the TELUS Digital Research Hub.
 
 
 \bibliographystyle{plainnat}
-\bibliography{references}
+\bibliography{references.bib}
 
 
 \appendix
@@ -484,6 +484,8 @@ This appendix provides the numerical MFQ foundation profiles that correspond to 
   \label{tab:persona_moral_foundations_profiles}
   \resizebox{\linewidth}{!}{\input{table_persona_moral_foundations_profiles.tex}}
 \end{table}
+
+It is intereting to compare the One can see that the only foundation for which models performed better than the average persona was Farirness/Reciprocity with the average over models being $4.36\pm 0.07$ and the average over personas being $4.25\pm0.01$. In contrast, the one for which the average over personas has the largest relative difference is Purity/Sanctity, $1.95\pm0.11$ vs $2.40\pm0.02$.
 
 
 

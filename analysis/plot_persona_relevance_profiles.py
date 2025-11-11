@@ -25,7 +25,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from mfq_questions import iter_questions
-from plot_relevance_profiles import load_relevance_scores, summarise_scores
 
 FOUNDATION_ORDER: List[str] = [
     "Harm/Care",
@@ -247,11 +246,32 @@ def summarise_persona_scores(
     return summaries
 
 
+def aggregate_persona_summary(
+    scores_by_persona: Dict[int, Dict[str, List[float]]]
+) -> Optional[Dict[str, Tuple[float, float]]]:
+    """Average scores across all personas and models for plotting."""
+
+    aggregated: Dict[str, List[float]] = {foundation: [] for foundation in FOUNDATION_ORDER}
+    for foundation_scores in scores_by_persona.values():
+        for foundation in FOUNDATION_ORDER:
+            aggregated[foundation].extend(foundation_scores.get(foundation, []))
+
+    if any(len(values) == 0 for values in aggregated.values()):
+        return None
+
+    summary: Dict[str, Tuple[float, float]] = {}
+    for foundation, values in aggregated.items():
+        mean_score = mean(values)
+        se_score = stdev(values) / sqrt(len(values)) if len(values) > 1 else 0.0
+        summary[foundation] = (mean_score, se_score)
+    return summary
+
+
 def plot_persona_profiles(
     persona_summaries: Dict[int, Dict[str, Tuple[float, float]]],
     output_path: Path,
     *,
-    self_summary: Optional[Dict[str, Tuple[float, float]]] = None,
+    overall_summary: Optional[Dict[str, Tuple[float, float]]] = None,
 ) -> Path:
     """Generate a line plot for averaged persona foundation profiles."""
 
@@ -261,7 +281,7 @@ def plot_persona_profiles(
     sorted_personas = sorted(persona_summaries)
     x_positions = list(range(len(FOUNDATION_ORDER)))
 
-    total_series = len(sorted_personas) + (1 if self_summary else 0)
+    total_series = len(sorted_personas) + (1 if overall_summary else 0)
     legend_cols = min(5, max(1, total_series))
     legend_rows = ceil(total_series / legend_cols)
 
@@ -271,15 +291,15 @@ def plot_persona_profiles(
     legend_ax = fig.add_subplot(gs[1])
     legend_ax.axis('off')
 
-    if self_summary:
-        means = [self_summary[foundation][0] for foundation in FOUNDATION_ORDER]
-        errors = [self_summary[foundation][1] for foundation in FOUNDATION_ORDER]
+    if overall_summary:
+        means = [overall_summary[foundation][0] for foundation in FOUNDATION_ORDER]
+        errors = [overall_summary[foundation][1] for foundation in FOUNDATION_ORDER]
 
         ax.errorbar(
             x_positions,
             means,
             yerr=errors,
-            label="Self",
+            label="Average",
             color="#000000",
             linestyle="-",
             linewidth=3.0,
@@ -399,30 +419,13 @@ def main() -> None:
             file=sys.stderr,
         )
 
-    self_scores = load_relevance_scores()
-    self_model_summaries = summarise_scores(self_scores)
-    self_summary: Optional[Dict[str, Tuple[float, float]]]
-    if not self_model_summaries:
-        self_summary = None
-    else:
-        aggregated: Dict[str, Tuple[float, float]] = {}
-        for foundation in FOUNDATION_ORDER:
-            means: List[float] = []
-            ses: List[float] = []
-            for model_summary in self_model_summaries.values():
-                if foundation not in model_summary:
-                    continue
-                mean_val, se_val = model_summary[foundation]
-                means.append(mean_val)
-                ses.append(se_val)
-            if not means:
-                continue
-            mean_avg = sum(means) / len(means)
-            se_combined = sqrt(sum(se ** 2 for se in ses)) / len(ses)
-            aggregated[foundation] = (mean_avg, se_combined)
-        self_summary = aggregated if aggregated else None
+    overall_summary = aggregate_persona_summary(scores)
 
-    pdf_path = plot_persona_profiles(summaries, args.output, self_summary=self_summary)
+    pdf_path = plot_persona_profiles(
+        summaries,
+        args.output,
+        overall_summary=overall_summary,
+    )
     print(f"Sampled personas: {sampled_personas}")
     print(f"Saved plot to {pdf_path}")
 

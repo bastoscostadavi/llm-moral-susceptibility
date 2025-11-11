@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.26)  10 NOV 2025 21:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.8.26)  11 NOV 2025 10:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -742,45 +742,45 @@ File: ../results/persona_moral_foundations_relevance_profiles.pdf Graphic file (
 <use ../results/persona_moral_foundations_relevance_profiles.pdf>
 Package pdftex.def Info: ../results/persona_moral_foundations_relevance_profiles.pdf  used on input line 223.
 (pdftex.def)             Requested size: 397.48499pt x 260.1793pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[3 <../results/moral_foundations_relevance_profiles.pdf>]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 249.
  (/usr/local/texlive/2025basic/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
 
-[3 <../results/moral_foundations_relevance_profiles.pdf>]
-
 [4 <../results/persona_moral_foundations_relevance_profiles.pdf>]
 
 [5]
-<../results/moral_metrics_overall_bars.pdf, id=353, 651.43375pt x 242.9075pt>
+<../results/moral_metrics_overall_bars.pdf, id=355, 651.43375pt x 242.9075pt>
 File: ../results/moral_metrics_overall_bars.pdf Graphic file (type pdf)
 <use ../results/moral_metrics_overall_bars.pdf>
 Package pdftex.def Info: ../results/moral_metrics_overall_bars.pdf  used on input line 350.
 (pdftex.def)             Requested size: 397.48499pt x 148.21782pt.
-
-
-[6 <../results/moral_metrics_overall_bars.pdf>]
-<../results/robustness_bars.pdf, id=456, 667.49374pt x 886.31125pt>
+<../results/robustness_bars.pdf, id=365, 667.49374pt x 886.31125pt>
 File: ../results/robustness_bars.pdf Graphic file (type pdf)
 <use ../results/robustness_bars.pdf>
 Package pdftex.def Info: ../results/robustness_bars.pdf  used on input line 365.
 (pdftex.def)             Requested size: 357.73405pt x 475.01709pt.
 
-Underfull \vbox (badness 1205) has occurred while \output is active []
 
-
-
-[7 <../results/robustness_bars.pdf>]
-<../results/susceptibility_bars.pdf, id=697, 601.24625pt x 886.31125pt>
+[6]
+<../results/susceptibility_bars.pdf, id=378, 601.24625pt x 886.31125pt>
 File: ../results/susceptibility_bars.pdf Graphic file (type pdf)
 <use ../results/susceptibility_bars.pdf>
 Package pdftex.def Info: ../results/susceptibility_bars.pdf  used on input line 378.
 (pdftex.def)             Requested size: 357.73405pt x 527.35498pt.
- (./neurips_2025.bbl
 
-[8]
 
-[9 <../results/susceptibility_bars.pdf>]
+[7 <../results/moral_metrics_overall_bars.pdf>]
+
+[8 <../results/robustness_bars.pdf>]
+
+[9 <../results/susceptibility_bars.pdf>] (./neurips_2025.bbl
 
 [10])
 Underfull \hbox (badness 10000) in paragraph at lines 441--448
@@ -798,6 +798,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 441--448
  []
 
 
+
+[11]
 Underfull \hbox (badness 10000) in paragraph at lines 453--460
 []\T1/cmtt/m/n/7 Please indicate your level of agreement with the following statement: <STATEMENT>.
  []
@@ -812,9 +814,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 453--460
 \T1/cmtt/m/n/7 disagree, 2 = slightly disagree, 3 = slightly agree, 4 = moderately agree, 5 = strongly
  []
 
-(./table_moral_foundations_profiles.tex)
-
-[11] (./table_persona_moral_foundations_profiles.tex)
+(./table_moral_foundations_profiles.tex) (./table_persona_moral_foundations_profiles.tex)
 
 [12] (./failures_by_model.tex) (./appendix_personas.tex
 
@@ -837,16 +837,16 @@ Package rerunfilecheck Info: File `neurips_2025.out' has not changed.
 Here is how much of TeX's memory you used:
  29620 strings out of 473190
  555756 string characters out of 5713195
- 965095 words of memory out of 5000000
+ 963023 words of memory out of 5000000
  51988 multiletter control sequences out of 15000+600000
  601892 words of font info for 216 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,16n,87p,1354b,1325s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,16n,87p,1414b,1325s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/fontawesome5/FontAwesome5Free-Solid.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/cm-super/sftt0800.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on neurips_2025.pdf (17 pages, 603866 bytes).
+Output written on neurips_2025.pdf (17 pages, 605796 bytes).
 PDF statistics:
- 1254 PDF objects out of 1440 (max. 8388607)
- 790 compressed objects within 8 object streams
+ 1256 PDF objects out of 1440 (max. 8388607)
+ 791 compressed objects within 8 object streams
  187 named destinations out of 1000 (max. 500000)
  44710 words of extra memory for PDF output out of 51595 (max. 10000000)
 
