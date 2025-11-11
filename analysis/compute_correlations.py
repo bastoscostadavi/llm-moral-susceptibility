@@ -29,8 +29,8 @@ import numpy as np
 import pandas as pd
 
 RESULTS_DIR = Path("results")
-OVERALL_CSV = RESULTS_DIR / "moral_metrics.csv"
-FOUNDATION_CSV = RESULTS_DIR / "moral_metrics_per_foundation.csv"
+OVERALL_CSV = RESULTS_DIR / "moral_metrics_bounded.csv"
+FOUNDATION_CSV = RESULTS_DIR / "moral_metrics_per_foundation_bounded.csv"
 MC_DRAWS = 50_000
 
 FAMILY_LABELS = {
@@ -77,6 +77,20 @@ def should_exclude(model: str, families: set[str], models: set[str]) -> bool:
     }
     key = family_keys.get(fam)
     return key in families if key else False
+
+
+def _normalise_columns(df: pd.DataFrame) -> pd.DataFrame:
+    rename_map = {
+        "bounded_robustness": "robustness",
+        "bounded_robustness_uncertainty": "robustness_uncertainty",
+        "bounded_susceptibility": "susceptibility",
+        "bounded_susceptibility_uncertainty": "susceptibility_uncertainty",
+    }
+    available = {k: v for k, v in rename_map.items() if k in df.columns}
+    if available:
+        df = df.drop(columns=[v for k, v in available.items() if v in df.columns])
+        df = df.rename(columns=available)
+    return df
 
 
 def draw_samples(df: pd.DataFrame, draws: int = MC_DRAWS) -> Tuple[np.ndarray, np.ndarray]:
@@ -148,8 +162,8 @@ def main() -> None:
     excluded_families = {f.lower() for f in args.exclude_family}
     excluded_models = set(args.exclude_model)
 
-    overall_df = pd.read_csv(OVERALL_CSV)
-    foundation_df = pd.read_csv(FOUNDATION_CSV)
+    overall_df = _normalise_columns(pd.read_csv(OVERALL_CSV))
+    foundation_df = _normalise_columns(pd.read_csv(FOUNDATION_CSV))
 
     overall_df = filter_df(overall_df, excluded_families, excluded_models)
     foundation_df = filter_df(foundation_df, excluded_families, excluded_models)

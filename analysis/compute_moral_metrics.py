@@ -5,7 +5,7 @@ The script scans summary CSVs (default: results/*.csv) produced by
 build_persona_question_summary, determines the personas that have valid
 (`average_score`, `standard_deviation`) entries for every model, optionally
 removing one persona to avoid a prime count, and then computes the moral
-robustness and susceptibility metrics described in articles/neurips_2025.tex.
+robustness and susceptibility metrics described in articles/mlsys2025.tex.
 
 Outputs a CSV with four metric columns (value + uncertainty for each
 capability) and one row per model ordered alphabetically."""
@@ -17,7 +17,7 @@ import math
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Sequence, Literal
+from typing import Iterable, List, Sequence
 
 import numpy as np
 import pandas as pd
@@ -38,29 +38,7 @@ class SummaryData:
     questions: set[int]
 
 
-@dataclass
-class FoundationMetrics:
-    mean_unc: float
-    se_unc: float
-    raw_susceptibility: float
-    raw_susceptibility_se: float
-
-
-@dataclass
-class ModelMetrics:
-    model: str
-    mean_unc: float
-    se_unc: float
-    raw_susceptibility: float
-    raw_susceptibility_se: float
-    foundation_stats: dict[str, FoundationMetrics]
-
-
 TARGET_GROUP_SIZE = 10
-MODEL_RENAMES = {
-    "deepseek-chat": "deepseek-v3",
-    "deepseek-chat-v3.1": "deepseek-v3.1",
-}
 
 
 def parse_args() -> argparse.Namespace:
@@ -137,11 +115,9 @@ def load_summaries(directory: Path, verbose: bool = False) -> List[SummaryData]:
         df["persona_id"] = df["persona_id"].astype(int)
         df["question_id"] = df["question_id"].astype(int)
         questions = set(df["question_id"].unique())
-        model_slug = MODEL_RENAMES.get(csv_path.stem, csv_path.stem)
-
         summaries.append(
             SummaryData(
-                model=model_slug,
+                model=csv_path.stem,
                 path=csv_path,
                 frame=df,
                 questions=questions,
@@ -253,7 +229,7 @@ def build_groups(personas: Sequence[int], verbose: bool = False) -> tuple[List[L
     return groups_list, removed
 
 
-def summarize_std_values(std_values: np.ndarray) -> tuple[float, float]:
+def compute_robustness(std_values: np.ndarray) -> tuple[float, float]:
     if std_values.size == 0:
         raise RuntimeError("No standard deviation values available for robustness computation.")
     mean_unc = float(np.mean(std_values))
@@ -262,41 +238,14 @@ def summarize_std_values(std_values: np.ndarray) -> tuple[float, float]:
         se_unc = sd_unc / math.sqrt(std_values.size)
     else:
         se_unc = 0.0
-    return mean_unc, se_unc
-
-
-def bounded_metric_with_linearized_uncertainty(
-    values: Sequence[float],
-    errors: Sequence[float],
-    *,
-    numerator: Literal["baseline", "value"],
-    clip_min: float = 1e-9,
-) -> tuple[np.ndarray, np.ndarray, float]:
-    """Apply bounded metric transform and propagate uncertainty analytically."""
-
-    arr = np.asarray(list(values), dtype=float)
-    errs = np.asarray(list(errors), dtype=float)
-
-    if arr.size == 0:
-        return np.array([], dtype=float), np.array([], dtype=float), float("nan")
-
-    arr = np.where(arr <= clip_min, clip_min, arr)
-    errs = np.clip(errs, a_min=0.0, a_max=None)
-    baseline = float(np.clip(arr.mean(), a_min=clip_min, a_max=None))
-
-    denom = arr + baseline
-    slope = baseline / np.square(denom)
-
-    if numerator == "baseline":
-        bounded = baseline / denom
-    elif numerator == "value":
-        bounded = arr / denom
+    eps = 1e-9
+    if mean_unc <= 0:
+        robustness = float("inf")
+        robustness_se = 0.0
     else:
-        raise ValueError(f"Unsupported numerator option: {numerator}")
-
-    bounded_se = slope * errs
-    return bounded.astype(float), bounded_se.astype(float), baseline
-
+        robustness = 1.0 / mean_unc
+        robustness_se = se_unc / (mean_unc ** 2) if se_unc > 0 else 0.0
+    return robustness, robustness_se
 
 
 def compute_susceptibility(pivot: pd.DataFrame, groups: Sequence[Sequence[int]]) -> tuple[float, float]:
@@ -368,7 +317,8 @@ def main() -> None:
     if args.verbose:
         print(f"Wrote persona grouping to {args.groups_output}")
 
-    model_metrics: List[ModelMetrics] = []
+    metrics_rows = []
+    foundation_metrics_rows = []
     for summary in summaries:
         df = summary.frame
         filtered = df[
@@ -376,11 +326,9 @@ def main() -> None:
             & df["persona_id"].isin(retained_personas)
         ].copy()
         if filtered.empty:
-            raise RuntimeError(
-                f"No data remaining for model {summary.model} after filtering personas/questions."
-            )
+            raise RuntimeError(f"No data remaining for model {summary.model} after filtering personas/questions.")
         std_values = filtered["standard_deviation"].to_numpy(dtype=float)
-        mean_unc, se_unc = summarize_std_values(std_values)
+        robustness, robustness_se = compute_robustness(std_values)
 
         pivot = (
             filtered.pivot(index="persona_id", columns="question_id", values="average_score")
@@ -393,7 +341,15 @@ def main() -> None:
             )
         susceptibility, susceptibility_se = compute_susceptibility(pivot, groups)
 
-        foundation_stats: dict[str, FoundationMetrics] = {}
+        metrics_rows.append(
+            {
+                "model": summary.model,
+                "robustness": robustness,
+                "robustness_uncertainty": robustness_se,
+                "susceptibility": susceptibility,
+                "susceptibility_uncertainty": susceptibility_se,
+            }
+        )
         for foundation in foundations:
             foundation_questions = [
                 qid for qid, name in foundation_map.items() if name == foundation
@@ -402,7 +358,7 @@ def main() -> None:
             if subset_f.empty:
                 continue
             std_values_f = subset_f["standard_deviation"].to_numpy(dtype=float)
-            mean_unc_f, se_unc_f = summarize_std_values(std_values_f)
+            robustness_f, robustness_se_f = compute_robustness(std_values_f)
             pivot_f = (
                 subset_f.pivot(index="persona_id", columns="question_id", values="average_score")
                 .loc[retained_personas]
@@ -413,114 +369,14 @@ def main() -> None:
                     f"Model {summary.model} has {missing} missing averages for foundation {foundation}."
                 )
             susceptibility_f, susceptibility_se_f = compute_susceptibility(pivot_f, groups)
-            foundation_stats[foundation] = FoundationMetrics(
-                mean_unc=mean_unc_f,
-                se_unc=se_unc_f,
-                raw_susceptibility=susceptibility_f,
-                raw_susceptibility_se=susceptibility_se_f,
-            )
-
-        model_metrics.append(
-            ModelMetrics(
-                model=summary.model,
-                mean_unc=mean_unc,
-                se_unc=se_unc,
-                raw_susceptibility=susceptibility,
-                raw_susceptibility_se=susceptibility_se,
-                foundation_stats=foundation_stats,
-            )
-        )
-
-    if not model_metrics:
-        raise RuntimeError("No models available for robustness computation.")
-
-    mean_unc_array = [m.mean_unc for m in model_metrics]
-    mean_unc_se_array = [m.se_unc for m in model_metrics]
-    raw_susc_array = [m.raw_susceptibility for m in model_metrics]
-    raw_susc_se_array = [m.raw_susceptibility_se for m in model_metrics]
-
-    overall_robust_vals, overall_robust_ses, _ = (
-        bounded_metric_with_linearized_uncertainty(
-            mean_unc_array,
-            mean_unc_se_array,
-            numerator="baseline",
-        )
-    )
-    overall_susc_vals, overall_susc_ses, _ = (
-        bounded_metric_with_linearized_uncertainty(
-            raw_susc_array,
-            raw_susc_se_array,
-            numerator="value",
-        )
-    )
-
-    metrics_rows = []
-    for model_metric, rob_val, rob_se, susc_val, susc_se in zip(
-        model_metrics,
-        overall_robust_vals,
-        overall_robust_ses,
-        overall_susc_vals,
-        overall_susc_ses,
-        strict=True,
-    ):
-        metrics_rows.append(
-            {
-                "model": model_metric.model,
-                "robustness": float(rob_val),
-                "robustness_uncertainty": float(rob_se),
-                "susceptibility": float(susc_val),
-                "susceptibility_uncertainty": float(susc_se),
-            }
-        )
-
-    foundation_metrics_rows = []
-    for foundation in foundations:
-        foundation_models: List[str] = []
-        foundation_mean_unc: List[float] = []
-        foundation_mean_unc_se: List[float] = []
-        foundation_susc: List[float] = []
-        foundation_susc_se: List[float] = []
-
-        for model_metric in model_metrics:
-            stats = model_metric.foundation_stats.get(foundation)
-            if stats is None:
-                continue
-            foundation_models.append(model_metric.model)
-            foundation_mean_unc.append(stats.mean_unc)
-            foundation_mean_unc_se.append(stats.se_unc)
-            foundation_susc.append(stats.raw_susceptibility)
-            foundation_susc_se.append(stats.raw_susceptibility_se)
-
-        if not foundation_models:
-            continue
-
-        f_robust_vals, f_robust_ses, _ = bounded_metric_with_linearized_uncertainty(
-            foundation_mean_unc,
-            foundation_mean_unc_se,
-            numerator="baseline",
-        )
-        f_susc_vals, f_susc_ses, _ = bounded_metric_with_linearized_uncertainty(
-            foundation_susc,
-            foundation_susc_se,
-            numerator="value",
-        )
-
-        for model_name, rob_val, rob_se, susc_val, susc_se in zip(
-            foundation_models,
-            f_robust_vals,
-            f_robust_ses,
-            f_susc_vals,
-            f_susc_ses,
-            strict=True,
-        ):
             foundation_metrics_rows.append(
                 {
-                    "model": model_name,
+                    "model": summary.model,
                     "foundation": foundation,
-                    "robustness": float(rob_val),
-                    "robustness_uncertainty": float(rob_se),
-                    "susceptibility": float(susc_val),
-                    "susceptibility_uncertainty": float(susc_se),
+                    "robustness": robustness_f,
+                    "robustness_uncertainty": robustness_se_f,
+                    "susceptibility": susceptibility_f,
+                    "susceptibility_uncertainty": susceptibility_se_f,
                 }
             )
 

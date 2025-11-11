@@ -7,7 +7,7 @@
 \def\input@path{{}{articles/}}
 \makeatother
 
-\usepackage{neurips_2025}
+\usepackage[preprint]{neurips_2025}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -192,7 +192,7 @@ This paper introduces a benchmark that combines persona role-play---prompting a 
 
   
   \end{tikzpicture}
-  \caption{The left summarizes our data collection pipeline: we elicit models to respond to the MFQ conditioned to a persona. The right summarizes our benchmark pipeline: robustness,  Eq.~\ref{eq:robustness}, and susceptibility, Eq.~\ref{eq:overall-susceptibility}, are computed from across and within persona variability in MFQ scores.}
+  \caption{Left: summary of our data collection pipeline: we elicit models to respond to the MFQ conditioned to a persona. Right: summary of our benchmark pipeline: robustness,  Eq.~\ref{eq:robustness}, and susceptibility, Eq.~\ref{eq:overall-susceptibility}, are computed from across and within persona variability in MFQ scores.}
   \label{fig:mfq-susceptibility-robustness}
   \end{figure}
   
@@ -209,24 +209,23 @@ We define a benchmark to evaluate the moral robustness and moral susceptibility 
 
 The Moral Foundations Questionnaire \citep{moralfoundations2017questionnaires} is a widely used instrument in moral psychology \citep{graham2009liberals,haidt2007when,moralfoundations2017questionnaires} and comprises 30 questions split into two sections. The first includes 15 relevance judgments, which assess how relevant certain considerations are when deciding what is right or wrong, and the second includes 15 agreement statements, which measure the level of agreement with specific moral propositions \citep{graham2011mfq,moralfoundations2017questionnaires}. In both sections, respondents answer each item using an integer scale from 0 to 5, representing in the first section the perceived relevance of the consideration and in the second the degree of agreement with the statement (see Appendix~\ref{app:prompts} for a verbatim description including the interpretation of the scale). Questions map to five moral foundations: Harm/Care, Fairness/Reciprocity, In-group/Loyalty, Authority/Respect, Purity/Sanctity. The results are typically presented as foundation-level scores, obtained by averaging the ratings of the questions associated with each foundation.
 
-Figure~\ref{fig:mfq-profiles} illustrates the resulting foundation-level MFQ scores across models using no-persona role-play. Specifically, models were elicited to answer the 30 MFQ questions 10 times each, which we average by foundation and display with the corresponding standard error. Although not the focus of our work, understanding the moral profile of different frontier models is relevant, providing useful context for deployment and comparison.
+Figure~\ref{fig:mfq-profiles} illustrates the resulting foundation-level MFQ scores across models using no-persona role-play. Models were elicited to answer the 30 MFQ questions 10 times each, which we average by foundation and display with the corresponding standard error. Although not the focus of our work, understanding the moral profile of different frontier models is relevant, providing useful context for deployment and comparison.
 
 \begin{figure}[t]
   \centering
-    \centering
-    \includegraphics[width=\linewidth]{../results/moral_foundations_relevance_profiles.pdf}
-    \caption{Moral foundation profile across models with no-persona role-play (self). Points show mean rating per foundation; error bars denote standard errors across questions within each foundation. See Table~\ref{tab:moral_foundations_profiles} for exact values.}
-    \label{fig:mfq-profiles}
-  \end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{../results/persona_moral_foundations_relevance_profiles.pdf}
-    \caption{Moral foundation profiles for fourteen randomly selected personas together with the self-assessment (no persona role-play) curve averaged across models. See Table~\ref{tab:persona_moral_foundations_profiles} for exact values.}
-    \label{fig:persona-mfq-profiles}
+  \includegraphics[width=\linewidth]{../results/moral_foundations_relevance_profiles.pdf}
+  \caption{Moral foundation profile across models with no-persona role-play (self). Points show mean rating per foundation; error bars denote standard errors across questions within each foundation. See Table~\ref{tab:moral_foundations_profiles} for exact values.}
+  \label{fig:mfq-profiles}
 \end{figure}
 
-Fig~\ref{fig:persona-mfq-profiles} reports foundation-level MFQ scores averaged over all models for different personas. It gives an average characterization of the moral profile of models elicited by a given persona. Complementary, in Table~\ref{tab:persona_foundation_maxima}, we present the persona ID that attained the highest MFQ score averaged across models for each one of the foundations. See Appendix~\ref{app:personas} for the persona descriptions. The full per-persona, per-model and per-question MFQ ratings are available in our GitHub repository \cite{costa2025llmms}.
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{../results/persona_moral_foundations_relevance_profiles.pdf}
+  \caption{Moral foundation profiles for fourteen randomly selected personas together with the self-assessment (no persona role-play) curve averaged across models. See Table~\ref{tab:persona_moral_foundations_profiles} for exact values.}
+  \label{fig:persona-mfq-profiles}
+\end{figure}
+
+Figure~\ref{fig:persona-mfq-profiles} reports foundation-level MFQ scores averaged over all models for different personas. It gives an average characterization of the moral profile of models elicited by a given persona. Complementary, in Table~\ref{tab:persona_foundation_maxima}, we present the persona ID that attained the highest MFQ score averaged across models for each foundation. See Appendix~\ref{app:personas} for the persona descriptions. The full per-persona, per-model, and per-question MFQ ratings are available in our GitHub repository \cite{costa2025llmms}.
 
 \begin{table}[t]
   \centering
@@ -251,7 +250,7 @@ For each model, we iterate through all MFQ questions for every persona, repeatin
   \item \textbf{Prompting:} For each persona and question, the model receives a role-playing instruction: ``You are roleplaying as the following persona:", followed by the persona description text and one of the $|\mathcal{Q}|=30$ MFQ questions.\footnote{We query one MFQ question at a time rather than the full questionnaire in a single prompt to avoid sequence- and order-dependent effects.} We instruct the models to start their response with the rating (an integer from 0 to 5), followed by their reasoning. Exact prompt templates are provided in Appendix~\ref{app:prompts}.
   \item \textbf{Repetition:} Each persona--question pair is queried \(n=10\) times to estimate within-persona mean score and variance, which are then used to compute the moral robustness and susceptibility, defined in Eq.~\eqref{eq:robustness} and Eq.~\eqref{eq:overall-susceptibility}. See Section~\ref{sec:rating_estimation} for a discussion of the underlying problem and an outline of a more principled approach.
   \item \textbf{Decoding:} In the first run, we constrain outputs to begin with a single integer rating from 0 to 5, and parse this leading integer. Parsing failures are recorded and we repeat each attempt at most 4 times, allowing responses that do not begin with the rating (see Section~\ref{sec:failures} for more details). This approach minimizes costs and unexpectedly revealed that some personas more likely elicit models to not follow instructions (see Section~\ref{sec:failures}).
-  \item \textbf{Models:} We included: Claude Haiku 4.5, Claude Sonnet 4.5, DeepSeek V3.1, Gemini 2.5 Flash Lite, Gemini 2.5 Flash, GPT-4.1, GPT-4.1 Mini, GPT-4.1 Nano, GPT-4o, GPT-4o Mini, GPT-5, GPT-5 Mini, GPT-5 Nano, Grok 4 and Grok 4 Fast. \item \textbf{Families:} We groups the above models in the following families: Claude, DeepSeek, Gemini, GPT-4, GPT-5 and Grok.
+  \item \textbf{Models:} We included: Claude Haiku 4.5, Claude Sonnet 4.5, DeepSeek V3,DeepSeek V3.1, Gemini 2.5 Flash Lite, Gemini 2.5 Flash, GPT-4.1, GPT-4.1 Mini, GPT-4.1 Nano, GPT-4o, GPT-4o Mini, GPT-5, GPT-5 Mini, GPT-5 Nano, Grok 4 and Grok 4 Fast. \item \textbf{Families:} We groups the above models in the following families: Claude, DeepSeek, Gemini, GPT-4, GPT-5 and Grok.
   \item \textbf{Logging}: For each model we did a total of $|\mathcal{Q}|\times|\mathcal{P}|\times n =30\times 100\times 10=30,000$ requests. The resulting tables are available in our GitHub repository \cite{costa2025llmms}.
 \end{itemize}
 We next formalize how these repeated ratings are aggregated into moral robustness and susceptibility scores.
@@ -268,17 +267,23 @@ For each persona--question pair we compute the sample mean and the standard devi
   \label{eq:persona-question-mean}
 \end{align}
 
-\paragraph{Moral robustness} We summarize within-persona variability by averaging the standard deviations in Eq.~\eqref{eq:persona-question-mean} over personas and questions and we estimate its uncertainty by computing the (sample) standard error: 
+\paragraph{Moral robustness} We summarize within-persona variability by averaging the standard deviations in Eq.~\eqref{eq:persona-question-mean} over personas and questions and we estimate its uncertainty via the sample standard error: 
 \begin{equation}
   \bar{u} = \frac{1}{|\mathcal{P}|\,|\mathcal{Q}|} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} u_{pq},\qquad \sigma_{\overline{u}}^2 = \frac{1}{|\mathcal{P}||\mathcal{Q}|(|\mathcal{P}|\,|\mathcal{Q}|-1)} \sum_{p \in \mathcal{P}} \sum_{q \in \mathcal{Q}} (u_{pq} - \bar{u})^2.\label{eq:mean-uncertainty}
 \end{equation}
-Our robustness index is defined as 
+We define the unbounded robustness index as the inverse:
 \begin{equation}
-  R = \frac{\mathbb{E}[\bar{u}]}{\bar{u} + \mathbb{E}[\bar{u}]},\qquad
-  \sigma_R = \frac{\mathbb{E}[\bar{u}]}{(\bar{u}+\mathbb{E}[\bar{u}])^2} \, \sigma_{\bar{u}},
+  \widetilde{R} = \frac{1}{\bar{u}},\qquad \sigma_{\widetilde{R}} = \frac{\sigma_{\bar{u}}}{\bar{u}^2},
+  \label{eq:unbounded-robustness}
+\end{equation}
+with uncertainty approximated propagated from $\bar{u}$.
+Moral robustness is then defined as
+\begin{equation}
+  R = \frac{\widetilde{R}}{\widetilde{R} + \mathbb{E}[\widetilde{R}]},\qquad
+  \sigma_R = \frac{\mathbb{E}[\widetilde{R}]}{(\widetilde{R}+\mathbb{E}[\widetilde{R}])^2} \, \sigma_{\widetilde{R}},
   \label{eq:robustness}
 \end{equation}
-where the average $\mathbb{E}[\bar{u}]$ is computed across models. As defined, our index is bounded $R \in [0, 1]$ and $R = 1/2$ sets the threshold for being more robust (smaller within-persona variability) than the overall average.
+where the average $\mathbb{E}[\widetilde{R}]$ is computed across models. As defined, $R$ is dimensionless, $R\in [0, 1]$ and $R = 1/2$ sets the threshold for being more robust (smaller within-persona variability) than the overall average, mirroring the susceptibility interpretation below.
 
 
 \paragraph{Moral susceptibility} For our across-perona variability index we partition \(\mathcal{P}\) into \(G\) disjoint groups \(\mathcal{P}_1,\ldots,\mathcal{P}_G\) of equal size. For each question \(q\) and group \(g\), we compute the sample standard deviation of persona means
@@ -286,37 +291,22 @@ where the average $\mathbb{E}[\bar{u}]$ is computed across models. As defined, o
   & s_{qg}^2 = \frac{1}{|\mathcal{P}_g|-1} \sum_{p \in \mathcal{P}_g}(\bar{y}_{pq} - \bar{y}_{gq})^2,\qquad \bar{y}_{gq} = \frac{1}{|\mathcal{P}_g|} \sum_{p \in \mathcal{P}_g} \bar{y}_{pq}.
   \label{eq:question-dispersion}
 \end{align}
-From $s_{qg}$ we obtain the unbounded susceptibility as the average over groups group-level susceptibility samples:
+From $s_{qg}$ we obtain the unbounded susceptibility as the average over groups of group-level susceptibility samples:
 \begin{equation}
   \widetilde{S} = \frac{1}{G} \sum_{g=1}^{G} \widetilde{S}_g,\qquad\widetilde{S}_g = \frac{1}{|\mathcal{Q}|} \sum_{q \in \mathcal{Q}} s_{qg},\qquad \sigma_{\widetilde{S}} = \sqrt{\frac{1}{G(G-1)} \sum_{g=1}^{G} (\widetilde{S}_g - \widetilde{S})^2},
-  \label{eq:overall-susceptibility}
+  \label{eq:unbounded-susceptibility}
 \end{equation}
 with its standard error estimated from the between-group variability. Analogously to robustness we define the bounded susceptibility as
 \begin{equation}
   S = \frac{\widetilde{S}}{\widetilde{S}+ \mathbb{E}[\widetilde{S}]},\qquad
   \sigma_S = \frac{\mathbb{E}[\widetilde{S}]}{(\widetilde{S}+ \mathbb{E}[\widetilde{S}])^2} \, \sigma_{\widetilde{S}},
-  \label{eq:bounded-susceptibility}
+  \label{eq:overall-susceptibility}
 \end{equation}
-where the average $\mathbb{E}[\widetilde{S}]$ is computed across models. In analogy with the robustness index,  \(S\in [0,1]\) and \(S=1/2\) marks the benchmark mean.
+where the average $\mathbb{E}[\widetilde{S}]$ is computed across models. In analogy with the robustness index,  $S$ is dimensionless, \(S\in [0,1]\) and \(S=1/2\) marks the benchmark mean.
 
-To propagate uncertainty in both robustness and susceptibility we adopt a first-order approximation: we treat the cross-model averages $\mathbb{E}[\bar{u}]$ and $\mathbb{E}[\widetilde{S}]$ as fixed constants and only propagate the uncertainty from $\bar{u}$ and $\widetilde{S}$. Linearizing Eqs.~\eqref{eq:robustness} and \eqref{eq:bounded-susceptibility} around these values yields the closed-form standard errors $\sigma_R$ and $\sigma_S$ reported alongside each index. This analytical approximation was compared with a bootstrap approach, and both gave similar values.
+To propagate uncertainty in both robustness and susceptibility we adopt a first-order approximation: we treat the cross-model averages $\mathbb{E}[\bar{u}]$ and $\mathbb{E}[\widetilde{S}]$ as fixed constants and only propagate the uncertainty from $\widetilde{R}$ and $\widetilde{S}$. Linearizing Eqs.~\eqref{eq:robustness} and \eqref{eq:overall-susceptibility} around these values yields the closed-form standard errors $\sigma_R$ and $\sigma_S$ reported alongside each index. This analytical approximation was compared with a bootstrap approach, and both gave similar values.
 
-Foundation-specific robustness and susceptibilities reuse Eqs.~\eqref{eq:mean-uncertainty}--\eqref{eq:bounded-susceptibility} after restricting \(\mathcal{Q}\) to the question subset \(\mathcal{Q}_f\) for foundation \(f\).
-
-
-
-
-
-\subsection{Correlation Metric}
-\label{sec:correlation_metrics}
-
-We quantify how moral robustness and susceptibility co-vary by measuring the Pearson correlation coefficient between the two quantities across models. The coefficient is
-\begin{equation}
-  r_{RS} = \frac{\sum_i (R_i - \bar{R})(S_i - \bar{S})}{\sqrt{\sum_i (R_i - \bar{R})^2}\sqrt{\sum_i (S_i - \bar{S})^2}},
-  \label{eq:pearson}
-\end{equation}
-where $R_i$ and $S_i$ denote the robustness and susceptibility of model $i$, and $\bar{R}$ and $\bar{S}$ are their respective means over all models. To propagate uncertainty we draw Gaussian samples $(R_i', S_i')$ using the standard errors for each model, recompute $r_{RS}$ for every draw, and quote the sample standard deviation of the resulting distribution. The same sampling procedure yields a family-level coefficient $\overline{r}_{RS}$ by first averaging $(R_i', S_i')$ within each model family before correlating. We repeat this computation for each moral foundation by restricting the robustness and susceptibility to the corresponding foundation-specific metrics.
-
+Foundation-specific robustness and susceptibilities reuse Eqs.~\eqref{eq:mean-uncertainty}--\eqref{eq:overall-susceptibility} after restricting \(\mathcal{Q}\) to the question subset \(\mathcal{Q}_f\) for foundation \(f\).
 
 \subsection{Average Score and Variance Estimation}
 \label{sec:rating_estimation}
@@ -332,18 +322,37 @@ This is the average and variance that our 10-trial procedure approximates, while
 
 \section{Results}
 
+
+\begin{table}[t]
+  \centering
+  \caption{Cross-model means of the unbounded robustness and susceptibility per foundation.}
+  \label{tab:unbounded_means}
+  \begin{tabular}{lcc}
+    \toprule
+    Foundation & $\mathbb{E}[\widetilde{R}]$ & $\mathbb{E}[\widetilde{S}]$ \\
+    \midrule
+    All foundations & $18 \pm 7$ & $0.62 \pm 0.02$ \\
+    Authority/Respect & $16 \pm 6$ & $0.70 \pm 0.03$ \\
+    Fairness/Reciprocity & $29 \pm 14$ & $0.42 \pm 0.02$ \\
+    Harm/Care & $27 \pm 12$ & $0.48 \pm 0.03$ \\
+    In-group/Loyalty & $18 \pm 7$ & $0.75 \pm 0.03$ \\
+    Purity/Sanctity & $17 \pm 7$ & $0.76 \pm 0.03$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
 Our results for the overall moral robustness, Eq.~\eqref{eq:robustness}, and moral susceptibility, Eq.~\eqref{eq:overall-susceptibility}, by model are displayed in Figure~\ref{fig:robustness-susceptibility}. For robustness, we see that model family explains most of the variance, with model size having no systematic effect. The Claude family is by a significant margin the most robust, while Grok are the least. At the model level Claude Sonnet 4.5 stand out as the most robust and GPT-5 Nano as the least. In contrast, moral susceptibility exhibits a mild family effect but a clear within-family size effect, with larger vairants being more susceptible. At the model level, Gemini 2.5 Flash is the most suscepbtile and GPT-5 Nano the least. Overall, the Grok family sits as the primary outlier, pairing comparatively low robustness with high susceptibility.
 
 % Overall Susceptibility and Robustness
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=\linewidth]{../results/moral_metrics_overall_bars.pdf}
-  \caption{On the left, moral robustness, Eq.~\eqref{eq:robustness}: higher values indicate greater MFQ rating stability. On the right, moral susceptibility, Eq.~\eqref{eq:bounded-susceptibility}: higher values indicate larger persona-driven shifts in MFQ scores.}
+  \caption{Left: moral robustness, Eq.~\eqref{eq:robustness}: higher values indicate greater MFQ rating stability. Right: moral susceptibility, Eq.~\eqref{eq:overall-susceptibility}: higher values indicate larger persona-driven shifts in MFQ scores.}
   \label{fig:robustness-susceptibility}
 \end{figure}
 
-
-
+In addition to moral robustness and susceptibility, we also display in Table~\ref{tab:unbounded_means} the average value across models of the unbounded robustness Eq.~\eqref{eq:unbounded-robustness} and susceptibility Eq.~\eqref{eq:unbounded-susceptibility}. As one can see, Fairness/Reciprocity and Harm/Care yield the highest average unbounded robustness and the lowest unbounded susceptibility, compared with other foudnations. The remaining foundations cluster closer together.
 
 \subsection{Moral Robustness}
 
@@ -375,7 +384,7 @@ models have a more balanced susceptibility moral profile if compared with robust
 \subsection{Correlation Between Robustness and Susceptibility}
 \label{sec:robustness-susceptibility-correlation}
 
-Table~\ref{tab:correlation_foundations} summarises the Pearson correlations from Eq.~\eqref{eq:pearson} at the model and family levels. With all models included we see a clear positive association between robustness and susceptibility ($+0.34 \pm 0.07$ across models, $+0.35 \pm 0.08$ by family), which is more pronounced at the family-level. It is driven mainly by Fairness/Reciprocity and In-group/Loyalty, and Purity/Sanctity shows a negative correlation. The Grok family alone suppresses these values because of its low robustness and high susceptibility, which is most significnant in the Purity/Sanctity foundaiton. Excluding Grok lifts every foundation, yielding an overall correlation of $+0.51 \pm 0.07$ ($+0.59 \pm 0.08$ by family) and reinforcing the positive trends without altering the qualitative ordering across foundations.
+Table~\ref{tab:correlation_foundations} summarises the Pearson correlations from Eq.~\eqref{eq:pearson} at the model and family levels. With all models included we see a positive association between robustness and susceptibility ($+0.27 \pm 0.07$ across models, $+0.29 \pm 0.09$ by family), with Fairness/Reciprocity and Harm/Care showing the strongest dependencies while Purity/Sanctity remains negative. The Grok family suppresses these values because of its low robustness and high susceptibility, particularly within Purity/Sanctity. Excluding Grok lifts every foundation, yielding an overall correlation of $+0.41 \pm 0.07$ ($+0.48 \pm 0.09$ by family) and reinforcing the positive trends without altering the qualitative ordering across foundations.
 
 \begin{table}[t]
   \centering
@@ -387,17 +396,15 @@ Table~\ref{tab:correlation_foundations} summarises the Pearson correlations from
     \cmidrule(lr){2-3} \cmidrule(l){4-5}
     Foundation & Model $r_{RS}$ & Family $\overline{r}_{RS}$ & Model $r_{RS}$ & Family $\overline{r}_{RS}$ \\
     \midrule
-    All foundations & $+0.34 \pm 0.07$ & $+0.35 \pm 0.08$ & $+0.51 \pm 0.07$ & $+0.59 \pm 0.08$ \\
-    Authority/Respect & $+0.13 \pm 0.09$ & $+0.15 \pm 0.13$ & $+0.28 \pm 0.09$ & $+0.39 \pm 0.15$ \\
-    Fairness/Reciprocity & $+0.36 \pm 0.08$ & $+0.47 \pm 0.11$ & $+0.48 \pm 0.08$ & $+0.67 \pm 0.09$ \\
-    Harm/Care & $+0.19 \pm 0.06$ & $+0.36 \pm 0.07$ & $+0.35 \pm 0.06$ & $+0.65 \pm 0.07$ \\
-    In-group/Loyalty & $+0.33 \pm 0.07$ & $+0.47 \pm 0.10$ & $+0.41 \pm 0.07$ & $+0.57 \pm 0.09$ \\
-    Purity/Sanctity & $-0.11 \pm 0.08$ & $-0.19 \pm 0.11$ & $-0.01 \pm 0.09$ & $-0.07 \pm 0.12$ \\
+    All foundations & $+0.27 \pm 0.07$ & $+0.29 \pm 0.09$ & $+0.41 \pm 0.07$ & $+0.48 \pm 0.09$ \\
+    Authority/Respect & $+0.07 \pm 0.09$ & $+0.12 \pm 0.14$ & $+0.20 \pm 0.10$ & $+0.33 \pm 0.16$ \\
+    Fairness/Reciprocity & $+0.36 \pm 0.08$ & $+0.46 \pm 0.10$ & $+0.45 \pm 0.08$ & $+0.62 \pm 0.09$ \\
+    Harm/Care & $+0.26 \pm 0.06$ & $+0.39 \pm 0.07$ & $+0.38 \pm 0.06$ & $+0.59 \pm 0.07$ \\
+    In-group/Loyalty & $+0.25 \pm 0.07$ & $+0.41 \pm 0.10$ & $+0.31 \pm 0.07$ & $+0.50 \pm 0.10$ \\
+    Purity/Sanctity & $-0.18 \pm 0.09$ & $-0.24 \pm 0.11$ & $-0.10 \pm 0.09$ & $-0.15 \pm 0.12$ \\
     \bottomrule
   \end{tabular}
 \end{table}
-
-\FloatBarrier
 
 
 \section{Conclusion}
@@ -477,6 +484,19 @@ This appendix provides the numerical MFQ foundation profiles that correspond to 
   \label{tab:persona_moral_foundations_profiles}
   \resizebox{\linewidth}{!}{\input{table_persona_moral_foundations_profiles.tex}}
 \end{table}
+
+
+
+\subsection{Correlation Metric}
+\label{sec:correlation_metrics}
+
+We quantify how moral robustness and susceptibility co-vary by measuring the Pearson correlation coefficient between the two quantities across models. The coefficient is
+\begin{equation}
+  r_{RS} = \frac{\sum_i (R_i - \bar{R})(S_i - \bar{S})}{\sqrt{\sum_i (R_i - \bar{R})^2}\sqrt{\sum_i (S_i - \bar{S})^2}},
+  \label{eq:pearson}
+\end{equation}
+where $R_i$ and $S_i$ denote the robustness and susceptibility of model $i$, and $\bar{R}$ and $\bar{S}$ are their respective means over all models. To propagate uncertainty we draw Gaussian samples $(R_i', S_i')$ using the standard errors for each model, recompute $r_{RS}$ for every draw, and quote the sample standard deviation of the resulting distribution. The same sampling procedure yields a family-level coefficient $\overline{r}_{RS}$ by first averaging $(R_i', S_i')$ within each model family before correlating. We repeat this computation for each moral foundation by restricting the robustness and susceptibility to the corresponding foundation-specific metrics.
+
 
 
 \section{Parsing Failures}

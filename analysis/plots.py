@@ -123,12 +123,40 @@ def _(create_val_err_label, zscore, zscore_error):
 
 @app.cell
 def _(extracolumns, pl):
+    def _normalize_columns(frame):
+        rename_map = {
+            "bounded_robustness": "robustness",
+            "bounded_robustness_uncertainty": "robustness_uncertainty",
+            "bounded_susceptibility": "susceptibility",
+            "bounded_susceptibility_uncertainty": "susceptibility_uncertainty",
+        }
+        for src, dest in rename_map.items():
+            if src in frame.columns:
+                if dest in frame.columns:
+                    frame = frame.drop(dest)
+                frame = frame.rename({src: dest})
+        return frame
+
+    def _select_metric_files(results_dir):
+        chosen = {}
+        for f in sorted(results_dir.glob("moral*csv")):
+            stem = f.stem
+            base = stem.removesuffix("_bounded") if stem.endswith("_bounded") else stem
+            if stem.endswith("_bounded"):
+                chosen[base] = f
+            else:
+                chosen.setdefault(base, f)
+        return list(chosen.values())
+
     def load_results(results_dir):
         table = {}
-        for f in results_dir.glob("moral*csv"):
-            if "foundation" not in f.stem:
-                table[f.stem] = extracolumns(
-                    pl.read_csv(f)
+        for f in _select_metric_files(results_dir):
+            stem = f.stem
+            base = stem[:-8] if stem.endswith("_bounded") else stem
+            frame = _normalize_columns(pl.read_csv(f))
+            if "foundation" not in frame.columns:
+                table[base] = extracolumns(
+                    frame
                     .with_columns(foundation=pl.lit("All Foundations"))
                     .select(
                         "model",
@@ -140,8 +168,9 @@ def _(extracolumns, pl):
                     )
                 )
             else:
-                table[f.stem] = extracolumns(pl.read_csv(f), group="foundation")
+                table[base] = extracolumns(frame, group="foundation")
         return table
+
     return (load_results,)
 
 
