@@ -23,7 +23,6 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import altair as alt
-    from matplotlib import pyplot as plt
     import polars as pl
     from pathlib import Path
     import re
@@ -96,22 +95,65 @@ def _(DATA_DIR, load_results):
 
 
 @app.cell
-def _(pl):
-    def entropy_columns(df):
-        return (
-            df.filter(pl.col("rating") >= 0)
-            .group_by("model", "question_id", "rating")
-            .agg(pl.col("rating").count().alias("n"))
-            .with_columns(
-                N=pl.col("n").sum().over("model", "question_id"),
-                p=(pl.col("n") / pl.col("n").sum().over("model", "question_id")),
-            )
-            .with_columns(ln_p=pl.col("p").log())
-            .with_columns(p_ln_p=pl.col("p") * pl.col("ln_p"))
-            .select("model", "question_id", "rating", "p", "ln_p", "p_ln_p")
-            .sort("model", "question_id", "rating")
+def _(pl, table):
+    def create_empty_count_table():
+        return pl.DataFrame(
+            [
+                (m, q, r, 0)
+                for m in table["persona"]
+                .select("model")
+                .unique()
+                .to_series()
+                .to_list()
+                for q in range(1, 31)
+                for r in range(6)
+            ],
+            ["model", "question_id", "rating", "count"],
+            orient="row",
         )
-    return (entropy_columns,)
+
+
+    def entropy_columns(df, *, count_smoothing=1.0):
+        a = count_smoothing
+        ndf = (
+            create_empty_count_table()
+            .update(
+                df.filter(pl.col("rating") >= 0)
+                .group_by("model", "question_id", "rating")
+                .agg(pl.col("rating").count().alias("count")),
+                on=["model", "question_id", "rating"],
+                how="left",
+            )
+            .with_columns(
+                p=(
+                    (pl.col("count") + pl.lit(a))
+                    / (
+                        pl.col("count").sum().over("model", "question_id")
+                        + pl.lit(a * 6)
+                    )
+                ),  # Laplace's smoothing
+            )
+            .with_columns(ln_invp=-pl.col("p").log())
+            .with_columns(p_ln_invp=pl.col("p") * pl.col("ln_invp"))
+        )
+
+        return ndf.select("model", *(c for c in ndf.columns if c != "model")).sort(
+            "model", "question_id", "rating"
+        )
+
+
+    def remove_self_from_model_name(df):
+        return (
+            df.with_columns(
+                pl.col("model")
+                .str.extract("([a-zA-Z0-9-.]+)_", 1)
+                .alias("clean_model"),
+            )
+            .drop("model")
+            .rename({"clean_model": "model"})
+            .select("model", *(c for c in df.columns if c != "model"))
+        )
+    return entropy_columns, remove_self_from_model_name
 
 
 @app.cell
@@ -150,74 +192,87 @@ def _(alt):
 
 
 @app.cell
-def _(entropy_columns, plot_question_rating_ridgelines, table):
-    plot_question_rating_ridgelines(entropy_columns(table["self"]))
+def _(persona_df, plot_question_rating_ridgelines):
+    plot_question_rating_ridgelines(persona_df)
     return
 
 
 @app.cell
-def _(entropy_columns, plot_question_rating_ridgelines, table):
-    plot_question_rating_ridgelines(entropy_columns(table["persona"]))
+def _(plot_question_rating_ridgelines, self_df):
+    plot_question_rating_ridgelines(self_df)
     return
 
 
 @app.cell
-def _(alt, entropy_columns, pl, table):
+def _(alt, both_df, persona_df, pl, self_df):
     import math
 
     (
         alt.Chart(
-            data=entropy_columns(table["persona"])
-            .group_by("model")
-            .agg(entropy=(-pl.col("p") * pl.col("ln_p")).sum())
+            title="Personas",
+            data=persona_df.group_by("model").agg(
+                entropy=(pl.col("p") * pl.col("ln_invp")).sum()
+            ),
         )
-        .mark_bar()
+        .mark_bar(size=15)
         .encode(
             alt.X("entropy:Q"),
             alt.Y("model:N", sort=alt.SortField("entropy", order="descending")),
         )
-    )
-    return
-
-
-@app.cell
-def _(entropy_columns, table):
-    entropy_columns(table["self"])
-    return
-
-
-@app.cell
-def _(entropy_columns, pl, table):
-    (
-        entropy_columns(table["persona"]).join(
-            entropy_columns(table["self"]).select(
-                "model", "question_id", "rating", pl.col("ln_p").alias("self_ln_p")
+        | alt.Chart(
+            title="Self",
+            data=self_df.group_by("model").agg(
+                entropy=(pl.col("p") * pl.col("ln_invp")).sum()
             ),
-            on=["model", "question_id", "rating"],
+        )
+        .mark_bar(size=15)
+        .encode(
+            alt.X("entropy:Q"),
+            alt.Y("model:N", sort=alt.SortField("entropy", order="descending")),
+        )
+        | alt.Chart(
+            title="Both - KL-Divergence",
+            data=both_df.group_by("model").agg(
+                rel_entropy=pl.col.rel_entropy.sum()
+            ),
+        )
+        .mark_bar(size=15)
+        .encode(
+            alt.X("rel_entropy:Q"),
+            alt.Y(
+                "model:N", sort=alt.SortField("rel_entropy", order="descending")
+            ),
         )
     )
     return
 
 
 @app.cell
-def _(entropy_columns, pl, table):
-    entropy_columns(table["self"]).select(
-        "model", "question_id", "rating", pl.col("ln_p").alias("self_ln_p")
+def _(entropy_columns, remove_self_from_model_name, table):
+    _a = 1 / 6
+    self_df = entropy_columns(
+        remove_self_from_model_name(table["self"]), count_smoothing=_a
     )
-    return
+    persona_df = entropy_columns(table["persona"], count_smoothing=_a)
+
+    {"self_df": self_df, "persona_df": persona_df}
+    return persona_df, self_df
 
 
 @app.cell
-def _(entropy_columns, table):
-    self_df = entropy_columns(table["self"])
-    persona_df = entropy_columns(table["persona"])
-    return (self_df,)
+def _(persona_df, pl, self_df):
+    both_df = persona_df.join(
+        self_df.select(
+            pl.all().name.replace("^(p|ln_invp|p_ln_invp|count)$", "self_$1")
+        ),
+        on=["model", "question_id", "rating"],
+        how="left",
+    ).with_columns(
+        rel_entropy=(-pl.col.p * (pl.col.ln_invp - pl.col.self_ln_invp))
+    )
 
-
-@app.cell
-def _(pl, self_df):
-    self_df.with_columns(model=pl.col("model").str.split("_"))
-    return
+    both_df
+    return (both_df,)
 
 
 if __name__ == "__main__":
